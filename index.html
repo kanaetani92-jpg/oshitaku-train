@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>おしたくトレイン</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="device.css" />
 </head>
 <body>
   <div class="app">
@@ -55,20 +54,28 @@
 
         <section class="progress-panel">
           <div class="metric"><span>いま</span><strong id="nowMetric">出発前</strong></div>
-          <div class="metric"><span>つぎの予定</span><strong id="nextMetric">出発まで</strong></div>
-          <div class="metric"><span>すすみぐあい</span><strong id="percentMetric">0%</strong></div>
+          <div class="metric"><span>つぎの予定まで</span><strong id="nextMetric">あと --</strong></div>
+          <div class="metric"><span>できた</span><strong id="percentMetric">0/5できた</strong></div>
         </section>
         <div class="completion" id="completion">🎉 ゴール駅に到着しました！よくできました。</div>
       </main>
 
       <aside class="card controls-card" aria-label="設定">
+        <details class="settings-details" open>
+          <summary class="settings-summary">保護者設定を開く / 閉じる</summary>
+          <div class="settings-content">
+
         <section class="section">
-          <h2>1. 使い方モード</h2>
-          <div class="mode-tabs" role="tablist">
-            <button class="mode-tab active" id="timerModeBtn" type="button">タイマー</button>
-            <button class="mode-tab" id="clockModeBtn" type="button">今日の時刻</button>
+          <h2>1. 予定を選ぶ</h2>
+          <div class="preset-list" id="presetList"></div>
+          <div class="preset-manage">
+            <label>追加するプリセット名 <input id="presetNameInput" type="text" placeholder="例：土曜の朝" maxlength="18" /></label>
+            <div class="button-row">
+              <button class="btn green" id="savePresetBtn" type="button">今の設定を追加</button>
+              <button class="btn" id="restoreDefaultPresetsBtn" type="button">初期プリセットを復元</button>
+            </div>
           </div>
-          <p class="help">タイマーは駅から駅までの「駅間分」で進みます。今日の時刻は、各駅の到着・出発時刻に合わせて進みます。</p>
+          <p class="help">★でお気に入りにできます。標準プリセットも削除できます。消した標準プリセットは「初期プリセットを復元」で戻せます。</p>
         </section>
 
         <section class="section">
@@ -81,14 +88,13 @@
             </select>
           </label>
         </section>
-
-        <section class="section" id="timerControls">
-          <h2>3. タイマー操作</h2>
-          <div class="button-row">
-            <button class="btn primary" id="startBtn" type="button">出発</button>
-            <button class="btn" id="pauseBtn" type="button">一時停止</button>
-            <button class="btn danger" id="resetBtn" type="button">駅にもどる</button>
+        <section class="section">
+          <h2>3. 使い方モード</h2>
+          <div class="mode-tabs" role="tablist">
+            <button class="mode-tab active" id="timerModeBtn" type="button">タイマー</button>
+            <button class="mode-tab" id="clockModeBtn" type="button">今日の時刻</button>
           </div>
+          <p class="help">タイマーは「次の駅までの時間」で進みます。今日の時刻は、各駅の到着・出発時刻に合わせて進みます。</p>
         </section>
 
         <section class="section">
@@ -101,17 +107,13 @@
           <p class="help">各駅に絵カードと読み上げ用テキストを設定できます。</p>
         </section>
 
-        <section class="section">
-          <h2>5. 使う予定を選ぶ</h2>
-          <div class="preset-list" id="presetList"></div>
-          <div class="preset-manage">
-            <label>追加するプリセット名 <input id="presetNameInput" type="text" placeholder="例：土曜の朝" maxlength="18" /></label>
-            <div class="button-row">
-              <button class="btn green" id="savePresetBtn" type="button">今の設定を追加</button>
-              <button class="btn" id="restoreDefaultPresetsBtn" type="button">初期プリセットを復元</button>
-            </div>
+        <section class="section" id="timerControls">
+          <h2>5. タイマー操作</h2>
+          <div class="button-row">
+            <button class="btn primary" id="startBtn" type="button">出発</button>
+            <button class="btn" id="pauseBtn" type="button">一時停止</button>
+            <button class="btn danger" id="resetBtn" type="button">駅にもどる</button>
           </div>
-          <p class="help">★でお気に入りにできます。標準プリセットも削除できます。消した標準プリセットは「初期プリセットを復元」で戻せます。</p>
         </section>
 
         <section class="section">
@@ -137,7 +139,8 @@
             </select>
           </label>
           <button class="btn full" id="fullscreenBtn" type="button">大きく表示</button>
-        </section>
+        </section></div>
+        </details>
       </aside>
     </div>
   </div>
@@ -155,6 +158,5 @@
     </div>
   </div>
   <script src="app.js"></script>
-  <script src="device.js"></script>
 </body>
 </html>
