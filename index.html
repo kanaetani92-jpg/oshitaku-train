@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>おしたくトレイン</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="device.css" />
 </head>
 <body>
   <div class="app">
@@ -91,8 +92,7 @@
         </section>
 
         <section class="section">
-          <h2>4. 駅を編集する</h2>
-          <div class="parent-note">駅 = 子どもがこれからすることです。駅名・読み上げ・絵カード・時間をここで整えます。</div>
+          <h2>4. 駅を編集する</h2><div class="parent-note">駅 = 子どもがこれからすることです。駅名・読み上げ・絵カード・時間をここで整えます。</div>
           <div class="station-editor" id="stationEditor"></div>
           <div class="button-row">
             <button class="btn green" id="addStationBtn" type="button">駅を追加</button>
@@ -155,58 +155,6 @@
     </div>
   </div>
   <script src="app.js"></script>
-  <script>
-    setTimeout(() => {
-      try {
-        const style = document.createElement('style');
-        style.textContent = '.last-station-no-interval{grid-column:1/-1;padding:10px 12px;border-radius:14px;background:#f7fafc;border:1px dashed #cbd5e1;color:#6d7480;font-size:12px;font-weight:850;line-height:1.5}';
-        document.head.appendChild(style);
-
-        const titleInput = document.getElementById('titleInput');
-        const displayTitle = document.getElementById('displayTitle');
-        if (titleInput && displayTitle && displayTitle.textContent.trim() === 'おしたくトレイン') {
-          titleInput.value = '朝の支度';
-          titleInput.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-
-        const fixLastStationInterval = () => {
-          const editor = document.getElementById('stationEditor');
-          if (!editor) return;
-          const rows = Array.from(editor.querySelectorAll('.station-row'));
-          rows.forEach((row) => row.querySelectorAll('.last-station-no-interval').forEach((note) => note.remove()));
-          const lastRow = rows[rows.length - 1];
-          if (!lastRow) return;
-          const input = lastRow.querySelector('input[data-field="intervalMin"]');
-          if (!input) return;
-          const label = input.closest('label');
-          const target = label?.parentElement || lastRow.querySelector('.station-edit-grid.three') || lastRow.querySelector('.station-edit-body');
-          if (label) label.remove();
-          const note = document.createElement('div');
-          note.className = 'last-station-no-interval';
-          note.textContent = 'さいごの駅です。駅間分はありません。';
-          target?.appendChild(note);
-        };
-        const editor = document.getElementById('stationEditor');
-        if (editor) {
-          const observer = new MutationObserver(fixLastStationInterval);
-          observer.observe(editor, { childList: true, subtree: true });
-          fixLastStationInterval();
-        }
-
-        const close = document.getElementById('guideCloseBtn');
-        const skip = document.getElementById('guideSkip');
-        if (close && skip) {
-          close.addEventListener('click', () => {
-            setTimeout(() => {
-              const key = 'oshitakuTrainNoPhotoStateV16';
-              const state = JSON.parse(localStorage.getItem(key) || '{}');
-              state.seenGuide = Boolean(skip.checked);
-              localStorage.setItem(key, JSON.stringify(state));
-            }, 0);
-          }, true);
-        }
-      } catch (e) {}
-    }, 0);
-  </script>
+  <script src="device.js"></script>
 </body>
 </html>
