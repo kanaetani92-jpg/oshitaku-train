@@ -155,5 +155,29 @@
     </div>
   </div>
   <script src="app.js"></script>
+  <script>
+    setTimeout(() => {
+      try {
+        const titleInput = document.getElementById('titleInput');
+        const displayTitle = document.getElementById('displayTitle');
+        if (titleInput && displayTitle && displayTitle.textContent.trim() === 'おしたくトレイン') {
+          titleInput.value = '朝の支度';
+          titleInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        const close = document.getElementById('guideCloseBtn');
+        const skip = document.getElementById('guideSkip');
+        if (close && skip) {
+          close.addEventListener('click', () => {
+            setTimeout(() => {
+              const key = 'oshitakuTrainNoPhotoStateV16';
+              const state = JSON.parse(localStorage.getItem(key) || '{}');
+              state.seenGuide = Boolean(skip.checked);
+              localStorage.setItem(key, JSON.stringify(state));
+            }, 0);
+          }, true);
+        }
+      } catch (e) {}
+    }, 0);
+  </script>
 </body>
 </html>
