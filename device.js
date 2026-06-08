@@ -15,8 +15,45 @@
     if (label) label.remove();
     const note = document.createElement('div');
     note.className = 'last-station-no-interval';
-    note.textContent = 'さいごの駅です。駅間分はありません。';
+    note.textContent = 'さいごの駅です。次の駅までの時間はありません。';
     target?.appendChild(note);
+  }
+
+  function finalStationNameFromTrack() {
+    const stations = Array.from(document.querySelectorAll('#track .station'));
+    const last = stations[stations.length - 1];
+    if (!last) return '';
+    const label = last.querySelector('.station-label');
+    if (!label) return '';
+    return String(label.childNodes[0]?.textContent || '').replace(/駅$/, '').trim();
+  }
+
+  function patchGoalLabels() {
+    const stations = Array.from(document.querySelectorAll('#track .station'));
+    const lastStation = stations[stations.length - 1];
+    if (lastStation) {
+      const time = lastStation.querySelector('.station-time');
+      if (time) time.textContent = 'ゴール';
+    }
+
+    const upcomingCards = Array.from(document.querySelectorAll('#upcomingCards .upcoming-card'));
+    const lastUpcoming = upcomingCards[upcomingCards.length - 1];
+    if (lastUpcoming) {
+      const time = lastUpcoming.querySelector('.picture-card-time');
+      if (time) time.textContent = 'ゴール';
+    }
+
+    const finalName = finalStationNameFromTrack();
+    const currentName = document.getElementById('currentCardName')?.textContent?.trim() || '';
+    const currentTime = document.getElementById('currentCardTime');
+    if (finalName && currentName === finalName && currentTime) currentTime.textContent = 'ゴール';
+  }
+
+  function patchMetricLabels() {
+    const nextLabel = document.getElementById('nextMetric')?.previousElementSibling;
+    const doneLabel = document.getElementById('percentMetric')?.previousElementSibling;
+    if (nextLabel) nextLabel.textContent = 'つぎの予定まで';
+    if (doneLabel) doneLabel.textContent = 'できた';
   }
 
   function patchGuideSkip() {
@@ -37,15 +74,27 @@
     }, true);
   }
 
+  function patchAll() {
+    fixLastStationInterval();
+    patchGoalLabels();
+    patchMetricLabels();
+    patchGuideSkip();
+  }
+
   function boot() {
     const editor = document.getElementById('stationEditor');
     if (editor) {
       const observer = new MutationObserver(fixLastStationInterval);
       observer.observe(editor, { childList: true, subtree: true });
     }
-    fixLastStationInterval();
-    patchGuideSkip();
-    window.addEventListener('resize', fixLastStationInterval);
+    const appRoot = document.querySelector('.app');
+    if (appRoot) {
+      const observer = new MutationObserver(patchAll);
+      observer.observe(appRoot, { childList: true, subtree: true, characterData: true });
+    }
+    patchAll();
+    setInterval(patchAll, 1000);
+    window.addEventListener('resize', patchAll);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
