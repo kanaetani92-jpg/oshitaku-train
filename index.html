@@ -158,12 +158,41 @@
   <script>
     setTimeout(() => {
       try {
+        const style = document.createElement('style');
+        style.textContent = '.last-station-no-interval{grid-column:1/-1;padding:10px 12px;border-radius:14px;background:#f7fafc;border:1px dashed #cbd5e1;color:#6d7480;font-size:12px;font-weight:850;line-height:1.5}';
+        document.head.appendChild(style);
+
         const titleInput = document.getElementById('titleInput');
         const displayTitle = document.getElementById('displayTitle');
         if (titleInput && displayTitle && displayTitle.textContent.trim() === 'おしたくトレイン') {
           titleInput.value = '朝の支度';
           titleInput.dispatchEvent(new Event('input', { bubbles: true }));
         }
+
+        const fixLastStationInterval = () => {
+          const editor = document.getElementById('stationEditor');
+          if (!editor) return;
+          const rows = Array.from(editor.querySelectorAll('.station-row'));
+          rows.forEach((row) => row.querySelectorAll('.last-station-no-interval').forEach((note) => note.remove()));
+          const lastRow = rows[rows.length - 1];
+          if (!lastRow) return;
+          const input = lastRow.querySelector('input[data-field="intervalMin"]');
+          if (!input) return;
+          const label = input.closest('label');
+          const target = label?.parentElement || lastRow.querySelector('.station-edit-grid.three') || lastRow.querySelector('.station-edit-body');
+          if (label) label.remove();
+          const note = document.createElement('div');
+          note.className = 'last-station-no-interval';
+          note.textContent = 'さいごの駅です。駅間分はありません。';
+          target?.appendChild(note);
+        };
+        const editor = document.getElementById('stationEditor');
+        if (editor) {
+          const observer = new MutationObserver(fixLastStationInterval);
+          observer.observe(editor, { childList: true, subtree: true });
+          fixLastStationInterval();
+        }
+
         const close = document.getElementById('guideCloseBtn');
         const skip = document.getElementById('guideSkip');
         if (close && skip) {
