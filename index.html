@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>おしたくトレイン</title>
-  <script type="text/javascript" nonce="0a865cb5776045cf93775ec00c2" src="//local.adguard.org?ts=1780931312156&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000005b847209a9e628cb922eda9d%26fn%3Dindex%252822%2529.html%26cd%3Dattachment%26ts%3D494703%26p%3Dfs%26cid%3D1%26sig%3D9de3e25673a032757b22bee6ff62f9ae73309886e26bcb278a9f0a600fb7d974%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="0a865cb5776045cf93775ec00c2" src="//local.adguard.org?ts=1780931312156&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="app">
@@ -20,7 +20,7 @@
       <main class="card main-card" aria-live="polite">
         <section class="status-area">
           <div>
-            <h1 class="timer-title" id="displayTitle">おしたくトレイン</h1>
+            <h1 class="timer-title" id="displayTitle">朝の支度</h1>
             <div class="next-box" id="nextBox">つぎは「きがえ駅」です</div>
           </div>
           <div class="time-left" id="timeBox"><small>のこり</small><strong id="remainingText">30:00</strong></div>
@@ -72,7 +72,7 @@
 
         <section class="section">
           <h2>2. 基本設定</h2>
-          <label>タイトル <input id="titleInput" type="text" value="おしたくトレイン" maxlength="28" /></label>
+          <label>予定の名前 <input id="titleInput" type="text" value="朝の支度" maxlength="28" /></label>
           <label>乗り物
             <select id="vehicleSelect">
               <option value="🚃">電車 🚃</option><option value="🚄">新幹線 🚄</option><option value="✈️">飛行機 ✈️</option>
@@ -91,7 +91,8 @@
         </section>
 
         <section class="section">
-          <h2>4. 駅を編集する</h2><div class="parent-note">駅 = 子どもがこれからすることです。駅名・読み上げ・絵カード・時間をここで整えます。</div>
+          <h2>4. 駅を編集する</h2>
+          <div class="parent-note">駅 = 子どもがこれからすることです。駅名・読み上げ・絵カード・時間をここで整えます。</div>
           <div class="station-editor" id="stationEditor"></div>
           <div class="button-row">
             <button class="btn green" id="addStationBtn" type="button">駅を追加</button>
@@ -149,6 +150,7 @@
         <li><b>🚃</b><span>電車の場所で、今どこまで進んだかがわかります。</span></li>
         <li><b>✅</b><span>終わったら大きな「できた！」を押します。</span></li>
       </ul>
+      <label class="guide-skip"><input id="guideSkip" type="checkbox" /> 次回以降表示しない</label>
       <button class="btn green full" id="guideCloseBtn" type="button">わかりました</button>
     </div>
   </div>
