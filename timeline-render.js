@@ -55,7 +55,7 @@
     const baseFormatNextMetric = formatNextMetric;
     formatNextMetric = function formatNextMetricWithoutNegativeTime(value) {
       if (Number(value) <= 0) {
-        return state.showNumbers ? '予定時刻を過ぎています' : '待っています';
+        return state.showNumbers ? 'できたら つぎへいこう' : 'でんしゃが まっているよ';
       }
       return baseFormatNextMetric(value);
     };
@@ -67,7 +67,7 @@
         Number(ms) <= 0 &&
         !isAllTasksDone(normalizedSchedule())
       ) {
-        return state.showNumbers ? '時間です' : '待っています';
+        return state.showNumbers ? 'おじかんになったよ' : 'でんしゃが まっているよ';
       }
       return baseFormatRemaining(ms);
     };
