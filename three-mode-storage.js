@@ -82,12 +82,12 @@
       fallback.requestedMode ?? fallback.mode ?? 'timer'
     );
 
-    // 第2段階では自動タイマーの画面と進行処理は未実装です。
-    // auto の希望値は保持しつつ、利用画面では安全な timer として開きます。
+    // 第3段階では自動タイマーを選択・保存できますが、
+    // 自動進行処理は次段階のため、実行モードは安全なtimerとして保持します。
     merged.requestedMode = requestedMode;
     merged.mode = requestedMode === 'auto' ? 'timer' : requestedMode;
 
-    // モード情報を持たない旧プリセットは、従来どおり timer として移行します。
+    // モード情報を持たない旧プリセットは、従来どおりtimerとして移行します。
     const sourcePresets = Array.isArray(incoming.presets)
       ? incoming.presets
       : (Array.isArray(fallback.presets) ? fallback.presets : []);
@@ -139,6 +139,17 @@
     return prepared;
   }
 
+  function loadThreeModeUi() {
+    if (document.querySelector('script[data-three-mode-ui]')) return;
+    const script = document.createElement('script');
+    script.src = 'three-mode-ui.js';
+    script.dataset.threeModeUi = 'true';
+    script.addEventListener('error', () => {
+      console.error('3モード選択画面を読み込めませんでした。');
+    });
+    document.head.appendChild(script);
+  }
+
   window.TrainThreeModeStorage = Object.freeze({
     schemaVersion: STORAGE_SCHEMA_VERSION,
     storageKey: STORAGE_KEY,
@@ -161,7 +172,7 @@
   }
 
   const saved = readNewestState();
-  // V20以前は app.js が既に移行・検証した state を利用します。
+  // V20以前はapp.jsが既に移行・検証したstateを利用します。
   // V21が存在するときだけ、V21を現在のstateへ重ねます。
   const sourceForRuntime = saved.sourceKey === STORAGE_KEY ? saved.value : state;
   state = normalizeRuntimeState(sourceForRuntime, state);
@@ -246,6 +257,8 @@
   if (typeof renderEditor === 'function') renderEditor();
   if (typeof renderTodoPage === 'function') renderTodoPage();
   if (typeof render === 'function') render();
+
+  loadThreeModeUi();
 
   if (saved.sourceKey && saved.sourceKey !== STORAGE_KEY) {
     console.info(`保存データを「${saved.sourceKey}」からV${STORAGE_SCHEMA_VERSION}へ移行しました。`);
