@@ -36,6 +36,40 @@
   let baseRenderPresetControls = null;
   let baseRenderEditor = null;
 
+  function loadScriptOnce(src, marker) {
+    return new Promise((resolve, reject) => {
+      const existing = document.querySelector(`script[${marker}]`);
+      if (existing) {
+        if (existing.dataset.loaded === 'true') resolve(existing);
+        else {
+          existing.addEventListener('load', () => resolve(existing), { once:true });
+          existing.addEventListener('error', reject, { once:true });
+        }
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = false;
+      script.setAttribute(marker, 'true');
+      script.addEventListener('load', () => {
+        script.dataset.loaded = 'true';
+        resolve(script);
+      }, { once:true });
+      script.addEventListener('error', reject, { once:true });
+      document.head.appendChild(script);
+    });
+  }
+
+  async function loadTimeCalculationModules() {
+    try {
+      await loadScriptOnce('three-mode-time.js', 'data-three-mode-time');
+      await loadScriptOnce('three-mode-time-adapter.js', 'data-three-mode-time-adapter');
+    } catch (error) {
+      console.error('共通時間計算を読み込めませんでした。従来の時間計算を継続します。', error);
+    }
+  }
+
   function addStylesheet() {
     if (document.querySelector('link[data-three-mode-ui]')) return;
     const link = document.createElement('link');
@@ -242,6 +276,7 @@
   installModeSelectionHandler();
   wrapRenderFunctions();
   syncModeCards();
+  loadTimeCalculationModules();
 
   if (typeof renderPresetControls === 'function') renderPresetControls();
   if (typeof renderEditor === 'function') renderEditor();
