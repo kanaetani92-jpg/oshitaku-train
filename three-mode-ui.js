@@ -165,11 +165,14 @@
     });
   }
 
-  function updateAutoControls(isAuto) {
+  function updateModeControls(current) {
     const startPlan = document.querySelector('#startPlanBtn');
     const preview = document.querySelector('#previewBtn');
+    const heading = document.querySelector('#timerControls h2');
 
-    if (startPlan && isAuto) {
+    if (heading) heading.textContent = current === 'auto' ? '4. 自動タイマー操作' : '4. タイマー操作';
+
+    if (startPlan && current === 'auto') {
       startPlan.disabled = false;
       startPlan.textContent = state.autoRunning
         ? '見るモードへ'
@@ -177,7 +180,7 @@
       startPlan.title = '自動タイマーを開始して見るモードへ移ります';
     }
 
-    if (preview && isAuto) {
+    if (preview && current === 'auto') {
       preview.disabled = false;
       preview.title = '時間を進めずに見るモードを確認します';
     }
@@ -202,7 +205,7 @@
       status.classList.toggle('auto-ready', current === 'auto');
     }
 
-    updateAutoControls(current === 'auto');
+    updateModeControls(current);
     updatePresetModeBadges();
   }
 
@@ -215,6 +218,11 @@
   function selectMode(modeId) {
     const previousMode = selectedMode();
     const nextMode = storage.normalizeMode(modeId, 'timer');
+
+    if (previousMode === nextMode) {
+      syncModeCards();
+      return;
+    }
 
     if (previousMode === 'auto' || nextMode === 'auto') resetAutoRuntime();
     state.requestedMode = nextMode;
