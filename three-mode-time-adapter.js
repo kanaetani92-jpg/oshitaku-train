@@ -85,6 +85,41 @@
     }
   }
 
+  function loadScriptOnce(src, marker) {
+    return new Promise((resolve, reject) => {
+      const existing = document.querySelector(`script[${marker}]`);
+      if (existing) {
+        if (existing.dataset.loaded === 'true') {
+          resolve(existing);
+          return;
+        }
+        existing.addEventListener('load', () => resolve(existing), { once:true });
+        existing.addEventListener('error', reject, { once:true });
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = false;
+      script.setAttribute(marker, 'true');
+      script.addEventListener('load', () => {
+        script.dataset.loaded = 'true';
+        resolve(script);
+      }, { once:true });
+      script.addEventListener('error', reject, { once:true });
+      document.head.appendChild(script);
+    });
+  }
+
+  async function loadDoneTimerModules() {
+    try {
+      await loadScriptOnce('three-mode-timer-core.js', 'data-done-timer-core');
+      await loadScriptOnce('three-mode-done-timer.js', 'data-done-timer-ui');
+    } catch (error) {
+      console.error('できた！タイマーの安定化処理を読み込めませんでした。従来処理を継続します。', error);
+    }
+  }
+
   diagnostics.timerEquivalent = verifySchedule('timer');
   diagnostics.clockEquivalent = verifySchedule('clock');
 
@@ -162,4 +197,5 @@
 
   if (typeof renderEditor === 'function') renderEditor();
   if (typeof render === 'function') render();
+  loadDoneTimerModules();
 })();
