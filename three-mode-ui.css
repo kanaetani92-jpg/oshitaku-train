@@ -126,7 +126,8 @@
   line-height: 1.55;
 }
 
-.mode-selection-status.auto-pending {
+.mode-selection-status.auto-pending,
+.mode-selection-status.auto-ready {
   border-color: #bfd2f2;
   background: #f3f7ff;
   color: #294e83;
@@ -145,7 +146,30 @@
 }
 
 body[data-requested-mode="auto"] #timerControls {
+  display: block !important;
+}
+
+body[data-requested-mode="auto"] .action-row {
   display: none !important;
+}
+
+body[data-requested-mode="auto"] #doneBtn {
+  display: none !important;
+}
+
+body[data-requested-mode="auto"][data-auto-timer-state="running"] #timeBox {
+  border-color: #91b7ee;
+  background: #f3f7ff;
+}
+
+body[data-requested-mode="auto"][data-auto-timer-state="paused"] #timeBox {
+  border-color: #e2b55e;
+  background: #fff9ed;
+}
+
+body[data-requested-mode="auto"][data-auto-timer-state="completed"] #timeBox {
+  border-color: #a7b4c5;
+  background: #f5f7fa;
 }
 
 @media (max-width: 420px) {
