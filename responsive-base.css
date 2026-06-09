@@ -1,0 +1,106 @@
+/* =========================================================
+   Responsive foundation
+   全端末共通 → モード共通 → Smartphone → Tablet → PC → Low height
+   ========================================================= */
+:root {
+  --timeline-edge-space: clamp(48px, 8vw, 78px);
+}
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.app,
+.layout,
+.layout > *,
+.main-card,
+.controls-card,
+.track-wrap,
+.track,
+.status-area,
+.status-copy,
+.station-editor,
+.station-row,
+.station-edit-body,
+.station-edit-grid,
+.icon-select-wrap,
+.preset-list,
+.preset-row,
+.button-row,
+.todo-layout,
+.todo-form,
+.todo-list-card {
+  min-width: 0;
+  max-width: 100%;
+}
+
+body:not(.view-mode) { --app-max-width: 1240px; }
+body.view-mode { --app-max-width: 1160px; }
+
+.app {
+  max-width: min(var(--app-max-width, 1220px), 100%);
+}
+
+.timer-title,
+.next-box,
+.picture-card-name,
+.station-label {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+body.timeline-horizontal .track-wrap {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  overflow: clip;
+}
+
+body.timeline-horizontal .track {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  margin-inline: 0;
+}
+
+body.timeline-horizontal .station-label {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+}
+
+body.timeline-vertical .track-wrap {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  overflow: clip;
+}
+
+body.view-mode .controls-card { display: none; }
+body.view-mode .layout { grid-template-columns: minmax(0, 1fr); }
+body:not(.view-mode) .controls-card { max-height: none; }
+
+.timeline-layout-notice {
+  width: min(760px, 100%);
+  margin: -4px auto 0;
+  padding: 9px 12px;
+  border: 1px solid #f0cf83;
+  border-radius: 14px;
+  background: #fff8df;
+  color: #6b4a00;
+  font-size: 12px;
+  font-weight: 850;
+  line-height: 1.5;
+  text-align: center;
+}
+
+
