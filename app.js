@@ -1527,7 +1527,10 @@ const $ = (selector) => document.querySelector(selector);
       render();
       window.requestAnimationFrame(() => $('#presetSection')?.scrollIntoView({ behavior:'smooth', block:'start' }));
     });
-    window.addEventListener('resize', () => { if (state.timelineMode === 'auto') render(); });
+    window.addEventListener('resize', () => {
+      if (typeof scheduleTimelineLayoutRefresh === 'function') scheduleTimelineLayoutRefresh();
+      else if (state.timelineMode === 'auto') render();
+    }, { passive:true });
 
     const initialPage = window.location.hash === '#todo' ? 'todo' : 'schedule';
     state.currentPage = initialPage;
