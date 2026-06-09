@@ -111,12 +111,14 @@
     });
   }
 
-  async function loadDoneTimerModules() {
+  async function loadModeRuntimeModules() {
     try {
       await loadScriptOnce('three-mode-timer-core.js', 'data-done-timer-core');
       await loadScriptOnce('three-mode-done-timer.js', 'data-done-timer-ui');
+      await loadScriptOnce('three-mode-auto-core.js', 'data-auto-timer-core');
+      await loadScriptOnce('three-mode-auto-timer.js', 'data-auto-timer-ui');
     } catch (error) {
-      console.error('できた！タイマーの安定化処理を読み込めませんでした。従来処理を継続します。', error);
+      console.error('タイマーモードの追加処理を読み込めませんでした。読み込み済みの従来処理を継続します。', error);
     }
   }
 
@@ -197,5 +199,5 @@
 
   if (typeof renderEditor === 'function') renderEditor();
   if (typeof render === 'function') render();
-  loadDoneTimerModules();
+  loadModeRuntimeModules();
 })();
