@@ -79,7 +79,7 @@
 
     const requestedMode = normalizeMode(
       incoming.requestedMode ?? incoming.mode,
-      fallback.mode || 'timer'
+      fallback.requestedMode ?? fallback.mode ?? 'timer'
     );
 
     // 第2段階では自動タイマーの画面と進行処理は未実装です。
@@ -87,12 +87,12 @@
     merged.requestedMode = requestedMode;
     merged.mode = requestedMode === 'auto' ? 'timer' : requestedMode;
 
-    const presetFallbackMode = requestedMode;
+    // モード情報を持たない旧プリセットは、従来どおり timer として移行します。
     const sourcePresets = Array.isArray(incoming.presets)
       ? incoming.presets
       : (Array.isArray(fallback.presets) ? fallback.presets : []);
     merged.presets = sourcePresets
-      .map((preset) => normalizePresetMode(preset, presetFallbackMode))
+      .map((preset) => normalizePresetMode(preset, 'timer'))
       .filter(Boolean);
 
     merged.autoRunning = incoming.autoRunning === true;
@@ -118,10 +118,10 @@
     const activeMode = normalizeMode(prepared.mode, 'timer');
     const requestedMode = normalizeMode(prepared.requestedMode, activeMode);
 
-    prepared.mode = activeMode;
+    prepared.mode = activeMode === 'auto' ? 'timer' : activeMode;
     prepared.requestedMode = requestedMode;
     prepared.presets = (Array.isArray(prepared.presets) ? prepared.presets : [])
-      .map((preset) => normalizePresetMode(preset, requestedMode))
+      .map((preset) => normalizePresetMode(preset, 'timer'))
       .filter(Boolean);
     prepared.autoRunning = prepared.autoRunning === true;
     prepared.autoStartedAt = Number.isFinite(Number(prepared.autoStartedAt))
@@ -134,6 +134,7 @@
         : 0
     );
     if (!prepared.autoRunning) prepared.autoStartedAt = null;
+    if (prepared.autoRunning && !prepared.autoStartedAt) prepared.autoRunning = false;
     prepared.schemaVersion = STORAGE_SCHEMA_VERSION;
     return prepared;
   }
@@ -160,17 +161,15 @@
   }
 
   const saved = readNewestState();
-  state = normalizeRuntimeState(saved.value || state, state);
+  // V20以前は app.js が既に移行・検証した state を利用します。
+  // V21が存在するときだけ、V21を現在のstateへ重ねます。
+  const sourceForRuntime = saved.sourceKey === STORAGE_KEY ? saved.value : state;
+  state = normalizeRuntimeState(sourceForRuntime, state);
 
   // V21用の保存処理へ切り替えます。V20以前のキーは削除せず、
   // 問題が起きた場合に戻せる移行元として残します。
   saveState = function saveThreeModeState() {
     try {
-      // 既存の2つのモードボタンを使った場合は、その選択を希望モードにも反映します。
-      if (state.mode === 'timer' || state.mode === 'clock') {
-        state.requestedMode = state.mode;
-      }
-
       const prepared = prepareStateForStorage(state);
       Object.assign(state, prepared);
       const json = JSON.stringify(prepared);
@@ -199,10 +198,18 @@
     normalizePreset = function normalizeThreeModePreset(preset) {
       const normalized = baseNormalizePreset(preset);
       return normalized
-        ? normalizePresetMode(normalized, preset?.defaultMode ?? preset?.mode ?? state.requestedMode ?? state.mode)
+        ? normalizePresetMode(normalized, preset?.defaultMode ?? preset?.mode ?? 'timer')
         : null;
     };
   }
+
+  // 既存のモード選択では、app.jsの処理より先に希望モードを同期します。
+  document.querySelector('#timerModeBtn')?.addEventListener('click', () => {
+    state.requestedMode = 'timer';
+  }, { capture:true });
+  document.querySelector('#clockModeBtn')?.addEventListener('click', () => {
+    state.requestedMode = 'clock';
+  }, { capture:true });
 
   // 新しく保存したプリセットには、保存時点の進み方を標準モードとして付けます。
   const savePresetButton = document.querySelector('#savePresetBtn');
@@ -214,14 +221,22 @@
     if (typeof renderPresetControls === 'function') renderPresetControls();
   });
 
-  // 既存のモード選択では希望モードも同期します。
-  document.querySelector('#timerModeBtn')?.addEventListener('click', () => {
-    state.requestedMode = 'timer';
+  // プリセット適用時は保存された標準モードも復元します。
+  document.querySelector('#presetList')?.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-apply-preset]');
+    if (!button) return;
+    const presetId = button.dataset.applyPreset;
+    if (state.currentPresetId !== presetId) return;
+    const preset = state.presets.find((item) => item.id === presetId);
+    if (!preset) return;
+
+    const requestedMode = normalizeMode(preset.defaultMode, 'timer');
+    state.requestedMode = requestedMode;
+    state.mode = requestedMode === 'auto' ? 'timer' : requestedMode;
+    if (typeof resetRunState === 'function') resetRunState();
     saveState();
-  });
-  document.querySelector('#clockModeBtn')?.addEventListener('click', () => {
-    state.requestedMode = 'clock';
-    saveState();
+    if (typeof renderEditor === 'function') renderEditor();
+    if (typeof render === 'function') render();
   });
 
   // V20以前から読み込んだ場合も、初回読み込み時にV21へ保存します。
