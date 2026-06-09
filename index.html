@@ -62,8 +62,8 @@
 
         <section class="progress-panel">
           <div class="metric"><span>いま</span><strong id="nowMetric">出発前</strong></div>
-          <div class="metric"><span>つぎの予定まで</span><strong id="nextMetric">あと --</strong></div>
-          <div class="metric"><span>できた</span><strong id="percentMetric">0/5できた</strong></div>
+          <div class="metric"><span>つぎの駅まで</span><strong id="nextMetric">あと --</strong></div>
+          <div class="metric"><span>できた</span><strong id="percentMetric">0/5</strong></div>
         </section>
         <div class="completion" id="completion" role="status" aria-hidden="true">🎉 ゴール駅に到着しました！よくできました。</div>
       </main>
@@ -137,13 +137,14 @@
 
         <section class="section">
           <h2>6. 見た目と音を調整する</h2>
-          <label>タイムライン表示
+          <label class="timeline-mode-field">タイムライン表示
             <select id="timelineModeSelect">
-              <option value="auto">自動（端末に合わせる）</option>
-              <option value="horizontal">横モード</option>
+              <option value="horizontal">横モード（おすすめ）</option>
               <option value="vertical">縦モード</option>
+              <option value="auto">自動（画面と駅数に合わせる）</option>
             </select>
           </label>
+          <p class="help timeline-mode-help">横は予定全体を一列で表示します。縦はスマートフォンで駅と今することを左右に表示します。自動は画面と駅数に合わせて切り替えます。</p>
           <label class="toggle-line">上の大きい絵カードを表示 <input id="showTopCards" type="checkbox" checked /></label>
           <label class="toggle-line">下のこれから絵カードを表示 <input id="showBottomCards" type="checkbox" checked /></label>
           <label class="toggle-line">数字を見せる <input id="showNumbers" type="checkbox" checked /></label>
