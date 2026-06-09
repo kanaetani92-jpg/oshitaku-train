@@ -177,4 +177,40 @@ body.view-mode .progress-panel {
   margin-top: -2px;
 }
 
+/* =========================================================
+   Stage 2: スマートフォンの現在カードと主操作を通常フローに統一
+   横・縦モードとも、できたボタンをカードへ重ねずGrid行内に配置する。
+   ========================================================= */
+@media (max-width: 640px) {
+  body.view-mode .main-card {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+  }
 
+  body.view-mode .current-card-section {
+    margin: 0 !important;
+  }
+
+  body.view-mode .action-row {
+    position: static !important;
+    inset: auto !important;
+    z-index: auto !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 8px 0 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+
+  body.view-mode .done-btn {
+    width: min(340px, 100%) !important;
+    max-width: 100%;
+    margin: 0 !important;
+  }
+}
