@@ -221,23 +221,24 @@
     if (typeof renderPresetControls === 'function') renderPresetControls();
   });
 
-  // プリセット適用時は保存された標準モードも復元します。
-  document.querySelector('#presetList')?.addEventListener('click', (event) => {
-    const button = event.target.closest('[data-apply-preset]');
-    if (!button) return;
-    const presetId = button.dataset.applyPreset;
-    if (state.currentPresetId !== presetId) return;
-    const preset = state.presets.find((item) => item.id === presetId);
-    if (!preset) return;
+  // 一覧、To Do、初回ガイドなど、どの経路からプリセットを開いても
+  // 保存された標準モードを復元します。
+  if (typeof applyPreset === 'function') {
+    const baseApplyPreset = applyPreset;
+    applyPreset = function applyThreeModePreset(id, options = {}) {
+      const preset = state.presets.find((item) => item.id === id);
+      const applied = baseApplyPreset(id, options);
+      if (!applied || !preset) return applied;
 
-    const requestedMode = normalizeMode(preset.defaultMode, 'timer');
-    state.requestedMode = requestedMode;
-    state.mode = requestedMode === 'auto' ? 'timer' : requestedMode;
-    if (typeof resetRunState === 'function') resetRunState();
-    saveState();
-    if (typeof renderEditor === 'function') renderEditor();
-    if (typeof render === 'function') render();
-  });
+      const requestedMode = normalizeMode(preset.defaultMode, 'timer');
+      state.requestedMode = requestedMode;
+      state.mode = requestedMode === 'auto' ? 'timer' : requestedMode;
+      saveState();
+      if (typeof renderEditor === 'function') renderEditor();
+      if (typeof render === 'function') render();
+      return true;
+    };
+  }
 
   // V20以前から読み込んだ場合も、初回読み込み時にV21へ保存します。
   saveState();
