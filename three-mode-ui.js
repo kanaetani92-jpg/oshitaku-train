@@ -55,10 +55,11 @@
   }
 
   function configureModeButton(button, mode) {
-    if (!button) return;
+    if (!button || button.dataset.modeCardConfigured === 'true') return;
     button.className = 'mode-tab mode-card';
     button.type = 'button';
     button.dataset.modeChoice = mode.id;
+    button.dataset.modeCardConfigured = 'true';
     button.setAttribute('aria-pressed', 'false');
     button.setAttribute('aria-label', `${mode.label}。${mode.description}`);
     button.innerHTML = modeCardContent(mode);
@@ -136,7 +137,7 @@
 
     if (startPlan) {
       startPlan.disabled = isAuto;
-      startPlan.textContent = isAuto ? '自動タイマーは次の段階で開始できます' : startPlan.textContent;
+      if (isAuto) startPlan.textContent = '自動タイマーは次の段階で開始できます';
       startPlan.title = isAuto ? '現在は自動タイマーの選択と保存まで利用できます' : '';
     }
 
