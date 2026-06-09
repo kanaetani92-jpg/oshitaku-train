@@ -11,15 +11,19 @@
     <header>
       <div class="header-row">
         <div class="brand"><span class="badge">🚃</span><span>おしたくトレイン</span></div>
-        <button class="btn primary view-toggle" id="viewEditToggle" type="button">見るモード</button>
+        <div class="header-actions">
+          <button class="btn menu-button" id="menuButton" type="button" aria-expanded="false" aria-controls="appMenu">☰ <span>メニュー</span></button>
+          <button class="btn primary view-toggle" id="viewEditToggle" type="button">見るモード</button>
+        </div>
       </div>
       <p class="subtitle">朝の支度・寝る前・勉強などの予定を駅として並べ、電車や飛行機が予定に合わせて進みます。絵カードで、いま何をするかをわかりやすく表示します。</p>
     </header>
 
-    <div class="layout">
-      <main class="card main-card" aria-live="polite">
+    <div class="layout app-page active" id="schedulePage">
+      <main class="card main-card">
+        <p class="visually-hidden" id="statusLive" aria-live="polite" aria-atomic="true"></p>
         <section class="status-area">
-          <div>
+          <div class="status-copy">
             <h1 class="timer-title" id="displayTitle">朝の支度</h1>
             <div class="next-box" id="nextBox">つぎは「きがえ駅」です</div>
           </div>
@@ -35,6 +39,11 @@
           </div>
         </section>
 
+        <section class="action-row">
+          <button class="btn green done-btn" id="doneBtn" type="button" aria-label="いますることができた">できた！</button>
+          <span class="slow-badge" id="slowBadge">🐢 ゆっくり運転中</span>
+        </section>
+
         <section class="track-wrap" aria-label="路線図タイマー">
           <div class="track" id="track">
             <div class="track-done" id="trackDone"></div>
@@ -47,39 +56,51 @@
           <div class="upcoming-strip" id="upcomingCards"></div>
         </section>
 
-        <section class="action-row">
-          <button class="btn green done-btn" id="doneBtn" type="button">できた！</button>
-          <span class="slow-badge" id="slowBadge">🐢 ゆっくり運転中</span>
-        </section>
-
         <section class="progress-panel">
           <div class="metric"><span>いま</span><strong id="nowMetric">出発前</strong></div>
           <div class="metric"><span>つぎの予定まで</span><strong id="nextMetric">あと --</strong></div>
           <div class="metric"><span>できた</span><strong id="percentMetric">0/5できた</strong></div>
         </section>
-        <div class="completion" id="completion">🎉 ゴール駅に到着しました！よくできました。</div>
+        <div class="completion" id="completion" role="status" aria-hidden="true">🎉 ゴール駅に到着しました！よくできました。</div>
       </main>
 
       <aside class="card controls-card" aria-label="設定">
-        <details class="settings-details" open>
-          <summary class="settings-summary">保護者設定を開く / 閉じる</summary>
-          <div class="settings-content">
+        <div class="editor-summary" aria-label="編集した予定を確認して開始">
+          <div>
+            <strong>予定を準備する</strong>
+            <span id="saveStatus" class="save-status" role="status" aria-live="polite">この端末に自動保存します</span>
+          </div>
+          <div class="editor-summary-actions">
+            <button class="btn" id="previewBtn" type="button">プレビュー</button>
+            <button class="btn green start-plan-btn" id="startPlanBtn" type="button">この予定で始める</button>
+          </div>
+        </div>
 
-        <section class="section">
-          <h2>1. 予定を選ぶ</h2>
+        <section class="section preset-first" id="presetSection">
+          <h2>1. 使う予定を選ぶ</h2>
+          <p class="parent-note">まず予定を選びます。そのまま使うことも、駅や時間を変えて使うこともできます。</p>
           <div class="preset-list" id="presetList"></div>
           <div class="preset-manage">
-            <label>追加するプリセット名 <input id="presetNameInput" type="text" placeholder="例：土曜の朝" maxlength="18" /></label>
+            <label>別の予定として保存する名前 <input id="presetNameInput" type="text" placeholder="例：土曜の朝" maxlength="18" /></label>
             <div class="button-row">
-              <button class="btn green" id="savePresetBtn" type="button">今の設定を追加</button>
+              <button class="btn green" id="savePresetBtn" type="button">今の設定を別の予定として保存</button>
               <button class="btn" id="restoreDefaultPresetsBtn" type="button">初期プリセットを復元</button>
             </div>
           </div>
-          <p class="help">★でお気に入りにできます。標準プリセットも削除できます。消した標準プリセットは「初期プリセットを復元」で戻せます。</p>
+          <p class="help">★はお気に入りです。独自の予定を削除するときは確認が表示されます。</p>
         </section>
 
         <section class="section">
-          <h2>2. 基本設定</h2>
+          <h2>2. 進み方を選ぶ</h2>
+          <div class="mode-tabs" role="group" aria-label="使い方モード">
+            <button class="mode-tab active" id="timerModeBtn" type="button" aria-pressed="true">タイマー</button>
+            <button class="mode-tab" id="clockModeBtn" type="button" aria-pressed="false">今日の時刻</button>
+          </div>
+          <p class="help">タイマーは「次のすることまで何分か」で進みます。今日の時刻は、到着・出発時刻に合わせて進みます。</p>
+        </section>
+
+        <section class="section">
+          <h2>3. 予定の名前と乗り物</h2>
           <label>予定の名前 <input id="titleInput" type="text" value="朝の支度" maxlength="28" /></label>
           <label>乗り物
             <select id="vehicleSelect">
@@ -88,36 +109,30 @@
             </select>
           </label>
         </section>
-        <section class="section">
-          <h2>3. 使い方モード</h2>
-          <div class="mode-tabs" role="tablist">
-            <button class="mode-tab active" id="timerModeBtn" type="button">タイマー</button>
-            <button class="mode-tab" id="clockModeBtn" type="button">今日の時刻</button>
+
+        <section class="section" id="timerControls">
+          <h2>4. タイマー操作</h2>
+          <div class="button-row timer-button-row">
+            <button class="btn primary" id="startBtn" type="button">出発</button>
+            <button class="btn" id="pauseBtn" type="button">一時停止</button>
+            <button class="btn danger reset-button" id="resetBtn" type="button">最初の駅に戻る</button>
           </div>
-          <p class="help">タイマーは「次の駅までの時間」で進みます。今日の時刻は、各駅の到着・出発時刻に合わせて進みます。</p>
+          <p class="help">通常は上の「この予定で始める」を押すだけで、見るモードへ移って出発できます。</p>
         </section>
 
         <section class="section">
-          <h2>4. 駅を編集する</h2><div class="parent-note">駅 = 子どもがこれからすることです。駅名・読み上げ・絵カード・時間をここで整えます。</div>
-          <div class="station-editor" id="stationEditor"></div>
+          <h2>5. 駅を編集する</h2>
+          <div class="parent-note">駅は子どもがすることです。名前・読み上げ・絵カード・時間を整えます。</div>
+          <div class="station-editor" id="stationEditor" aria-label="駅の編集一覧"></div>
           <div class="button-row">
             <button class="btn green" id="addStationBtn" type="button">駅を追加</button>
             <button class="btn" id="sortBtn" type="button">時刻で並べる</button>
           </div>
-          <p class="help">各駅に絵カードと読み上げ用テキストを設定できます。</p>
-        </section>
-
-        <section class="section" id="timerControls">
-          <h2>5. タイマー操作</h2>
-          <div class="button-row">
-            <button class="btn primary" id="startBtn" type="button">出発</button>
-            <button class="btn" id="pauseBtn" type="button">一時停止</button>
-            <button class="btn danger" id="resetBtn" type="button">駅にもどる</button>
-          </div>
+          <p class="help">ドラッグが難しい場合は、各駅の上・下ボタンで並び替えられます。</p>
         </section>
 
         <section class="section">
-          <h2>6. 見た目と音を変える</h2>
+          <h2>6. 見た目と音を調整する</h2>
           <label>タイムライン表示
             <select id="timelineModeSelect">
               <option value="auto">自動（端末に合わせる）</option>
@@ -131,30 +146,111 @@
           <label class="toggle-line">駅についたら音 <input id="soundToggle" type="checkbox" checked /></label>
           <label class="toggle-line">駅名を読み上げる <input id="voiceToggle" type="checkbox" /></label>
           <label>ゆっくり運転の猶予（分） <input id="lateGraceInput" type="number" min="0" max="30" step="1" value="2" /></label>
-          <label>遅れたときの動作
+          <label>時間を過ぎたとき
             <select id="lateBehaviorSelect">
-              <option value="display">表示だけ「ゆっくり運転中」</option>
-              <option value="wait">できた！まで同じ駅で待つ</option>
-              <option value="adjust">できた！で予定に追いつく</option>
+              <option value="display">やさしい表示だけ出す</option>
+              <option value="wait">「できた！」まで同じところで待つ</option>
+              <option value="adjust">「できた！」で時間を合わせる</option>
             </select>
           </label>
-          <button class="btn full" id="fullscreenBtn" type="button">大きく表示</button>
-        </section></div>
-        </details>
+        </section>
       </aside>
     </div>
+
+    <section class="app-page todo-page" id="todoPage" aria-labelledby="todoPageTitle">
+      <div class="todo-page-header">
+        <button class="btn todo-back-button" id="todoBackButton" type="button">← 予定へ戻る</button>
+        <div>
+          <span class="page-eyebrow">あとで予定に入れるもの</span>
+          <h1 id="todoPageTitle">To Do</h1>
+          <p>思いついたことを一度ここに置き、あとから新しい予定や既存のプリセットへ追加できます。</p>
+        </div>
+        <span class="todo-count" id="todoCount">0件</span>
+      </div>
+
+      <div class="todo-layout">
+        <form class="card todo-form" id="todoForm">
+          <h2 id="todoFormTitle">To Doを追加</h2>
+          <input id="todoEditingId" type="hidden" />
+          <label>すること
+            <input id="todoText" type="text" maxlength="24" placeholder="例：図書館の本を返す" required />
+          </label>
+          <details class="todo-details" id="todoDetails">
+            <summary>絵カード・時間・入れる予定を設定</summary>
+            <div class="todo-details-body">
+              <div class="todo-form-grid">
+                <label>絵カード
+                  <select id="todoIcon"></select>
+                </label>
+                <label>目安時間
+                  <div class="number-with-unit"><input id="todoMinutes" type="number" min="1" max="240" value="5" /><span>分</span></div>
+                </label>
+              </div>
+              <label>入れる予定
+                <select id="todoTargetPreset"></select>
+              </label>
+              <label class="hidden" id="todoNewPresetWrap">新しいプリセット名
+                <input id="todoNewPresetName" type="text" maxlength="18" placeholder="例：休日の予定" />
+              </label>
+            </div>
+          </details>
+          <p class="help">まず「すること」だけでも保存できます。予定への追加はあとから選べます。</p>
+          <div class="todo-form-actions">
+            <button class="btn green" id="todoSaveButton" type="submit">追加する</button>
+            <button class="btn hidden" id="todoCancelEdit" type="button">編集をやめる</button>
+          </div>
+        </form>
+
+        <section class="card todo-list-card" aria-label="To Do一覧">
+          <div class="todo-list-header">
+            <div><h2>To Do一覧</h2><p>予定に入れたあとも、確認できるよう一覧に残します。</p></div>
+          </div>
+          <div class="todo-list" id="todoList"></div>
+        </section>
+      </div>
+    </section>
   </div>
-  <div class="confetti" id="confetti"></div>
-  <div class="guide-modal" id="guideModal" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
+
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <nav class="app-menu" id="appMenu" aria-label="ページメニュー" aria-hidden="true" inert>
+    <div class="app-menu-header">
+      <strong>メニュー</strong>
+      <button class="icon-only-button" id="menuCloseButton" type="button" aria-label="メニューを閉じる">×</button>
+    </div>
+    <button class="menu-link active" type="button" data-page="schedule"><span>🚃</span><span><b>おしたくトレイン</b><small>タイマーと予定の編集</small></span></button>
+    <button class="menu-link" type="button" data-page="todo"><span>📝</span><span><b>To Do</b><small>あとで予定に入れるもの</small></span></button>
+    <button class="menu-link help-menu-link" id="helpButton" type="button"><span>❓</span><span><b>使い方を見る</b><small>最初の説明をもう一度表示</small></span></button>
+    <div class="menu-mode-note">
+      <b>見るモード</b>は子ども用、<b>編集モード</b>は保護者用です。
+    </div>
+  </nav>
+
+  <nav class="mobile-tabs" aria-label="ページ切り替え">
+    <button type="button" class="mobile-tab active" data-page="schedule"><span>🚃</span><b>予定</b></button>
+    <button type="button" class="mobile-tab" data-page="todo"><span>📝</span><b>To Do</b></button>
+  </nav>
+
+  <div class="undo-snackbar" id="undoSnackbar" role="status" aria-live="polite" aria-hidden="true">
+    <span id="undoMessage"></span>
+    <button class="undo-button" id="undoButton" type="button">元に戻す</button>
+    <button class="undo-close" id="undoCloseButton" type="button" aria-label="通知を閉じる">×</button>
+  </div>
+
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+  <div class="guide-modal" id="guideModal" role="dialog" aria-modal="true" aria-labelledby="guideTitle" aria-describedby="guideDescription" aria-hidden="true">
     <div class="guide-card">
-      <h2 id="guideTitle">はじめての使い方</h2>
+      <h2 id="guideTitle">まず、どちらから始めますか？</h2>
+      <p id="guideDescription" class="guide-intro">用意してある「朝の支度」をすぐ試すか、保護者向けの編集画面で予定を整えられます。</p>
       <ul class="guide-list">
-        <li><b>🚉</b><span>駅は「これからすること」です。ならべた順番に進みます。</span></li>
-        <li><b>🚃</b><span>電車の場所で、今どこまで進んだかがわかります。</span></li>
-        <li><b>✅</b><span>終わったら大きな「できた！」を押します。</span></li>
+        <li><b>👀</b><span>大きなカードが「いますること」です。</span></li>
+        <li><b>✅</b><span>終わったら「できた！」を押すと、次へ進みます。</span></li>
+        <li><b>🐢</b><span>時間を過ぎても責めず、電車がやさしく待ちます。</span></li>
       </ul>
-      <label class="guide-skip"><input id="guideSkip" type="checkbox" /> 次回以降表示しない</label>
-      <button class="btn green full" id="guideCloseBtn" type="button">わかりました</button>
+      <div class="guide-actions">
+        <button class="btn green" id="guideTryBtn" type="button">朝の支度を試す</button>
+        <button class="btn" id="guideCloseBtn" type="button">予定を設定する</button>
+      </div>
+      <p class="guide-footnote">この説明は次回から自動では表示しません。メニューの「使い方を見る」からいつでも確認できます。</p>
     </div>
   </div>
   <script src="app.js"></script>
