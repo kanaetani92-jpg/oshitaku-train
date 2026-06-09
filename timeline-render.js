@@ -1,3 +1,77 @@
+    /* =========================================================
+       Stage 6: タイマーの時間進行と「できた！」進行を同期する
+       未完了の予定がある間は、電車が次の駅を越えずに待つ。
+       ========================================================= */
+    const baseVehiclePositionForTaskWait = vehiclePosition;
+    vehiclePosition = function vehiclePositionWithTaskWait(schedule, elapsedMin) {
+      const result = baseVehiclePositionForTaskWait(schedule, elapsedMin);
+      if (state.mode !== 'timer' || isAllTasksDone(schedule)) return result;
+
+      const lastIndex = schedule.stations.length - 1;
+      const activeIndex = timerDoingIndex(schedule);
+      const waitingIndex = Math.min(activeIndex + 1, lastIndex);
+      const waitingOffset = schedule.stations[waitingIndex]?.markerOffset ?? schedule.total;
+      const waitingPosition = clamp(waitingOffset / schedule.total, 0, 1);
+
+      if (result.pos <= waitingPosition) return result;
+      return {
+        ...result,
+        pos: waitingPosition,
+        status: 'waiting',
+        stationIndex: Math.max(0, waitingIndex - 1),
+        nextIndex: waitingIndex,
+        nextType: 'arrive',
+        nextAt: waitingOffset,
+        activeIndex
+      };
+    };
+
+    const baseProgressDataForTaskWait = progressData;
+    progressData = function progressDataWithTaskWait() {
+      const data = baseProgressDataForTaskWait();
+      if (state.mode !== 'timer') return data;
+
+      const lastIndex = data.schedule.stations.length - 1;
+      const waitingIndex = Math.min(data.activeIndex + 1, lastIndex);
+      return {
+        ...data,
+        reachedIndex: Math.min(data.reachedIndex, waitingIndex)
+      };
+    };
+
+    isLate = function isLateIncludingFirstTask(schedule, elapsedMin, activeIndex, reachedIndex) {
+      if (activeIndex < 0 || activeIndex >= schedule.stations.length) return false;
+      const grace = toNonNegativeNumber(state.lateGraceMin || 0);
+      if (state.mode === 'timer') {
+        const dueIndex = timerNextIndex(schedule, activeIndex);
+        if (dueIndex === activeIndex) return false;
+        const due = schedule.stations[dueIndex].markerOffset;
+        return elapsedMin > due + grace && state.doneUntilIndex < activeIndex;
+      }
+      const due = schedule.stations[activeIndex].departOffset || schedule.stations[activeIndex].arriveOffset;
+      return elapsedMin > due + grace && !state.clockDoneIndexes.includes(activeIndex);
+    };
+
+    const baseFormatNextMetric = formatNextMetric;
+    formatNextMetric = function formatNextMetricWithoutNegativeTime(value) {
+      if (Number(value) <= 0) {
+        return state.showNumbers ? '予定時刻を過ぎています' : '待っています';
+      }
+      return baseFormatNextMetric(value);
+    };
+
+    const baseFormatRemaining = formatRemaining;
+    formatRemaining = function formatRemainingForUnfinishedTasks(ms) {
+      if (
+        state.mode === 'timer' &&
+        Number(ms) <= 0 &&
+        !isAllTasksDone(normalizedSchedule())
+      ) {
+        return state.showNumbers ? '時間です' : '待っています';
+      }
+      return baseFormatRemaining(ms);
+    };
+
     function verticalTimelineGeometry(layout) {
       const count = Math.max(1, Number(layout?.metrics?.count) || 1);
       const density = layout?.metrics?.density || 'comfortable';
@@ -35,6 +109,7 @@
       const layout = resolveTimelineLayout(data.schedule.stations);
       applyTimelineLayout(layout);
       const track = $('#track');
+      const vehicleElement = $('#vehicle');
       const lastIndex = data.schedule.stations.length - 1;
       const presentation = layout.metrics;
       const verticalGeometry = applyVerticalTimelineGeometry(layout, track);
@@ -61,7 +136,7 @@
         element.classList.toggle('long-name', [...String(station.name || '')].length >= 7);
         element.dataset.labelRow = presentation.staggerLabels && index % 2 === 1 ? 'lower' : 'base';
         const isDone = state.mode === 'clock' ? state.clockDoneIndexes.includes(index) : state.doneUntilIndex >= index;
-        const isReached = station.markerOffset <= data.elapsedMin + 1 / 120;
+        const isReached = index <= data.reachedIndex;
         if (isDone) element.classList.add('done');
         else if (isReached) element.classList.add('reached');
         const isCurrent = index === data.activeIndex && !isAllTasksDone(data.schedule);
@@ -85,9 +160,10 @@
       const verticalVehicleTop = verticalGeometry
         ? verticalGeometry.edge + (verticalGeometry.height - verticalGeometry.edge * 2) * (vehiclePos / 100)
         : null;
-      $('#vehicle').style.left = `${vehiclePos}%`;
-      $('#vehicle').style.setProperty('--vehicle-left', `${vehiclePos}%`);
-      $('#vehicle').style.setProperty('--mobile-vehicle-top', verticalVehicleTop === null ? `${vehiclePos}%` : `${verticalVehicleTop}px`);
+      vehicleElement.style.left = `${vehiclePos}%`;
+      vehicleElement.style.zIndex = layout.mode === 'vertical' ? '2' : '5';
+      vehicleElement.style.setProperty('--vehicle-left', `${vehiclePos}%`);
+      vehicleElement.style.setProperty('--mobile-vehicle-top', verticalVehicleTop === null ? `${vehiclePos}%` : `${verticalVehicleTop}px`);
       $('#trackDone').style.setProperty('--progress', verticalVehicleTop === null ? `${vehiclePos}%` : `${verticalVehicleTop}px`);
       verifyRenderedTimelineLayout(layout);
     };
