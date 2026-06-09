@@ -330,3 +330,26 @@ body.view-mode .progress-panel {
     gap: 6px !important;
   }
 }
+
+/* =========================================================
+   Stage 5: 縦タイムラインの高さを駅数から決める
+   画面高ではなく駅数と密度を基準にし、駅間隔を一定範囲へ収める。
+   ========================================================= */
+@media (max-width: 640px) and (orientation: portrait) {
+  body.view-mode.timeline-vertical .track-wrap {
+    height: calc(var(--vertical-track-height, 360px) + 60px) !important;
+    min-height: calc(var(--vertical-track-height, 360px) + 60px) !important;
+    max-height: none !important;
+  }
+
+  body.view-mode.timeline-vertical .track {
+    height: var(--vertical-track-height, 360px) !important;
+    min-height: var(--vertical-track-height, 360px) !important;
+    max-height: var(--vertical-track-height, 360px) !important;
+    align-self: center;
+  }
+
+  body.view-mode.timeline-vertical .station-label {
+    max-width: var(--vertical-label-width);
+  }
+}
