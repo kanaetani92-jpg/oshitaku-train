@@ -72,6 +72,29 @@
       return baseFormatRemaining(ms);
     };
 
+    /* =========================================================
+       Stage 8: 各駅の時間表示を「その駅から次の駅まで」に統一する
+       保存データは変えず、表示時に隣接駅の累積時刻差を計算する。
+       ========================================================= */
+    function stationTaskDurationMinutes(schedule, index) {
+      if (!schedule?.stations?.length || index >= schedule.stations.length - 1) return 0;
+      const currentOffset = schedule.stations[index]?.markerOffset ?? 0;
+      const nextOffset = schedule.stations[index + 1]?.markerOffset ?? schedule.total;
+      return Math.max(0, nextOffset - currentOffset);
+    }
+
+    const baseStationTimeLabelForNextDuration = stationTimeLabel;
+    stationTimeLabel = function stationTimeLabelToNextStation(station, index, lastIndex) {
+      if (state.mode !== 'timer') {
+        return baseStationTimeLabelForNextDuration(station, index, lastIndex);
+      }
+      if (index >= lastIndex) return 'ゴール';
+
+      const schedule = normalizedTimerSchedule();
+      const duration = stationTaskDurationMinutes(schedule, index);
+      return state.showNumbers ? `つぎまで ${Math.ceil(duration)}分` : 'つぎまで';
+    };
+
     function verticalTimelineGeometry(layout) {
       const count = Math.max(1, Number(layout?.metrics?.count) || 1);
       const density = layout?.metrics?.density || 'comfortable';
@@ -207,10 +230,7 @@
 
     function currentTaskDurationMinutes(data) {
       const activeIndex = clamp(data.activeIndex, 0, data.schedule.stations.length - 1);
-      if (activeIndex >= data.schedule.stations.length - 1) return 0;
-      const currentOffset = data.schedule.stations[activeIndex]?.markerOffset ?? 0;
-      const nextOffset = data.schedule.stations[activeIndex + 1]?.markerOffset ?? data.schedule.total;
-      return Math.max(0, nextOffset - currentOffset);
+      return stationTaskDurationMinutes(data.schedule, activeIndex);
     }
 
     function setTextIfChanged(element, text) {
