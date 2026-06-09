@@ -30,6 +30,14 @@
       return requestedMode() === 'timer' && state.mode === 'timer';
     }
 
+    function setTextIfChanged(element, text) {
+      if (element && element.textContent !== text) element.textContent = text;
+    }
+
+    function setAttributeIfChanged(element, name, value) {
+      if (element && element.getAttribute(name) !== value) element.setAttribute(name, value);
+    }
+
     function padTime(ms) {
       const seconds = Math.max(0, Math.ceil(Number(ms || 0) / 1000));
       const minutes = Math.floor(seconds / 60);
@@ -66,27 +74,29 @@
       const timeLabel = document.querySelector('#timeBox small');
       const remaining = document.querySelector('#remainingText');
       const currentCardTime = document.querySelector('#currentCardTime');
-
-      document.body.dataset.timerTaskState = timing.completed
+      const taskState = timing.completed
         ? 'completed'
         : (timing.isLast ? 'last' : (timing.overdue ? 'overdue' : 'running'));
 
-      if (timeLabel) {
-        timeLabel.textContent = timing.completed
-          ? '完了'
-          : (timing.isLast ? 'さいごの予定' : 'この予定ののこり');
+      if (document.body.dataset.timerTaskState !== taskState) {
+        document.body.dataset.timerTaskState = taskState;
       }
-      if (remaining) remaining.textContent = gentleRemainingLabel(timing);
-      if (currentCardTime) {
-        if (timing.completed) currentCardTime.textContent = 'ゴール';
-        else if (timing.isLast) currentCardTime.textContent = 'できたらゴール';
-        else if (state.showNumbers) currentCardTime.textContent = `つぎまで ${Math.max(1, Math.ceil(timing.durationMs / 60000))}分`;
-        else currentCardTime.textContent = 'つぎまで';
-      }
+
+      setTextIfChanged(timeLabel, timing.completed
+        ? '完了'
+        : (timing.isLast ? 'さいごの予定' : 'この予定ののこり'));
+      setTextIfChanged(remaining, gentleRemainingLabel(timing));
+
+      if (timing.completed) setTextIfChanged(currentCardTime, 'ゴール');
+      else if (timing.isLast) setTextIfChanged(currentCardTime, 'できたらゴール');
+      else if (state.showNumbers) setTextIfChanged(currentCardTime, `つぎまで ${Math.max(1, Math.ceil(timing.durationMs / 60000))}分`);
+      else setTextIfChanged(currentCardTime, 'つぎまで');
+
       if (doneButton) {
-        doneButton.disabled = timing.completed || handlingDone;
-        doneButton.textContent = timing.completed ? 'できた！' : 'できた！';
-        doneButton.setAttribute('aria-label', timing.completed
+        const disabled = timing.completed || handlingDone;
+        if (doneButton.disabled !== disabled) doneButton.disabled = disabled;
+        setTextIfChanged(doneButton, 'できた！');
+        setAttributeIfChanged(doneButton, 'aria-label', timing.completed
           ? 'すべて完了しました'
           : `${current?.name || 'いますること'}ができた`);
       }
