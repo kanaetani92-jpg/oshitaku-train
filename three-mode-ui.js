@@ -20,7 +20,7 @@
       icon: '▶️',
       label: '自動タイマー',
       description: '決めた時間が過ぎると、自動的に次へ進みます。',
-      status: '選択内容を保存しました。自動進行の動作は次の段階で追加します。'
+      status: '出発すると、設定した時間に合わせて自動的に次の予定へ進みます。'
     },
     {
       id: 'clock',
@@ -165,19 +165,21 @@
     });
   }
 
-  function updateAutoUnavailableControls(isAuto) {
+  function updateAutoControls(isAuto) {
     const startPlan = document.querySelector('#startPlanBtn');
     const preview = document.querySelector('#previewBtn');
 
-    if (startPlan) {
-      startPlan.disabled = isAuto;
-      if (isAuto) startPlan.textContent = '自動タイマーは次の段階で開始できます';
-      startPlan.title = isAuto ? '現在は自動タイマーの選択と保存まで利用できます' : '';
+    if (startPlan && isAuto) {
+      startPlan.disabled = false;
+      startPlan.textContent = state.autoRunning
+        ? '見るモードへ'
+        : (state.autoPausedElapsedMs > 0 ? '再開して見る' : 'この予定で始める');
+      startPlan.title = '自動タイマーを開始して見るモードへ移ります';
     }
 
-    if (preview) {
-      preview.disabled = isAuto;
-      preview.title = isAuto ? '自動タイマーのプレビューは次の段階で追加します' : '';
+    if (preview && isAuto) {
+      preview.disabled = false;
+      preview.title = '時間を進めずに見るモードを確認します';
     }
   }
 
@@ -196,15 +198,25 @@
     const mode = modeById.get(current) || modeById.get('timer');
     if (status) {
       status.textContent = mode.status;
-      status.classList.toggle('auto-pending', current === 'auto');
+      status.classList.toggle('auto-pending', false);
+      status.classList.toggle('auto-ready', current === 'auto');
     }
 
-    updateAutoUnavailableControls(current === 'auto');
+    updateAutoControls(current === 'auto');
     updatePresetModeBadges();
   }
 
+  function resetAutoRuntime() {
+    state.autoRunning = false;
+    state.autoStartedAt = null;
+    state.autoPausedElapsedMs = 0;
+  }
+
   function selectMode(modeId) {
+    const previousMode = selectedMode();
     const nextMode = storage.normalizeMode(modeId, 'timer');
+
+    if (previousMode === 'auto' || nextMode === 'auto') resetAutoRuntime();
     state.requestedMode = nextMode;
     state.mode = nextMode === 'auto' ? 'timer' : nextMode;
 
@@ -217,8 +229,7 @@
 
     const mode = modeById.get(nextMode);
     if (typeof announceAccessibleStatus === 'function' && mode) {
-      const suffix = nextMode === 'auto' ? '現在は選択と保存まで利用できます。' : '';
-      announceAccessibleStatus(`${mode.label}を選びました。${suffix}`, true);
+      announceAccessibleStatus(`${mode.label}を選びました。`, true);
     }
   }
 
