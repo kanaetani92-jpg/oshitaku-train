@@ -168,6 +168,107 @@
       verifyRenderedTimelineLayout(layout);
     };
 
+    /* =========================================================
+       Stage 7: タイマーの開始状態と所要時間表示を一致させる
+       見るモードではタイマーを動かし、編集モードでは一時停止する。
+       現在カードは「現在の予定から次の駅まで」の時間を表示する。
+       ========================================================= */
+    function timerHasTimeRemaining() {
+      const schedule = normalizedTimerSchedule();
+      return state.pausedElapsedMs < schedule.total * 60000;
+    }
+
+    function resumeTimerForViewMode() {
+      if (
+        state.mode !== 'timer' ||
+        state.running ||
+        state.uiMode !== 'view' ||
+        isAllTasksDone(normalizedTimerSchedule()) ||
+        !timerHasTimeRemaining()
+      ) return false;
+
+      state.running = true;
+      state.timerStartedAt = Date.now();
+      state.pausedByLate = false;
+      state.celebrated = false;
+      saveState();
+      return true;
+    }
+
+    function pauseTimerForEditMode() {
+      if (state.mode !== 'timer' || !state.running || state.uiMode !== 'edit') return false;
+      state.pausedElapsedMs = getElapsedMs();
+      state.running = false;
+      state.timerStartedAt = null;
+      state.pausedByLate = false;
+      saveState();
+      return true;
+    }
+
+    function currentTaskDurationMinutes(data) {
+      const activeIndex = clamp(data.activeIndex, 0, data.schedule.stations.length - 1);
+      if (activeIndex >= data.schedule.stations.length - 1) return 0;
+      const currentOffset = data.schedule.stations[activeIndex]?.markerOffset ?? 0;
+      const nextOffset = data.schedule.stations[activeIndex + 1]?.markerOffset ?? data.schedule.total;
+      return Math.max(0, nextOffset - currentOffset);
+    }
+
+    function setTextIfChanged(element, text) {
+      if (element && element.textContent !== text) element.textContent = text;
+    }
+
+    function syncTimerConsistencyUi() {
+      const timeLabel = $('#timeBox small');
+      if (state.mode !== 'timer') {
+        setTextIfChanged(timeLabel, 'のこり');
+        return;
+      }
+
+      const data = progressData();
+      const allDone = isAllTasksDone(data.schedule);
+      const currentTime = $('#currentCardTime');
+
+      setTextIfChanged(timeLabel, 'ゴールまで');
+
+      if (!currentTime) return;
+      if (allDone || data.activeIndex >= data.schedule.stations.length - 1) {
+        setTextIfChanged(currentTime, 'ゴール');
+        return;
+      }
+
+      if (!state.showNumbers) {
+        setTextIfChanged(currentTime, 'つぎまで');
+        return;
+      }
+
+      const duration = currentTaskDurationMinutes(data);
+      setTextIfChanged(currentTime, `つぎまで ${Math.ceil(duration)}分`);
+    }
+
+    const baseRenderForTimerConsistency = render;
+    render = function renderWithTimerConsistency() {
+      baseRenderForTimerConsistency();
+      syncTimerConsistencyUi();
+    };
+
+    $('#viewEditToggle')?.addEventListener('click', () => {
+      const changed = state.uiMode === 'view'
+        ? resumeTimerForViewMode()
+        : pauseTimerForEditMode();
+      if (changed) render();
+    });
+
+    $('#doneBtn')?.addEventListener('click', () => {
+      if (resumeTimerForViewMode()) render();
+    });
+
+    const timerUiObserver = new MutationObserver(syncTimerConsistencyUi);
+    const currentCardTimeElement = $('#currentCardTime');
+    const timeBoxElement = $('#timeBox');
+    if (currentCardTimeElement) timerUiObserver.observe(currentCardTimeElement, { childList:true, characterData:true, subtree:true });
+    if (timeBoxElement) timerUiObserver.observe(timeBoxElement, { childList:true, characterData:true, subtree:true });
+
     window.addEventListener('orientationchange', scheduleTimelineLayoutRefresh, { passive:true });
+    resumeTimerForViewMode();
     render();
     setupTimelineResizeObserver();
