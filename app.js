@@ -8,6 +8,7 @@ const $ = (selector) => document.querySelector(selector);
       'oshitakuTrainNoPhotoState'
     ];
     const allowedVehicles = ['🚃','🚄','✈️','🚌','🚀','🚢','🐰'];
+    const allowedTimelineModes = ['horizontal', 'vertical', 'auto'];
 
     const iconOptions = [
       ['🏠','おうち'], ['🚽','トイレ'], ['👕','きがえ'], ['🍚','ごはん'], ['🥛','のみもの'], ['🪥','はみがき'],
@@ -43,7 +44,7 @@ const $ = (selector) => document.querySelector(selector);
       uiMode:'edit', mode:'timer', title:'朝の支度', vehicle:'🚃', stations: deepCopy(initialPresets[0].stations),
       presets: deepCopy(initialPresets), currentPresetId:'morning', running:false, timerStartedAt:null, pausedElapsedMs:0,
       showNumbers:true, showTopCards:true, showBottomCards:true, sound:true, voice:false, lateGraceMin:2,
-      lateBehavior:'display', timelineMode:'auto', seenGuide:false, currentPage:'schedule', todos:[],
+      lateBehavior:'display', timelineMode:'horizontal', seenGuide:false, currentPage:'schedule', todos:[],
       doneUntilIndex:-1, lastReachedIndex:-1, celebrated:false, clockDoneIndexes: [],
       clockDateKey:'', pausedByLate:false, schemaVersion:SCHEMA_VERSION
     };
@@ -111,7 +112,7 @@ const $ = (selector) => document.querySelector(selector);
       merged.uiMode = ['view','edit'].includes(saved.uiMode) ? saved.uiMode : 'edit';
       merged.mode = ['timer','clock'].includes(saved.mode) ? saved.mode : 'timer';
       merged.lateBehavior = ['display','wait','adjust'].includes(saved.lateBehavior) ? saved.lateBehavior : 'display';
-      merged.timelineMode = ['auto','horizontal','vertical'].includes(saved.timelineMode) ? saved.timelineMode : 'auto';
+      merged.timelineMode = allowedTimelineModes.includes(saved.timelineMode) ? saved.timelineMode : 'horizontal';
       merged.currentPage = ['schedule','todo'].includes(saved.currentPage) ? saved.currentPage : 'schedule';
       merged.vehicle = allowedVehicles.includes(saved.vehicle) ? saved.vehicle : '🚃';
       merged.title = String(saved.title || base.title).slice(0, 28);
@@ -418,12 +419,6 @@ const $ = (selector) => document.querySelector(selector);
       return { pos:1, status:'goal', stationIndex:stations.length-1, nextIndex:stations.length-1, nextType:'goal', nextAt:schedule.endAbs, activeIndex:stations.length-1 };
     }
 
-
-    function effectiveTimelineMode() {
-      if (state.timelineMode === 'horizontal' || state.timelineMode === 'vertical') return state.timelineMode;
-      return window.matchMedia('(max-width: 640px)').matches ? 'vertical' : 'horizontal';
-    }
-
     function timerDoingIndex(schedule) {
       return clamp((state.doneUntilIndex ?? -1) + 1, 0, schedule.stations.length - 1);
     }
@@ -486,6 +481,14 @@ const $ = (selector) => document.querySelector(selector);
       return `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
     }
     function formatMinutes(n) { if (!state.showNumbers) return n <= 1 ? 'あと少し' : 'すすんでいます'; if (n < 1) return '1分未満'; return `${Math.ceil(n)}分`; }
+    function stationProgressName(station) {
+      const name = String(station?.name || 'ゴール');
+      return name.endsWith('駅') ? name : `${name}駅`;
+    }
+    function formatNextMetric(n) {
+      const remaining = formatMinutes(n);
+      return state.showNumbers ? `あと ${remaining}` : remaining;
+    }
     function stationTimeLabel(station, index, lastIndex) {
       if (index === lastIndex) return 'ゴール';
       if (!state.showNumbers) return '';
@@ -889,10 +892,7 @@ const $ = (selector) => document.querySelector(selector);
       const activeStation = schedule.stations[data.activeIndex] || currentStation;
       const isLastActive = data.activeIndex >= schedule.stations.length - 1;
 
-      const timelineMode = effectiveTimelineMode();
       document.body.classList.toggle('view-mode', state.uiMode === 'view');
-      document.body.classList.toggle('timeline-horizontal', timelineMode === 'horizontal');
-      document.body.classList.toggle('timeline-vertical', timelineMode === 'vertical');
       $('#viewEditToggle').textContent = state.uiMode === 'view' ? '編集モード' : '見るモード';
       $('#displayTitle').textContent = state.title || 'おしたくトレイン';
       $('#vehicleIcon').textContent = state.vehicle;
@@ -936,14 +936,21 @@ const $ = (selector) => document.querySelector(selector);
       $('#currentCardTime').textContent = stationTimeLabel(activeStation, data.activeIndex, schedule.stations.length - 1);
       $('#doneBtn').setAttribute('aria-label', `${activeStation.name}ができた`);
 
-      renderUpcomingCards(data, allDone);
+      const timelinePreviewMode = typeof resolveTimelineLayout === 'function'
+        ? resolveTimelineLayout(schedule.stations).mode
+        : 'horizontal';
+      renderUpcomingCards(data, allDone, timelinePreviewMode);
       renderTrack(data);
 
       const activeStart = activeStation?.markerOffset || 0;
       const activeElapsed = Math.max(0, Math.floor(elapsedMin - activeStart));
-      if (allDone) $('#nowMetric').textContent = 'ゴール';
-      else if (!state.showNumbers) $('#nowMetric').textContent = `${activeStation.name}中`;
-      else $('#nowMetric').textContent = `${activeStation.name}中・${activeElapsed}分経過${data.late ? '・ゆっくりでOK' : ''}`;
+      if (allDone) $('#nowMetric').textContent = 'ゴール駅とうちゃく';
+      else {
+        const nowLines = [`${stationProgressName(activeStation)}つうか中`];
+        if (state.showNumbers) nowLines.push(`${activeElapsed}分経過`);
+        if (data.late) nowLines.push('ゆっくりでOK');
+        $('#nowMetric').textContent = nowLines.join('\n');
+      }
 
       if (allDone) {
         $('#nextMetric').textContent = '完了';
@@ -953,13 +960,13 @@ const $ = (selector) => document.querySelector(selector);
         const nextRemaining = state.mode === 'timer'
           ? (schedule.stations[nextIndexForDisplay]?.markerOffset ?? vehicle.nextAt) - elapsedMin
           : vehicle.nextAt - currentAbs;
-        $('#nextMetric').textContent = `${nextStation.name}まで あと ${formatMinutes(nextRemaining)}`;
+        $('#nextMetric').textContent = formatNextMetric(nextRemaining);
       }
 
       const completedCount = state.mode === 'timer'
         ? clamp((state.doneUntilIndex ?? -1) + 1, 0, schedule.stations.length)
         : clamp(new Set(state.clockDoneIndexes).size, 0, schedule.stations.length);
-      $('#percentMetric').textContent = `${completedCount}/${schedule.stations.length}できた`;
+      $('#percentMetric').textContent = `${completedCount}/${schedule.stations.length}`;
       $('#completion').classList.toggle('show', allDone);
       $('#completion').setAttribute('aria-hidden', allDone ? 'false' : 'true');
       $('#doneBtn').disabled = allDone;
@@ -969,16 +976,20 @@ const $ = (selector) => document.querySelector(selector);
       saveState();
     }
 
-    function renderUpcomingCards(data, allDone = isAllTasksDone(data.schedule)) {
+    function renderUpcomingCards(data, allDone = isAllTasksDone(data.schedule), timelineMode = 'horizontal') {
       const list = data.schedule.stations.slice(data.activeIndex + 1);
+      const verticalView = state.uiMode === 'view' && timelineMode === 'vertical';
+      const visibleList = verticalView ? list.slice(0, 1) : list;
       const root = $('#upcomingCards');
-      if (!list.length) {
+      const title = $('.upcoming-title');
+      if (title) title.textContent = verticalView ? 'つぎ' : 'これからすること';
+      if (!visibleList.length) {
         root.innerHTML = allDone
           ? '<div class="upcoming-empty">ぜんぶできました！よくがんばりました 🎉</div>'
           : '<div class="upcoming-empty">さいごの駅です。「できた！」を押そう ✅</div>';
         return;
       }
-      root.innerHTML = list.map((station, idx) => {
+      root.innerHTML = visibleList.map((station, idx) => {
         const actualIndex = data.activeIndex + 1 + idx;
         return `<div class="picture-card upcoming-card">${visualHtml(station)}<span class="picture-card-name">${escapeHtml(station.name)}</span><span class="picture-card-time">${escapeHtml(stationTimeLabel(station, actualIndex, data.schedule.stations.length - 1))}</span></div>`;
       }).join('');
@@ -995,11 +1006,15 @@ const $ = (selector) => document.querySelector(selector);
         const isReached = station.markerOffset <= data.elapsedMin + 1/120;
         if (isDone) el.classList.add('done');
         else if (isReached) el.classList.add('reached');
-        if (index === data.activeIndex && !isAllTasksDone(data.schedule)) el.classList.add('current');
+        const isCurrent = index === data.activeIndex && !isAllTasksDone(data.schedule);
+        if (isCurrent) el.classList.add('current');
         if (data.late && index === data.activeIndex) el.classList.add('late');
+        const stateLabel = isDone ? 'できた' : (isCurrent ? '現在' : (index === data.activeIndex + 1 ? '次の予定' : 'これから'));
+        el.dataset.stationState = stateLabel;
         el.setAttribute('role', 'img');
-        el.setAttribute('aria-label', `${station.name}駅、${isDone ? 'できた' : (index === data.activeIndex ? 'いますること' : 'まだ')}`);
-        el.style.left = `${pos}%`; el.style.setProperty('--station-left', `${pos}%`); el.style.setProperty('--mobile-top', `${pos}%`);
+        el.setAttribute('aria-label', `${station.name}駅、${stateLabel}`);
+        if (isCurrent) el.setAttribute('aria-current', 'step');
+        el.style.left = `${pos}%`; el.style.top = `${pos}%`; el.style.setProperty('--station-left', `${pos}%`); el.style.setProperty('--mobile-top', `${pos}%`);
         const label = stationTimeLabel(station, index, data.schedule.stations.length - 1);
         el.innerHTML = `${visualHtml(station, 'station-mini-icon')}<span class="station-label">${escapeHtml(station.name)}駅<span class="station-time">${escapeHtml(label)}</span></span>`;
         track.appendChild(el);
@@ -1022,7 +1037,7 @@ const $ = (selector) => document.querySelector(selector);
       $('#voiceToggle').checked = state.voice;
       $('#lateGraceInput').value = state.lateGraceMin;
       $('#lateBehaviorSelect').value = state.lateBehavior;
-      $('#timelineModeSelect').value = state.timelineMode;
+      $('#timelineModeSelect').value = allowedTimelineModes.includes(state.timelineMode) ? state.timelineMode : 'horizontal';
       const editor = $('#stationEditor'); editor.innerHTML = '';
       state.stations.forEach((station, index) => {
         const row = document.createElement('div');
@@ -1271,6 +1286,7 @@ const $ = (selector) => document.querySelector(selector);
       const data = progressData();
       const activeIndex = clamp(data.activeIndex, 0, data.schedule.stations.length - 1);
       if (state.mode === 'timer') {
+        const wasPausedByLate = state.pausedByLate;
         state.doneUntilIndex = Math.max(state.doneUntilIndex, activeIndex);
         const allDone = state.doneUntilIndex >= data.schedule.stations.length - 1;
         if (allDone) {
@@ -1281,8 +1297,8 @@ const $ = (selector) => document.querySelector(selector);
         } else {
           const nextIndex = activeIndex + 1;
           const scheduledTarget = data.schedule.stations[nextIndex]?.markerOffset ?? data.schedule.total;
-          const target = Math.max(scheduledTarget, data.elapsedMin);
-          const keepRunning = state.running || state.pausedByLate;
+          const target = wasPausedByLate ? scheduledTarget : Math.max(scheduledTarget, data.elapsedMin);
+          const keepRunning = state.running || wasPausedByLate;
           state.pausedByLate = false;
           setTimerElapsed(target * 60000, keepRunning);
         }
@@ -1320,7 +1336,12 @@ const $ = (selector) => document.querySelector(selector);
     $('#voiceToggle').addEventListener('change', (e) => { state.voice = e.target.checked; saveState(); });
     $('#lateGraceInput').addEventListener('change', (e) => { state.lateGraceMin = toNonNegativeNumber(e.target.value); render(); });
     $('#lateBehaviorSelect').addEventListener('change', (e) => { state.lateBehavior = e.target.value; render(); });
-    $('#timelineModeSelect').addEventListener('change', (e) => { state.timelineMode = e.target.value; render(); });
+    $('#timelineModeSelect').addEventListener('change', (e) => {
+      state.timelineMode = allowedTimelineModes.includes(e.target.value) ? e.target.value : 'horizontal';
+      const label = state.timelineMode === 'vertical' ? '縦表示' : (state.timelineMode === 'auto' ? '自動表示' : '横表示');
+      announceAccessibleStatus(`タイムラインを${label}に変更しました。`, true);
+      render();
+    });
     $('#timerModeBtn').addEventListener('click', () => { state.mode = 'timer'; resetRunState(); renderEditor(); render(); });
     $('#clockModeBtn').addEventListener('click', () => { state.mode = 'clock'; resetRunState(); renderEditor(); render(); });
     $('#startBtn').addEventListener('click', async () => {
@@ -1529,7 +1550,7 @@ const $ = (selector) => document.querySelector(selector);
     });
     window.addEventListener('resize', () => {
       if (typeof scheduleTimelineLayoutRefresh === 'function') scheduleTimelineLayoutRefresh();
-      else if (state.timelineMode === 'auto') render();
+      else render();
     }, { passive:true });
 
     const initialPage = window.location.hash === '#todo' ? 'todo' : 'schedule';

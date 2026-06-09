@@ -35,21 +35,11 @@
       return false;
     }
 
-    function rememberUnsafeHorizontalLayout(layout) {
-      if (unsafeHorizontalLayout.contentKey === layout.metrics.contentKey &&
-        unsafeHorizontalLayout.maxWidth >= layout.metrics.availableWidth) return false;
-      unsafeHorizontalLayout = {
-        contentKey:layout.metrics.contentKey,
-        maxWidth:layout.metrics.availableWidth + 8
-      };
-      return true;
-    }
-
     function verifyRenderedTimelineLayout(layout) {
       if (layout.mode !== 'horizontal') return;
       window.requestAnimationFrame(() => {
         if (!horizontalLayoutHasCollision()) return;
-        if (rememberUnsafeHorizontalLayout(layout)) scheduleTimelineLayoutRefresh();
+        scheduleTimelineLayoutRefresh();
       });
     }
 
@@ -60,10 +50,6 @@
         const next = resolveTimelineLayout(state.stations);
         if (next.renderKey !== lastTimelineRenderKey) {
           render();
-          return;
-        }
-        if (next.mode === 'horizontal' && horizontalLayoutHasCollision() && rememberUnsafeHorizontalLayout(next)) {
-          window.requestAnimationFrame(render);
         }
       });
     }

@@ -1,7 +1,4 @@
-    let lastResolvedTimelineMode = '';
     let lastTimelineRenderKey = '';
-    let lastTimelineNoticeText = '';
-    let unsafeHorizontalLayout = { contentKey:'', maxWidth:0 };
     let timelineResizeObserver = null;
     let timelineResizeFrame = 0;
     let lastObservedTimelineWidth = 0;
@@ -13,8 +10,7 @@
       const totalNameLength = names.reduce((sum, name) => sum + [...name].length, 0);
       const density = count <= 4 ? 'comfortable' : (count <= 6 ? 'compact' : (count <= 8 ? 'dense' : 'crowded'));
       const staggerLabels = count >= 6 || (count >= 5 && (longestName >= 7 || totalNameLength >= 30));
-      const verticalRecommended = count >= 9 || longestName >= 12 || (count >= 8 && totalNameLength >= 56);
-      return { count, longestName, totalNameLength, density, staggerLabels, verticalRecommended };
+      return { count, longestName, totalNameLength, density, staggerLabels };
     }
 
     function timelineNameUnits(value) {
@@ -30,22 +26,18 @@
       if (viewportWidth <= 640 || window.matchMedia('(orientation: landscape) and (max-height: 480px) and (max-width: 900px)').matches) {
         return {
           name:'smartphone', edge:20, fontSize:10, minLabel:44, maxLabel:82,
-          minInterval:52, explicitMinInterval:46, maxAutoStations:8, maxExplicitStations:9,
-          maxNameUnits:12, explicitMaxNameUnits:15
+          minInterval:52
         };
       }
       if (viewportWidth <= 1100) {
         return {
           name:'tablet', edge:56, fontSize:11.5, minLabel:76, maxLabel:124,
-          minInterval:64, explicitMinInterval:56, maxAutoStations:9, maxExplicitStations:10,
-          maxNameUnits:14, explicitMaxNameUnits:17
+          minInterval:64
         };
       }
       return {
         name:'pc', edge:68, fontSize:state.uiMode === 'view' ? 13 : 12,
-        minLabel:86, maxLabel:154, minInterval:74, explicitMinInterval:66,
-        maxAutoStations:11, maxExplicitStations:12,
-        maxNameUnits:16, explicitMaxNameUnits:18
+        minLabel:86, maxLabel:154, minInterval:74
       };
     }
 
@@ -93,18 +85,10 @@
         ? (estimatedLabelWidth + labelGap + 2) / 2
         : estimatedLabelWidth + labelGap;
       const minimumInterval = Math.max(profile.minInterval, labelInterval);
-      const explicitMinimumInterval = Math.max(profile.explicitMinInterval, labelInterval * .9);
       const intervalCount = Math.max(0, presentation.count - 1);
       const heightPenalty = window.innerHeight < 650 && presentation.count >= 7 ? 1.08 : 1;
       const viewPenalty = state.uiMode === 'view' && profile.name !== 'smartphone' ? 1.03 : 1;
       const requiredWidth = (profile.edge * 2 + intervalCount * minimumInterval) * heightPenalty * viewPenalty;
-      const explicitRequiredWidth = profile.edge * 2 + intervalCount * explicitMinimumInterval;
-      const contentUnsafe = presentation.count > profile.maxAutoStations ||
-        longestNameUnits > profile.maxNameUnits || presentation.verticalRecommended;
-      const explicitContentUnsafe = presentation.count > profile.maxExplicitStations ||
-        longestNameUnits > profile.explicitMaxNameUnits;
-      const widthUnsafe = availableWidth < requiredWidth + (profile.name === 'smartphone' ? 0 : 8);
-      const explicitWidthUnsafe = availableWidth < explicitRequiredWidth + 4;
       const widthBucket = Math.round(availableWidth / 4) * 4;
       const namesKey = stations.map((station) => String(station?.name || '')).join('|');
       const timeKey = state.showNumbers
@@ -115,7 +99,7 @@
       const orientation = window.innerWidth >= window.innerHeight ? 'landscape' : 'portrait';
       const heightClass = window.innerHeight < 650 ? 'low' : 'normal';
       const contentKey = [
-        state.timelineMode, state.uiMode, state.mode, state.showNumbers ? 'numbers' : 'no-numbers',
+        'horizontal', state.uiMode, state.mode, state.showNumbers ? 'numbers' : 'no-numbers',
         profile.name, orientation, heightClass, namesKey, timeKey
       ].join('::');
       const key = [contentKey, widthBucket].join('::');
@@ -131,11 +115,6 @@
         estimatedLabelWidth,
         minimumInterval,
         requiredWidth,
-        explicitRequiredWidth,
-        contentUnsafe,
-        explicitContentUnsafe,
-        widthUnsafe,
-        explicitWidthUnsafe,
         key,
         contentKey
       };

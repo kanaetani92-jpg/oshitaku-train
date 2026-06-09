@@ -260,20 +260,6 @@
     top: calc(50% - var(--pc-vehicle-offset));
   }
 
-  body.timeline-vertical .track-wrap {
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
-    overflow: hidden;
-    overflow: clip;
-  }
-
-  body.timeline-vertical .station-label {
-    width: min(260px, calc(100vw - 180px));
-    max-width: calc(100vw - 180px);
-    white-space: normal;
-    overflow-wrap: anywhere;
-  }
 }
 
 @media (min-width: 1101px) and (min-height: 760px) {
@@ -541,6 +527,400 @@
     min-height: 0;
     max-height: none;
     overflow: visible;
+  }
+}
+
+@media (min-width: 1101px) {
+  body.view-mode .app {
+    min-height: 100svh;
+    padding-top: 10px;
+    padding-bottom: 14px;
+  }
+
+  body.view-mode header {
+    margin-bottom: 10px;
+  }
+
+  body.view-mode .main-card {
+    width: min(1080px, 100%);
+    padding: 14px 16px;
+    gap: 9px;
+  }
+
+  body.view-mode .timer-title {
+    font-size: clamp(30px, 3.4vw, 42px);
+    line-height: 1.08;
+  }
+
+  body.view-mode .next-box {
+    padding: 9px 12px;
+    font-size: clamp(15px, 1.5vw, 18px);
+    line-height: 1.32;
+  }
+
+  body.view-mode .time-left {
+    min-width: 124px;
+    padding: 9px 13px;
+  }
+
+  body.view-mode .time-left strong {
+    font-size: clamp(28px, 3vw, 36px);
+  }
+
+  body.view-mode .picture-card-large {
+    width: min(360px, 100%);
+    min-height: clamp(180px, 25svh, 220px);
+    padding: 13px;
+  }
+
+  body.view-mode .picture-card-icon {
+    font-size: clamp(76px, 10svh, 106px);
+  }
+
+  body.view-mode .picture-card-name {
+    font-size: clamp(30px, 3.6vw, 42px);
+  }
+
+  body.view-mode .done-btn {
+    min-height: 58px;
+    padding: 11px 24px;
+    font-size: clamp(24px, 2.5vw, 30px);
+  }
+
+  body.view-mode.timeline-horizontal {
+    --pc-timeline-edge: 64px;
+    --pc-timeline-top: 78px;
+    --pc-timeline-bottom: 72px;
+    --pc-track-height: 15px;
+    --pc-station-size: 44px;
+    --pc-station-icon-size: 20px;
+    --pc-label-width: 110px;
+    --pc-label-size: 12px;
+    --pc-time-size: 8.5px;
+    --pc-label-offset: 32px;
+    --pc-vehicle-size: 60px;
+    --pc-vehicle-font-size: 37px;
+    --pc-vehicle-offset: 78px;
+  }
+
+  body.view-mode.timeline-horizontal.timeline-density-dense,
+  body.view-mode.timeline-horizontal.timeline-density-crowded {
+    --pc-timeline-edge: 52px;
+    --pc-timeline-top: 68px;
+    --pc-timeline-bottom: 78px;
+    --pc-station-size: 38px;
+    --pc-station-icon-size: 17px;
+    --pc-label-width: 84px;
+    --pc-label-size: 10.5px;
+    --pc-time-size: 8px;
+    --pc-vehicle-size: 52px;
+    --pc-vehicle-font-size: 32px;
+    --pc-vehicle-offset: 68px;
+  }
+
+  body.view-mode.timeline-horizontal.timeline-labels-staggered {
+    --pc-timeline-bottom: 106px;
+  }
+
+  body.view-mode.timeline-horizontal .track-wrap {
+    min-height: clamp(150px, 22svh, 190px);
+  }
+
+  body.view-mode.timeline-horizontal.timeline-labels-staggered .station[data-label-row="lower"] .station-label {
+    top: calc(50% + var(--pc-label-offset) + 42px);
+  }
+
+  body.view-mode .upcoming-section {
+    gap: 5px;
+    margin-top: 0;
+  }
+
+  body.view-mode .upcoming-title {
+    font-size: 12px;
+  }
+
+  body.view-mode .upcoming-strip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 7px;
+    padding: 0;
+  }
+
+  body.view-mode .upcoming-card {
+    min-height: 58px;
+    padding: 6px;
+    border-radius: 14px;
+  }
+
+  body.view-mode .upcoming-card .picture-card-icon {
+    font-size: 28px;
+  }
+
+  body.view-mode .upcoming-card .picture-card-name {
+    font-size: 12px;
+  }
+
+  body.view-mode .upcoming-card .picture-card-time {
+    font-size: 9px;
+  }
+
+  body.view-mode .progress-panel {
+    gap: 7px;
+  }
+
+  body.view-mode .metric {
+    padding: 8px 10px;
+    border-radius: 14px;
+  }
+
+  body.view-mode .metric span {
+    font-size: 11px;
+    margin-bottom: 2px;
+  }
+
+  body.view-mode .metric strong {
+    font-size: 16px;
+    line-height: 1.22;
+  }
+
+  body.view-mode .completion.show {
+    padding: 7px 11px;
+    font-size: 13px;
+  }
+}
+
+@media (min-width: 1101px) and (max-height: 760px) {
+  body.view-mode .app {
+    padding-top: 6px;
+    padding-bottom: 8px;
+  }
+
+  body.view-mode header {
+    margin-bottom: 6px;
+  }
+
+  body.view-mode .main-card {
+    gap: 6px;
+    padding: 10px 12px;
+  }
+
+  body.view-mode .picture-card-large {
+    min-height: 150px;
+  }
+
+  body.view-mode .picture-card-icon {
+    font-size: 66px;
+  }
+
+  body.view-mode.timeline-horizontal {
+    --pc-timeline-top: 58px;
+    --pc-timeline-bottom: 58px;
+    --pc-station-size: 36px;
+    --pc-station-icon-size: 16px;
+    --pc-vehicle-size: 48px;
+    --pc-vehicle-font-size: 30px;
+    --pc-vehicle-offset: 58px;
+  }
+
+  body.view-mode.timeline-horizontal .track-wrap {
+    min-height: 126px;
+  }
+
+  body.view-mode .upcoming-card {
+    min-height: 44px;
+  }
+
+  body.view-mode .upcoming-card .picture-card-time,
+  body.view-mode.timeline-horizontal .station-time {
+    display: none;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 480px) and (max-width: 900px) {
+  body.view-mode .app {
+    min-height: 100svh;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  body.view-mode header {
+    margin-bottom: 5px;
+  }
+
+  body.view-mode .brand {
+    font-size: 15px;
+  }
+
+  body.view-mode .brand .badge,
+  body.view-mode .subtitle {
+    display: none;
+  }
+
+  body.view-mode .view-toggle,
+  body.view-mode .menu-button {
+    min-height: 34px;
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  body.view-mode .main-card {
+    grid-template-columns: minmax(190px, .9fr) minmax(0, 1.25fr);
+    grid-template-areas:
+      "status status"
+      "current track"
+      "action progress"
+      "upcoming completion";
+    align-items: stretch;
+    gap: 6px 8px;
+    min-height: 0;
+    padding: 8px;
+  }
+
+  body.view-mode .status-area {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px;
+  }
+
+  body.view-mode .timer-title {
+    font-size: clamp(18px, 3.5vw, 24px);
+  }
+
+  body.view-mode .next-box {
+    padding: 5px 8px;
+    font-size: 12px;
+    line-height: 1.25;
+  }
+
+  body.view-mode .time-left {
+    min-width: 86px;
+    padding: 5px 8px;
+  }
+
+  body.view-mode .time-left strong {
+    font-size: 22px;
+  }
+
+  body.view-mode .picture-card-large {
+    width: 100%;
+    min-height: 118px;
+    padding: 7px;
+  }
+
+  body.view-mode .picture-card-kicker,
+  body.view-mode .picture-card-time {
+    display: none;
+  }
+
+  body.view-mode .picture-card-icon {
+    font-size: 48px;
+  }
+
+  body.view-mode .picture-card-name {
+    font-size: clamp(20px, 3.7vw, 28px);
+  }
+
+  body.view-mode .action-row {
+    position: static;
+    inset: auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  body.view-mode .done-btn {
+    min-height: 46px;
+    padding: 8px 14px;
+    font-size: 21px;
+  }
+
+  body.view-mode.timeline-horizontal {
+    --mobile-timeline-edge: 28px;
+    --mobile-timeline-top: 42px;
+    --mobile-timeline-bottom: 48px;
+    --mobile-track-height: 10px;
+    --mobile-station-size: 28px;
+    --mobile-station-icon-size: 13px;
+    --mobile-station-label-width: 52px;
+    --mobile-station-name-size: 9px;
+    --mobile-station-time-size: 0;
+    --mobile-station-label-offset: 20px;
+    --mobile-vehicle-size: 34px;
+    --mobile-vehicle-font-size: 21px;
+    --mobile-vehicle-offset: 40px;
+  }
+
+  body.view-mode.timeline-horizontal .track-wrap {
+    min-height: 112px;
+    padding: var(--mobile-timeline-top) var(--mobile-timeline-edge) var(--mobile-timeline-bottom);
+  }
+
+  body.view-mode.timeline-horizontal .station-time {
+    display: none;
+  }
+
+  body.view-mode.timeline-horizontal.timeline-labels-staggered .station[data-label-row="lower"] .station-label {
+    top: calc(50% + var(--mobile-station-label-offset) + 28px);
+  }
+
+  body.view-mode .upcoming-section {
+    gap: 3px;
+  }
+
+  body.view-mode .upcoming-title {
+    display: none;
+  }
+
+  body.view-mode .upcoming-strip {
+    display: flex;
+    gap: 5px;
+    padding: 0;
+  }
+
+  body.view-mode .upcoming-card {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 34px;
+    padding: 4px;
+  }
+
+  body.view-mode .upcoming-card .picture-card-icon {
+    font-size: 18px;
+  }
+
+  body.view-mode .upcoming-card .picture-card-name {
+    font-size: 10px;
+  }
+
+  body.view-mode .upcoming-card .picture-card-time {
+    display: none;
+  }
+
+  body.view-mode .progress-panel {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+    align-self: center;
+  }
+
+  body.view-mode .metric {
+    padding: 5px;
+    border-radius: 12px;
+  }
+
+  body.view-mode .metric span {
+    font-size: 9px;
+    margin-bottom: 1px;
+  }
+
+  body.view-mode .metric strong {
+    font-size: 11px;
+    line-height: 1.15;
+  }
+
+  body.view-mode .completion.show {
+    padding: 5px 7px;
+    font-size: 11px;
   }
 }
 
