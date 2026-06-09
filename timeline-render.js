@@ -161,7 +161,7 @@
         ? verticalGeometry.edge + (verticalGeometry.height - verticalGeometry.edge * 2) * (vehiclePos / 100)
         : null;
       vehicleElement.style.left = `${vehiclePos}%`;
-      vehicleElement.style.zIndex = layout.mode === 'vertical' ? '2' : '5';
+      vehicleElement.style.zIndex = '50';
       vehicleElement.style.setProperty('--vehicle-left', `${vehiclePos}%`);
       vehicleElement.style.setProperty('--mobile-vehicle-top', verticalVehicleTop === null ? `${vehiclePos}%` : `${verticalVehicleTop}px`);
       $('#trackDone').style.setProperty('--progress', verticalVehicleTop === null ? `${vehiclePos}%` : `${verticalVehicleTop}px`);
