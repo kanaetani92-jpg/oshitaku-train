@@ -890,10 +890,13 @@ const $ = (selector) => document.querySelector(selector);
       const isLastActive = data.activeIndex >= schedule.stations.length - 1;
 
       const timelineMode = effectiveTimelineMode();
+      document.documentElement.classList.toggle('view-mode-root', state.uiMode === 'view');
       document.body.classList.toggle('view-mode', state.uiMode === 'view');
       document.body.classList.toggle('timeline-horizontal', timelineMode === 'horizontal');
       document.body.classList.toggle('timeline-vertical', timelineMode === 'vertical');
-      $('#viewEditToggle').textContent = state.uiMode === 'view' ? '編集モード' : '見るモード';
+      const viewToggle = $('#viewEditToggle');
+      viewToggle.textContent = state.uiMode === 'view' ? '編集に戻る' : '見るモード';
+      viewToggle.setAttribute('aria-label', state.uiMode === 'view' ? '予定の編集に戻る' : '見るモードでプレビューする');
       $('#displayTitle').textContent = state.title || 'おしたくトレイン';
       $('#vehicleIcon').textContent = state.vehicle;
       $('#vehicleIcon').classList.toggle('reverse', shouldReverseVehicle(state.vehicle));
@@ -1308,7 +1311,15 @@ const $ = (selector) => document.querySelector(selector);
     function escapeHtml(text) { return String(text).replace(/[&<>\"]/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
     function escapeAttr(text) { return escapeHtml(text).replace(/'/g, '&#39;'); }
 
-    $('#viewEditToggle').addEventListener('click', () => { state.uiMode = state.uiMode === 'view' ? 'edit' : 'view'; render(); });
+    $('#viewEditToggle').addEventListener('click', () => {
+      const returningToEdit = state.uiMode === 'view';
+      state.uiMode = returningToEdit ? 'edit' : 'view';
+      if (returningToEdit) showPage('schedule');
+      else {
+        saveState();
+        render();
+      }
+    });
     $('#startPlanBtn')?.addEventListener('click', startCurrentPlan);
     $('#previewBtn')?.addEventListener('click', previewCurrentPlan);
     $('#titleInput').addEventListener('input', (e) => { state.title = e.target.value.slice(0, 28); detachCurrentPreset(); render(); });
