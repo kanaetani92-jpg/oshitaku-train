@@ -93,6 +93,9 @@
       else setTextIfChanged(currentCardTime, 'つぎまで');
 
       if (doneButton) {
+        doneButton.hidden = false;
+        doneButton.removeAttribute('aria-hidden');
+        doneButton.removeAttribute('tabindex');
         const disabled = timing.completed || handlingDone;
         if (doneButton.disabled !== disabled) doneButton.disabled = disabled;
         setTextIfChanged(doneButton, 'できた！');
@@ -115,9 +118,6 @@
         event.preventDefault();
         event.stopPropagation();
         event.stopImmediatePropagation();
-        if (typeof announceAccessibleStatus === 'function') {
-          announceAccessibleStatus('自動タイマーの開始は次の段階で追加します。', true);
-        }
         return;
       }
 
@@ -179,16 +179,6 @@
     }
 
     document.querySelector('#doneBtn')?.addEventListener('click', completeCurrentTask, { capture:true });
-
-    document.querySelector('#viewEditToggle')?.addEventListener('click', (event) => {
-      if (requestedMode() !== 'auto') return;
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-      if (typeof announceAccessibleStatus === 'function') {
-        announceAccessibleStatus('自動タイマーの見るモードは次の段階で追加します。', true);
-      }
-    }, { capture:true });
 
     const observer = new MutationObserver(scheduleSync);
     const timeBox = document.querySelector('#timeBox');
