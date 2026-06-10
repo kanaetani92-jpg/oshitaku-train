@@ -138,15 +138,31 @@
       await loadScriptOnce('three-mode-clock-core.js', 'data-clock-mode-core');
       await loadScriptOnce('three-mode-clock-mode.js', 'data-clock-mode-ui');
       await loadScriptOnce('three-mode-clock-editor.js', 'data-clock-mode-editor');
+    } catch (error) {
+      console.error('3モードの実行処理を読み込めませんでした。読み込み済みの従来処理を継続します。', error);
+      return;
+    }
 
-      // 第9段階は各モードの表示処理が利用可能になったあとに読み込み、
-      // 最後に描画コーディネーターへ接続します。
+    // 第9段階のCSSは補助扱いです。失敗しても3モード本体と最終同期を継続します。
+    try {
       await loadStylesheetOnce('three-mode-regression.css', 'data-three-mode-regression-style');
+    } catch (error) {
+      console.warn('第9段階の表示調整CSSを読み込めませんでした。既存のレスポンシブ表示を継続します。', error);
+    }
+
+    // 第9段階の言葉表示も補助扱いです。失敗時は第8段階までの表示を維持します。
+    try {
       await loadScriptOnce('three-mode-regression-core.js', 'data-three-mode-regression-core');
       await loadScriptOnce('three-mode-regression-ui.js', 'data-three-mode-regression-ui');
+    } catch (error) {
+      console.warn('第9段階の総合表示調整を読み込めませんでした。第8段階までの表示を継続します。', error);
+    }
+
+    // 最終描画コーディネーターは第7段階のちらつき対策でも使うため、必ず別に読み込みます。
+    try {
       await loadScriptOnce('three-mode-auto-render.js', 'data-three-mode-render-coordinator');
     } catch (error) {
-      console.error('3モードの追加処理を読み込めませんでした。読み込み済みの従来処理を継続します。', error);
+      console.error('3モードの最終表示同期を読み込めませんでした。', error);
     }
   }
 
