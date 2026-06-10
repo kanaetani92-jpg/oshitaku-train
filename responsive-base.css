@@ -81,6 +81,104 @@ body.timeline-horizontal .station-label {
   overflow-wrap: anywhere;
 }
 
+body.timeline-vertical {
+  --vertical-track-height: clamp(360px, 58vh, 620px);
+  --vertical-rail-left: clamp(40px, 7vw, 72px);
+  --vertical-station-size: 48px;
+  --vertical-station-icon-size: 22px;
+  --vertical-label-width: clamp(120px, 24vw, 220px);
+  --vertical-name-size: 14px;
+  --vertical-time-size: 11px;
+  --vertical-vehicle-size: 62px;
+  --vertical-vehicle-font-size: 38px;
+}
+
+body.timeline-vertical .track-wrap {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  min-height: var(--vertical-track-height);
+  padding: 24px 12px 34px;
+  align-items: stretch;
+  overflow: hidden;
+  overflow: clip;
+}
+
+body.timeline-vertical .track {
+  width: 16px;
+  min-width: 16px;
+  max-width: 16px;
+  height: auto;
+  min-height: 100%;
+  margin-left: var(--vertical-rail-left);
+  background: repeating-linear-gradient(180deg, #b8c3cc 0 28px, #d9e1e7 28px 44px);
+}
+
+body.timeline-vertical .track::before,
+body.timeline-vertical .track::after {
+  top: 0;
+  bottom: 0;
+  left: -11px;
+  right: auto;
+  width: 4px;
+  height: auto;
+}
+
+body.timeline-vertical .track::after {
+  left: auto;
+  right: -11px;
+}
+
+body.timeline-vertical .track-done {
+  inset: 0 0 auto 0;
+  width: 100%;
+  height: var(--progress, 0%);
+  transition: height .45s ease;
+}
+
+body.timeline-vertical .station {
+  left: 50% !important;
+  top: var(--mobile-top) !important;
+  width: var(--vertical-station-size);
+  height: var(--vertical-station-size);
+  transform: translate(-50%, -50%);
+}
+
+body.timeline-vertical .station.current {
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+body.timeline-vertical .station-mini-icon {
+  font-size: var(--vertical-station-icon-size);
+}
+
+body.timeline-vertical .station-label {
+  top: 50%;
+  left: calc(50% + 42px);
+  width: var(--vertical-label-width);
+  transform: translateY(-50%);
+  text-align: left;
+  font-size: var(--vertical-name-size);
+  line-height: 1.32;
+}
+
+body.timeline-vertical .station-time {
+  font-size: var(--vertical-time-size);
+}
+
+body.timeline-vertical .vehicle {
+  left: 50% !important;
+  top: var(--mobile-vehicle-top) !important;
+  width: var(--vertical-vehicle-size);
+  height: var(--vertical-vehicle-size);
+  font-size: var(--vertical-vehicle-font-size);
+  transform: translate(-50%, -50%);
+}
+
+body.timeline-vertical .vehicle::after {
+  display: none;
+}
+
 body.view-mode .controls-card { display: none; }
 body.view-mode .layout { grid-template-columns: minmax(0, 1fr); }
 body:not(.view-mode) .controls-card { max-height: none; }

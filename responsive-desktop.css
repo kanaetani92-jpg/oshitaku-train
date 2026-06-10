@@ -260,6 +260,210 @@
     top: calc(50% - var(--pc-vehicle-offset));
   }
 
+  body.view-mode.timeline-vertical {
+    --vertical-track-height: clamp(500px, calc(100svh - 128px), 760px);
+    --vertical-rail-left: 30px;
+    --vertical-station-size: 42px;
+    --vertical-station-icon-size: 20px;
+    --vertical-label-width: min(122px, 12vw);
+    --vertical-name-size: 13px;
+    --vertical-time-size: 11px;
+    --vertical-vehicle-size: 52px;
+    --vertical-vehicle-font-size: 32px;
+  }
+
+  body.view-mode.timeline-vertical .main-card {
+    width: min(580px, 100%);
+    max-width: 580px;
+    grid-template-columns: minmax(166px, 39%) minmax(0, 1fr);
+    grid-template-rows: auto auto auto auto auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "status status"
+      "track current"
+      "track action"
+      "track upcoming"
+      "track progress"
+      "completion completion";
+    align-items: start;
+    align-content: start;
+    gap: 3px 8px;
+    padding: 12px;
+  }
+
+  body.view-mode.timeline-vertical .status-area {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+
+  body.view-mode.timeline-vertical .timer-title {
+    font-size: clamp(28px, 3.4vw, 40px);
+  }
+
+  body.view-mode.timeline-vertical .next-box {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  body.view-mode.timeline-vertical .time-left {
+    min-width: 112px;
+    padding: 9px 12px;
+  }
+
+  body.view-mode.timeline-vertical .time-left strong {
+    font-size: 32px;
+  }
+
+  body.view-mode.timeline-vertical .track-wrap {
+    min-height: var(--vertical-track-height);
+    padding: 22px 4px 34px;
+    overflow: visible;
+  }
+
+  body.view-mode.timeline-vertical .track {
+    width: 14px;
+    min-width: 14px;
+    max-width: 14px;
+    margin-left: var(--vertical-rail-left);
+    background: linear-gradient(180deg, #a9c6ef, #6f9de4);
+    box-shadow: inset 0 0 0 3px rgba(255,255,255,.62), 0 10px 22px rgba(57,97,160,.15);
+  }
+
+  body.view-mode.timeline-vertical .station {
+    width: var(--vertical-station-size);
+    height: var(--vertical-station-size);
+    border-width: 4px;
+  }
+
+  body.view-mode.timeline-vertical .station.current {
+    border-color: #f5a524;
+    background: #fff7df;
+    transform: translate(-50%, -50%) scale(1.12);
+    box-shadow: 0 0 0 5px rgba(245,165,36,.18), 0 12px 22px rgba(36,48,65,.16);
+  }
+
+  body.view-mode.timeline-vertical .station.current::after {
+    content: "いま";
+    position: absolute;
+    right: calc(100% - 2px);
+    left: auto;
+    top: -9px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: #fff2c7;
+    color: #8a4b00;
+    font-size: 10px;
+    font-weight: 950;
+    white-space: nowrap;
+  }
+
+  body.view-mode.timeline-vertical .station-label {
+    left: calc(50% + 28px);
+    width: var(--vertical-label-width);
+    font-size: var(--vertical-name-size);
+    line-height: 1.28;
+  }
+
+  body.view-mode.timeline-vertical .station-time {
+    font-size: var(--vertical-time-size);
+  }
+
+  body.view-mode.timeline-vertical .vehicle {
+    width: var(--vertical-vehicle-size);
+    height: var(--vertical-vehicle-size);
+    border-radius: 16px;
+    font-size: var(--vertical-vehicle-font-size);
+  }
+
+  body.view-mode.timeline-vertical .picture-card-large {
+    width: 100%;
+    min-height: clamp(164px, 25svh, 208px);
+    padding: 10px 10px;
+    border-color: #f5a524;
+    background: linear-gradient(180deg, #fff8df, #ffffff);
+  }
+
+  body.view-mode.timeline-vertical .picture-card-icon {
+    font-size: clamp(72px, 11svh, 104px);
+  }
+
+  body.view-mode.timeline-vertical .picture-card-name {
+    font-size: clamp(30px, 3.4vw, 42px);
+  }
+
+  body.view-mode.timeline-vertical .action-row {
+    position: static;
+    inset: auto;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  body.view-mode.timeline-vertical .done-btn {
+    width: 100%;
+    min-height: 52px;
+    font-size: 26px;
+  }
+
+  body.view-mode.timeline-vertical .upcoming-section {
+    width: 100%;
+    gap: 1px;
+    margin-top: -2px;
+  }
+
+  body.view-mode.timeline-vertical .upcoming-title {
+    display: block;
+    font-size: 12px;
+    line-height: 1;
+    color: #2463b7;
+  }
+
+  body.view-mode.timeline-vertical .upcoming-strip {
+    display: block;
+    padding: 0;
+  }
+
+  body.view-mode.timeline-vertical .upcoming-card {
+    width: 100%;
+    min-height: 40px;
+    padding: 3px 8px;
+    border-color: #b8d5ff;
+    background: #f4f8ff;
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    column-gap: 7px;
+    align-items: center;
+    text-align: left;
+  }
+
+  body.view-mode.timeline-vertical .upcoming-card .picture-card-icon {
+    font-size: 24px;
+  }
+
+  body.view-mode.timeline-vertical .upcoming-card .picture-card-name {
+    font-size: 13px;
+    line-height: 1.2;
+  }
+
+  body.view-mode.timeline-vertical .upcoming-card .picture-card-time {
+    display: none;
+  }
+
+  body.view-mode.timeline-vertical .progress-panel {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    margin-top: -1px;
+  }
+
+  body.view-mode.timeline-vertical .metric {
+    padding: 7px 8px;
+  }
+
+  body.view-mode.timeline-vertical .metric strong {
+    font-size: 13px;
+  }
+
 }
 
 @media (min-width: 1101px) and (min-height: 760px) {
@@ -733,6 +937,42 @@
   body.view-mode .upcoming-card .picture-card-time,
   body.view-mode.timeline-horizontal .station-time {
     display: none;
+  }
+
+  body.view-mode.timeline-vertical .main-card {
+    width: min(540px, 100%);
+    max-width: 540px;
+    grid-template-columns: minmax(158px, 38%) minmax(0, 1fr);
+    gap: 3px 8px;
+    padding: 10px;
+  }
+
+  body.view-mode.timeline-vertical {
+    --vertical-track-height: clamp(430px, calc(100svh - 100px), 640px);
+    --vertical-station-size: 36px;
+    --vertical-station-icon-size: 17px;
+    --vertical-label-width: min(112px, 12vw);
+    --vertical-name-size: 12px;
+    --vertical-time-size: 10px;
+    --vertical-vehicle-size: 46px;
+    --vertical-vehicle-font-size: 28px;
+  }
+
+  body.view-mode.timeline-vertical .track-wrap {
+    padding-top: 20px;
+  }
+
+  body.view-mode.timeline-vertical .picture-card-large {
+    min-height: 150px;
+  }
+
+  body.view-mode.timeline-vertical .picture-card-icon {
+    font-size: 66px;
+  }
+
+  body.view-mode.timeline-vertical .done-btn {
+    min-height: 50px;
+    font-size: 24px;
   }
 }
 

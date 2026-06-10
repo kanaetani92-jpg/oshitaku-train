@@ -1,9 +1,13 @@
     function timelineCanUseVertical() {
+      return true;
+    }
+
+    function timelineCanAutoUseVertical() {
       return window.matchMedia('(max-width: 640px) and (orientation: portrait)').matches;
     }
 
     function autoTimelineNeedsVertical(metrics) {
-      if (!timelineCanUseVertical()) return false;
+      if (!timelineCanAutoUseVertical()) return false;
       if (state.uiMode !== 'view') return false;
       const tooWide = metrics.requiredWidth > metrics.availableWidth * 1.08;
       const manyLongStations = metrics.count >= 7 && (metrics.longestNameUnits >= 7 || metrics.averageNameUnits >= 5.8);
