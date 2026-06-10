@@ -7,6 +7,7 @@
   }
 
   const baseRender = render;
+  const baseCheckStationEvents = typeof checkStationEvents === 'function' ? checkStationEvents : null;
   let insideRender = false;
   let observer = null;
 
@@ -44,11 +45,21 @@
     });
   }
 
+  // app.js の render() は checkStationEvents() のあとに表示を書き換えません。
+  // そのため、この位置で専用表示を確定すると、旧表示が画面に出る前に上書きできます。
+  if (baseCheckStationEvents) {
+    checkStationEvents = function checkStationEventsWithThreeModeFinalizer(data, allDone) {
+      const result = baseCheckStationEvents(data, allDone);
+      if (specialModeActive()) synchronizeSpecialMode({ announce:false });
+      return result;
+    };
+  }
+
   observer = new MutationObserver(() => {
     if (insideRender || !specialModeActive()) return;
 
-    // app.jsの1秒描画が同じ欄を書き換えた直後、ブラウザが描画する前に
-    // 選択中モードの表示へ1回だけ戻します。
+    // 動的に呼ばれる render() 以外にも、起動時に登録済みの旧renderタイマーがあるため、
+    // DOM変更後・ブラウザ描画前にも専用表示を確認します。
     observer.disconnect();
     insideRender = true;
     try {
