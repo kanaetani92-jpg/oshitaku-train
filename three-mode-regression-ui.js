@@ -10,8 +10,8 @@
     }
 
     let frame = 0;
-    let observer = null;
     let applying = false;
+    let lastIssueKey = '';
 
     function requestedMode() {
       return storage.normalizeMode(state.requestedMode ?? state.mode, 'timer');
@@ -22,13 +22,6 @@
       const text = String(value ?? '');
       if (element && element.textContent !== text) element.textContent = text;
       return element;
-    }
-
-    function setHidden(element, hidden) {
-      if (!element) return;
-      element.classList.toggle('hidden', hidden);
-      element.hidden = hidden;
-      element.setAttribute('aria-hidden', hidden ? 'true' : 'false');
     }
 
     function currentSchedule(mode) {
@@ -54,10 +47,6 @@
         timeBox.hidden = false;
         timeBox.setAttribute('aria-hidden', 'false');
       }
-
-      document.querySelectorAll('#track .station-time, #upcomingCards .picture-card-time').forEach((element) => {
-        setHidden(element, !showNumbers);
-      });
     }
 
     function applyTimer(showNumbers) {
@@ -73,6 +62,8 @@
       setText('#currentCardTime', view.currentCardTime);
       setText('#nextMetric', view.nextMetric);
       setText('#percentMetric', view.progress);
+      const progressLabel = document.querySelector('.progress-panel .metric:nth-child(3) span');
+      if (progressLabel) progressLabel.textContent = showNumbers ? 'できた' : '進み具合';
       return true;
     }
 
@@ -115,9 +106,11 @@
       const issues = core.scheduleIssues(schedule);
       document.body.dataset.scheduleHealth = issues.length ? 'normalized' : 'ok';
       document.body.dataset.scheduleIssueCount = String(issues.length);
-      if (issues.length) {
+      const issueKey = issues.join('|');
+      if (issues.length && issueKey !== lastIssueKey) {
         console.info('第9段階：予定データは安全な表示用に補正されています。', issues);
       }
+      lastIssueKey = issueKey;
     }
 
     function apply() {
@@ -142,27 +135,9 @@
       if (frame) return;
       frame = window.requestAnimationFrame(() => {
         frame = 0;
-        if (observer) observer.disconnect();
         apply();
-        observe();
       });
     }
-
-    function observe() {
-      const root = document.querySelector('#schedulePage');
-      if (!root || !observer) return;
-      observer.observe(root, {
-        subtree:true,
-        childList:true,
-        characterData:true,
-        attributes:true,
-        attributeFilter:['class', 'hidden', 'aria-hidden', 'style']
-      });
-    }
-
-    observer = new MutationObserver(() => {
-      if (!applying) scheduleApply();
-    });
 
     document.querySelector('#showNumbers')?.addEventListener('change', scheduleApply);
     window.addEventListener('resize', scheduleApply, { passive:true });
@@ -171,16 +146,6 @@
       if (!document.hidden) scheduleApply();
     });
 
-    const originalCoordinator = window.TrainThreeModeRenderCoordinator;
-    if (originalCoordinator?.synchronize) {
-      const originalSynchronize = originalCoordinator.synchronize;
-      window.TrainStage9Synchronize = function synchronizeStage9(options) {
-        originalSynchronize(options);
-        scheduleApply();
-      };
-    }
-
-    observe();
     scheduleApply();
 
     window.TrainThreeModeRegressionUi = Object.freeze({
