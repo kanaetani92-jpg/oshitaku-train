@@ -69,7 +69,7 @@
   }
 
   // app.js の render() は checkStationEvents() のあとに表示を書き換えません。
-  // この位置で専用モードと第9段階の表示を確定し、旧表示を画面へ出しません。
+  // この位置で各モードの専用表示と第9段階の表示を確定し、旧表示を画面へ出しません。
   if (baseCheckStationEvents) {
     checkStationEvents = function checkStationEventsWithThreeModeFinalizer(data, allDone) {
       const result = baseCheckStationEvents(data, allDone);
@@ -79,9 +79,10 @@
   }
 
   observer = new MutationObserver(() => {
-    if (insideRender || !specialModeActive()) return;
+    if (insideRender) return;
 
-    // 自動タイマーの500ms更新や、起動時に登録済みの旧renderタイマーにも対応します。
+    // 自動タイマーの500ms更新、起動時に登録済みの旧1秒render、
+    // できた！タイマーのDOM更新にも対応します。
     // DOM変更後・ブラウザ描画前に、専用表示と第9段階の表示を順に確定します。
     observer.disconnect();
     insideRender = true;
