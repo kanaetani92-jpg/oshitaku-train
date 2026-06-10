@@ -23,12 +23,26 @@
     return autoActive() || clockActive();
   }
 
+  function normalizeClockRuntime() {
+    if (!clockActive() || typeof state === 'undefined') return;
+
+    // 時計モードは現在時刻の表示だけを行い、完了操作やタイマー状態を持ちません。
+    state.running = false;
+    state.timerStartedAt = null;
+    state.pausedElapsedMs = 0;
+    state.pausedByLate = false;
+    state.doneUntilIndex = -1;
+    state.clockDoneIndexes = [];
+    state.celebrated = false;
+  }
+
   function synchronizeSpecialMode({ announce = false } = {}) {
     if (autoActive()) {
       window.TrainAutoTimer.synchronize({ renderNow:false, save:false });
       return;
     }
     if (clockActive()) {
+      normalizeClockRuntime();
       window.TrainClockMode.synchronize({ announce });
     }
   }
