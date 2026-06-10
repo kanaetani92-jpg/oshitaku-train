@@ -26,11 +26,17 @@
 
     function currentSchedule(mode) {
       try {
+        // 画面で実際に使用している正規化結果を優先します。
+        // 特に時計モードは最初の開始時刻と最後の終了時刻を実効範囲として扱います。
+        if (mode === 'clock' && typeof normalizedClockSchedule === 'function') {
+          return normalizedClockSchedule();
+        }
+        if (mode !== 'clock' && typeof normalizedTimerSchedule === 'function') {
+          return normalizedTimerSchedule();
+        }
         if (window.TrainThreeModeTimeAdapter?.buildSchedule) {
           return window.TrainThreeModeTimeAdapter.buildSchedule(mode);
         }
-        if (mode === 'clock' && typeof normalizedClockSchedule === 'function') return normalizedClockSchedule();
-        if (typeof normalizedTimerSchedule === 'function') return normalizedTimerSchedule();
       } catch (error) {
         console.warn('第9段階の予定情報を取得できませんでした。', error);
       }
@@ -41,6 +47,7 @@
       document.body.classList.toggle('numbers-hidden', !showNumbers);
       document.body.dataset.showNumbers = showNumbers ? 'true' : 'false';
 
+      // 数字を消す場合も、残り時間の意味を表す言葉は表示します。
       const timeBox = document.querySelector('#timeBox');
       if (timeBox) {
         timeBox.classList.remove('hidden');
@@ -53,9 +60,12 @@
       if (!window.TrainDoneTimer?.isActive?.()) return false;
       const schedule = currentSchedule('timer');
       const timing = window.TrainDoneTimer.timing();
+      const count = Array.isArray(schedule.stations) ? schedule.stations.length : 0;
+      const doneCount = Math.max(0, Math.min(count, Number(state.doneUntilIndex ?? -1) + 1));
       const view = core.timerView({
         ...timing,
-        count:Array.isArray(schedule.stations) ? schedule.stations.length : 0
+        count,
+        doneCount
       }, showNumbers);
 
       setText('#remainingText', view.remaining);
@@ -142,6 +152,8 @@
     document.querySelector('#showNumbers')?.addEventListener('change', scheduleApply);
     window.addEventListener('resize', scheduleApply, { passive:true });
     window.addEventListener('orientationchange', scheduleApply, { passive:true });
+    window.addEventListener('pageshow', scheduleApply, { passive:true });
+    window.addEventListener('focus', scheduleApply, { passive:true });
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) scheduleApply();
     });
