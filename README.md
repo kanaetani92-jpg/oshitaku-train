@@ -138,6 +138,25 @@
 
 編集画面・プリセット・To Do対応の詳細は [`docs/three-mode-editor-presets.md`](docs/three-mode-editor-presets.md) を参照してください。
 
+### 第9段階：総合テスト・表示調整
+
+完了しました。
+
+- 「数字を見せる」の挙動を3モードで統一
+- 数字を隠しても時間欄を残し、「あと少し」「もうすぐ」「進行中」などの言葉を表示
+- 路線上の駅時刻と「これからすること」カードの時刻を数字非表示時に非表示
+- できた！タイマーの数字表示を、現在位置ではなく実際の「できた数」に統一
+- 1駅だけの予定で、完了前の「さいごの予定」と完了後の表示を分離
+- 最後の予定を「できた！」前に完了扱いにしない表示を維持
+- 再読み込み、ブラウザ復帰、アプリ復帰、画面回転後に表示を再同期
+- 360px以下の画面と高さの低い横向き画面へ表示保護を追加
+- 旧1秒描画を含む全モードの更新後に、最終表示を1回だけ確定
+- 予定データの不足や並び異常を診断し、画面を止めずに表示を継続
+- 第9段階の回帰テストと、3モード全体の一括テストランナーを追加
+- 第9段階のCSSや言葉表示を読み込めない場合も、第7〜8段階までの機能を継続する安全策を追加
+
+総合テスト・表示調整の詳細は [`docs/three-mode-regression.md`](docs/three-mode-regression.md) を参照してください。
+
 ## 現在の画面
 
 編集画面では次の3モードを選択できます。
@@ -154,7 +173,17 @@
 
 各モードの時間設定は別々に保存されるため、モードを切り替えても以前入力した分数や時刻へ戻せます。
 
+「数字を見せる」をオフにした場合は、時刻や秒数の代わりに、現在の状態を示すやさしい言葉を表示します。
+
 ## テスト
+
+3モード全体をまとめて確認する場合：
+
+```bash
+node tests/run-three-mode-tests.js
+```
+
+個別に確認する場合：
 
 ```bash
 node tests/three-mode-time.test.js
@@ -162,4 +191,5 @@ node tests/three-mode-done-timer.test.js
 node tests/three-mode-auto-timer.test.js
 node tests/three-mode-clock-mode.test.js
 node tests/three-mode-editor.test.js
+node tests/three-mode-regression.test.js
 ```
