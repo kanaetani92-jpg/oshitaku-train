@@ -20,6 +20,40 @@
     };
   }
 
+  function loadScriptOnce(src, marker) {
+    return new Promise((resolve, reject) => {
+      const existing = document.querySelector(`script[${marker}]`);
+      if (existing) {
+        if (existing.dataset.loaded === 'true') resolve(existing);
+        else {
+          existing.addEventListener('load', () => resolve(existing), { once:true });
+          existing.addEventListener('error', reject, { once:true });
+        }
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = false;
+      script.setAttribute(marker, 'true');
+      script.addEventListener('load', () => {
+        script.dataset.loaded = 'true';
+        resolve(script);
+      }, { once:true });
+      script.addEventListener('error', reject, { once:true });
+      document.head.appendChild(script);
+    });
+  }
+
+  async function loadStage9Modules() {
+    try {
+      await loadScriptOnce('three-mode-regression-core.js', 'data-three-mode-regression-core');
+      await loadScriptOnce('three-mode-regression-ui.js', 'data-three-mode-regression-ui');
+    } catch (error) {
+      console.error('第9段階の総合表示調整を読み込めませんでした。従来表示を継続します。', error);
+    }
+  }
+
   if (typeof shiftStationTime === 'function') {
     const baseShiftStationTime = shiftStationTime;
     shiftStationTime = function shiftStage8StationTime(station, minutes) {
@@ -63,4 +97,6 @@
       state.stations = core.applyModeData(core.normalizeStations(state.stations, selectedMode()), selectedMode());
     }
   });
+
+  loadStage9Modules();
 })();
