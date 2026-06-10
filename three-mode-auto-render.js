@@ -23,6 +23,10 @@
     return autoActive() || clockActive();
   }
 
+  function finalizeStage9() {
+    window.TrainThreeModeRegressionUi?.applyNow?.();
+  }
+
   function normalizeClockRuntime() {
     if (!clockActive() || typeof state === 'undefined') return;
 
@@ -47,6 +51,11 @@
     }
   }
 
+  function synchronizeAll({ announce = false } = {}) {
+    synchronizeSpecialMode({ announce });
+    finalizeStage9();
+  }
+
   function observeSchedulePage() {
     const root = document.querySelector('#schedulePage');
     if (!root || !observer) return;
@@ -60,11 +69,11 @@
   }
 
   // app.js の render() は checkStationEvents() のあとに表示を書き換えません。
-  // そのため、この位置で専用表示を確定すると、旧表示が画面に出る前に上書きできます。
+  // この位置で専用モードと第9段階の表示を確定し、旧表示を画面へ出しません。
   if (baseCheckStationEvents) {
     checkStationEvents = function checkStationEventsWithThreeModeFinalizer(data, allDone) {
       const result = baseCheckStationEvents(data, allDone);
-      if (specialModeActive()) synchronizeSpecialMode({ announce:false });
+      synchronizeAll({ announce:false });
       return result;
     };
   }
@@ -72,12 +81,12 @@
   observer = new MutationObserver(() => {
     if (insideRender || !specialModeActive()) return;
 
-    // 動的に呼ばれる render() 以外にも、起動時に登録済みの旧renderタイマーがあるため、
-    // DOM変更後・ブラウザ描画前にも専用表示を確認します。
+    // 自動タイマーの500ms更新や、起動時に登録済みの旧renderタイマーにも対応します。
+    // DOM変更後・ブラウザ描画前に、専用表示と第9段階の表示を順に確定します。
     observer.disconnect();
     insideRender = true;
     try {
-      synchronizeSpecialMode({ announce:false });
+      synchronizeAll({ announce:false });
     } finally {
       insideRender = false;
       observeSchedulePage();
@@ -90,7 +99,7 @@
     observer.disconnect();
     try {
       const result = baseRender();
-      synchronizeSpecialMode({ announce:false });
+      synchronizeAll({ announce:false });
       return result;
     } finally {
       insideRender = false;
@@ -99,10 +108,10 @@
   };
 
   observeSchedulePage();
-  if (specialModeActive()) synchronizeSpecialMode({ announce:false });
+  synchronizeAll({ announce:false });
 
   window.TrainThreeModeRenderCoordinator = Object.freeze({
-    synchronize: synchronizeSpecialMode,
+    synchronize: synchronizeAll,
     isSpecialModeActive: specialModeActive
   });
 })();
