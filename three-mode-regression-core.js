@@ -28,8 +28,9 @@
     const safeCount = Math.max(0, Math.round(Number(count) || 0));
     const safePosition = clamp(Math.round(Number(position) || 0), 0, safeCount);
     if (!safeCount) return '予定なし';
-    if (completed || safePosition >= safeCount) return completedLabel;
+    if (completed) return completedLabel;
     if (safePosition <= 0) return '開始前';
+    if (safeCount === 1 || safePosition >= safeCount) return 'さいごの予定';
     if (safePosition === 1) return 'はじめ';
     if (safePosition >= safeCount - 1) return 'もうすぐ最後';
     return '進行中';
