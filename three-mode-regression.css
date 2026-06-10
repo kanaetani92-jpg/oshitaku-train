@@ -1,0 +1,96 @@
+/* 第9段階：3モード総合表示調整 */
+
+body.numbers-hidden #track .station-time,
+body.numbers-hidden #upcomingCards .picture-card-time {
+  display: none !important;
+}
+
+body.numbers-hidden #timeBox {
+  display: grid !important;
+  min-width: min(150px, 42vw);
+  max-width: min(220px, 48vw);
+}
+
+body.numbers-hidden #remainingText,
+body.numbers-hidden #currentCardTime,
+body.numbers-hidden #nextMetric,
+body.numbers-hidden #percentMetric {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+body.numbers-hidden #remainingText {
+  font-size: clamp(16px, 4.8vw, 24px);
+  line-height: 1.15;
+}
+
+body[data-schedule-health="normalized"] .track,
+body[data-schedule-health="normalized"] .track-wrap {
+  min-width: 0;
+  max-width: 100%;
+}
+
+#schedulePage,
+#schedulePage .main-card,
+#schedulePage .track-wrap,
+#schedulePage .track,
+#schedulePage .upcoming-strip,
+#schedulePage .progress-panel {
+  min-width: 0;
+  max-width: 100%;
+}
+
+#schedulePage .metric strong,
+#schedulePage .next-box,
+#schedulePage .picture-card-time {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  body.numbers-hidden #timeBox {
+    min-width: 92px;
+    max-width: 40vw;
+    padding-inline: 8px;
+  }
+
+  body.numbers-hidden #remainingText {
+    font-size: clamp(14px, 4.4vw, 20px);
+  }
+
+  body.numbers-hidden .progress-panel {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  body.numbers-hidden .metric {
+    min-width: 0;
+    padding-inline: 5px;
+  }
+
+  body.numbers-hidden .metric strong {
+    font-size: clamp(10px, 3.2vw, 13px);
+    line-height: 1.2;
+  }
+}
+
+@media (max-width: 360px) {
+  body.numbers-hidden #timeBox {
+    min-width: 82px;
+    max-width: 38vw;
+  }
+
+  body.numbers-hidden #remainingText {
+    font-size: 13px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 480px) and (max-width: 900px) {
+  body.numbers-hidden #timeBox {
+    min-width: 100px;
+    max-width: 30vw;
+  }
+
+  body.numbers-hidden #remainingText {
+    font-size: 14px;
+  }
+}
