@@ -78,23 +78,41 @@
 
   function captureModeData(stations, mode) {
     const normalizedMode = normalizeMode(mode, 'timer');
-    return normalizeStations(stations, normalizedMode).map((station, index) => {
+    const list = Array.isArray(stations) ? stations : [];
+
+    return list.map((source, index) => {
+      const station = normalizeStation(source, index, normalizedMode);
+
       if (normalizedMode === 'timer') {
+        const editedMinutes = index === 0
+          ? 0
+          : nonNegativeMinutes(source?.intervalMin, station.timerIntervalMin);
         return {
           ...station,
-          timerIntervalMin:index === 0 ? 0 : nonNegativeMinutes(station.intervalMin, station.timerIntervalMin)
+          intervalMin:editedMinutes,
+          timerIntervalMin:editedMinutes
         };
       }
+
       if (normalizedMode === 'auto') {
+        const editedMinutes = index === 0
+          ? 0
+          : nonNegativeMinutes(source?.intervalMin, station.autoIntervalMin);
         return {
           ...station,
-          autoIntervalMin:index === 0 ? 0 : nonNegativeMinutes(station.intervalMin, station.autoIntervalMin)
+          intervalMin:editedMinutes,
+          autoIntervalMin:editedMinutes
         };
       }
+
+      const clockStart = validHHMM(source?.arrive, station.clockStart);
+      const clockEnd = validHHMM(source?.depart, station.clockEnd);
       return {
         ...station,
-        clockStart:validHHMM(station.arrive, station.clockStart),
-        clockEnd:validHHMM(station.depart, station.clockEnd)
+        clockStart,
+        clockEnd,
+        arrive:clockStart,
+        depart:clockEnd
       };
     });
   }
