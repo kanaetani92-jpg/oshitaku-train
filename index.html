@@ -199,25 +199,41 @@
               </label>
             </div>
           </details>
+          <p class="help">まず「すること」だけでも保存できます。予定への追加はあとから選べます。</p>
           <div class="todo-form-actions">
             <button class="btn green" id="todoSaveButton" type="submit">追加する</button>
             <button class="btn hidden" id="todoCancelEdit" type="button">編集をやめる</button>
           </div>
         </form>
-        <section class="todo-list-wrap" aria-label="To Do一覧">
+
+        <section class="card todo-list-card" aria-label="To Do一覧">
+          <div class="todo-list-header">
+            <div><h2>To Do一覧</h2><p>予定に入れたあとも、確認できるよう一覧に残します。</p></div>
+          </div>
           <div class="todo-list" id="todoList"></div>
         </section>
       </div>
     </section>
   </div>
 
-  <nav class="app-menu" id="appMenu" aria-hidden="true" inert>
-    <div class="app-menu-head"><strong>メニュー</strong><button class="btn menu-close" id="menuCloseButton" type="button" aria-label="メニューを閉じる">×</button></div>
-    <button class="menu-item" type="button" data-page="schedule">🚃 予定</button>
-    <button class="menu-item" type="button" data-page="todo">📝 To Do</button>
-    <button class="menu-item" id="menuGuideButton" type="button">❓ 使い方を見る</button>
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <nav class="app-menu" id="appMenu" aria-label="ページメニュー" aria-hidden="true" inert>
+    <div class="app-menu-header">
+      <strong>メニュー</strong>
+      <button class="icon-only-button" id="menuCloseButton" type="button" aria-label="メニューを閉じる">×</button>
+    </div>
+    <button class="menu-link active" type="button" data-page="schedule"><span>🚃</span><span><b>おしたくトレイン</b><small>進み方と予定の編集</small></span></button>
+    <button class="menu-link" type="button" data-page="todo"><span>📝</span><span><b>To Do</b><small>あとで予定に入れるもの</small></span></button>
+    <button class="menu-link help-menu-link" id="helpButton" type="button"><span>❓</span><span><b>使い方を見る</b><small>最初の説明をもう一度表示</small></span></button>
+    <div class="menu-mode-note">
+      <b>見るモード</b>は子ども用、<b>編集モード</b>は保護者用です。
+    </div>
   </nav>
-  <button class="menu-backdrop" id="menuBackdrop" type="button" aria-label="メニューを閉じる"></button>
+
+  <nav class="mobile-tabs" aria-label="ページ切り替え">
+    <button type="button" class="mobile-tab active" data-page="schedule"><span>🚃</span><b>予定</b></button>
+    <button type="button" class="mobile-tab" data-page="todo"><span>📝</span><b>To Do</b></button>
+  </nav>
 
   <div class="undo-snackbar" id="undoSnackbar" role="status" aria-live="polite" aria-hidden="true">
     <span id="undoMessage"></span>
