@@ -133,6 +133,12 @@
   color: #294e83;
 }
 
+body[data-requested-mode="clock"] .mode-selection-status {
+  border-color: #efd29a;
+  background: #fffaf0;
+  color: #6f4b0e;
+}
+
 .preset-mode-badge {
   display: inline-flex;
   align-items: center;
@@ -149,11 +155,17 @@ body[data-requested-mode="auto"] #timerControls {
   display: block !important;
 }
 
-body[data-requested-mode="auto"] .action-row {
+body[data-requested-mode="auto"] .action-row,
+body[data-requested-mode="clock"] .action-row {
   display: none !important;
 }
 
-body[data-requested-mode="auto"] #doneBtn {
+body[data-requested-mode="auto"] #doneBtn,
+body[data-requested-mode="clock"] #doneBtn {
+  display: none !important;
+}
+
+body[data-requested-mode="clock"] #timerControls {
   display: none !important;
 }
 
@@ -170,6 +182,31 @@ body[data-requested-mode="auto"][data-auto-timer-state="paused"] #timeBox {
 body[data-requested-mode="auto"][data-auto-timer-state="completed"] #timeBox {
   border-color: #a7b4c5;
   background: #f5f7fa;
+}
+
+body[data-requested-mode="clock"][data-clock-phase="before"] #timeBox,
+body[data-requested-mode="clock"][data-clock-phase="between"] #timeBox {
+  border-color: #e5bc6b;
+  background: #fffaf0;
+}
+
+body[data-requested-mode="clock"][data-clock-phase="active"] #timeBox {
+  border-color: #84b897;
+  background: #f4fff7;
+}
+
+body[data-requested-mode="clock"][data-clock-phase="ended"] #timeBox {
+  border-color: #a7b4c5;
+  background: #f5f7fa;
+}
+
+body[data-requested-mode="auto"] #nowMetric,
+body[data-requested-mode="auto"] #nextMetric,
+body[data-requested-mode="auto"] #percentMetric,
+body[data-requested-mode="clock"] #nowMetric,
+body[data-requested-mode="clock"] #nextMetric,
+body[data-requested-mode="clock"] #percentMetric {
+  white-space: pre-line;
 }
 
 @media (max-width: 420px) {
