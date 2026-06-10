@@ -85,6 +85,24 @@
     }
   }
 
+  function loadStylesheetOnce(href, marker) {
+    return new Promise((resolve, reject) => {
+      const existing = document.querySelector(`link[${marker}]`);
+      if (existing) {
+        resolve(existing);
+        return;
+      }
+
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = href;
+      link.setAttribute(marker, 'true');
+      link.addEventListener('load', () => resolve(link), { once:true });
+      link.addEventListener('error', reject, { once:true });
+      document.head.appendChild(link);
+    });
+  }
+
   function loadScriptOnce(src, marker) {
     return new Promise((resolve, reject) => {
       const existing = document.querySelector(`script[${marker}]`);
@@ -120,6 +138,12 @@
       await loadScriptOnce('three-mode-clock-core.js', 'data-clock-mode-core');
       await loadScriptOnce('three-mode-clock-mode.js', 'data-clock-mode-ui');
       await loadScriptOnce('three-mode-clock-editor.js', 'data-clock-mode-editor');
+
+      // 第9段階は各モードの表示処理が利用可能になったあとに読み込み、
+      // 最後に描画コーディネーターへ接続します。
+      await loadStylesheetOnce('three-mode-regression.css', 'data-three-mode-regression-style');
+      await loadScriptOnce('three-mode-regression-core.js', 'data-three-mode-regression-core');
+      await loadScriptOnce('three-mode-regression-ui.js', 'data-three-mode-regression-ui');
       await loadScriptOnce('three-mode-auto-render.js', 'data-three-mode-render-coordinator');
     } catch (error) {
       console.error('3モードの追加処理を読み込めませんでした。読み込み済みの従来処理を継続します。', error);
