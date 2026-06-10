@@ -24,19 +24,19 @@
     return fallback;
   }
 
-  function qualitativeProgress(position, count, completed = false) {
+  function qualitativeProgress(position, count, completed = false, completedLabel = '時間終了') {
     const safeCount = Math.max(0, Math.round(Number(count) || 0));
     const safePosition = clamp(Math.round(Number(position) || 0), 0, safeCount);
     if (!safeCount) return '予定なし';
-    if (completed || safePosition >= safeCount) return '時間終了';
+    if (completed || safePosition >= safeCount) return completedLabel;
     if (safePosition <= 0) return '開始前';
     if (safePosition === 1) return 'はじめ';
     if (safePosition >= safeCount - 1) return 'もうすぐ最後';
     return '進行中';
   }
 
-  function progressText(position, count, showNumbers = true, completed = false) {
-    if (!showNumbers) return qualitativeProgress(position, count, completed);
+  function progressText(position, count, showNumbers = true, completed = false, completedLabel = '時間終了') {
+    if (!showNumbers) return qualitativeProgress(position, count, completed, completedLabel);
     const safeCount = Math.max(0, Math.round(Number(count) || 0));
     const safePosition = clamp(Math.round(Number(position) || 0), 0, safeCount);
     return `${safePosition}/${safeCount}`;
@@ -46,9 +46,13 @@
     const completed = timing.completed === true;
     const isLast = timing.isLast === true;
     const overdue = timing.overdue === true;
-    const position = completed
-      ? Number(timing.count || 0)
+    const count = Math.max(0, Number(timing.count) || 0);
+    const currentPosition = completed
+      ? count
       : Math.max(0, Number(timing.currentIndex || 0) + 1);
+    const doneCount = completed
+      ? count
+      : clamp(Math.round(Number(timing.doneCount) || 0), 0, count);
 
     let remaining;
     if (completed) remaining = 'できた！';
@@ -68,7 +72,9 @@
       nextMetric: completed
         ? '完了'
         : (isLast ? 'さいごの予定' : gentleTime(timing.remainingMs, showNumbers, 'すすんでいます')),
-      progress: progressText(position, timing.count, showNumbers, completed)
+      progress: showNumbers
+        ? progressText(doneCount, count, true, completed)
+        : progressText(currentPosition, count, false, completed, 'できた！')
     };
   }
 
