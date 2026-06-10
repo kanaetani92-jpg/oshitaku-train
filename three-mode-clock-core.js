@@ -15,9 +15,34 @@
     return Array.isArray(schedule?.stations) ? schedule.stations.length : 0;
   }
 
+  function effectiveBounds(schedule) {
+    const stations = Array.isArray(schedule?.stations) ? schedule.stations : [];
+    const first = stations[0];
+    const last = stations.at(-1);
+    const scheduleStart = Number(schedule?.startAbs);
+    const scheduleEnd = Number(schedule?.endAbs);
+    const firstStart = Number(first?.arriveAbs);
+    const lastEnd = Number(last?.departAbs);
+
+    const startAbs = Number.isFinite(firstStart)
+      ? Math.min(Number.isFinite(scheduleStart) ? scheduleStart : firstStart, firstStart)
+      : (Number.isFinite(scheduleStart) ? scheduleStart : 0);
+    let endAbs = Number.isFinite(lastEnd)
+      ? Math.max(Number.isFinite(scheduleEnd) ? scheduleEnd : lastEnd, lastEnd)
+      : (Number.isFinite(scheduleEnd) ? scheduleEnd : startAbs);
+    if (endAbs <= startAbs) endAbs = startAbs + 1;
+
+    return {
+      startAbs,
+      endAbs,
+      total: Math.max(1 / 60, endAbs - startAbs)
+    };
+  }
+
   function currentAbsoluteMinutes(schedule, now = new Date()) {
+    const bounds = effectiveBounds(schedule);
     let current = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60 + now.getMilliseconds() / 60000;
-    if (Number(schedule?.endAbs) > DAY_MINUTES && current <= Number(schedule.endAbs) - DAY_MINUTES) {
+    if (bounds.endAbs > DAY_MINUTES && current <= bounds.endAbs - DAY_MINUTES) {
       current += DAY_MINUTES;
     }
     return current;
@@ -49,9 +74,8 @@
     }
 
     const stations = schedule.stations;
-    const startAbs = Number(schedule.startAbs) || 0;
-    const endAbs = Math.max(startAbs, Number(schedule.endAbs) || startAbs);
-    const total = Math.max(1 / 60, Number(schedule.total) || endAbs - startAbs || 1);
+    const bounds = effectiveBounds(schedule);
+    const { startAbs, endAbs, total } = bounds;
     const nowAbs = currentAbsoluteMinutes(schedule, now);
 
     if (nowAbs < startAbs) {
@@ -113,7 +137,10 @@
     const safeNextIndex = nextIndex >= 0 ? nextIndex : count - 1;
     let previousIndex = -1;
     for (let index = 0; index < count; index += 1) {
-      if (Number(stations[index].markerAbs) <= nowAbs) previousIndex = index;
+      const marker = Number(stations[index].markerAbs);
+      const arrive = Number(stations[index].arriveAbs);
+      const comparison = Number.isFinite(marker) ? marker : arrive;
+      if (Number.isFinite(comparison) && comparison <= nowAbs) previousIndex = index;
       else break;
     }
 
@@ -136,6 +163,7 @@
     DAY_MINUTES,
     clamp,
     stationCount,
+    effectiveBounds,
     currentAbsoluteMinutes,
     minutesToHHMM,
     snapshot
