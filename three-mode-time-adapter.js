@@ -117,9 +117,11 @@
       await loadScriptOnce('three-mode-done-timer.js', 'data-done-timer-ui');
       await loadScriptOnce('three-mode-auto-core.js', 'data-auto-timer-core');
       await loadScriptOnce('three-mode-auto-timer.js', 'data-auto-timer-ui');
-      await loadScriptOnce('three-mode-auto-render.js', 'data-auto-timer-render');
+      await loadScriptOnce('three-mode-clock-core.js', 'data-clock-mode-core');
+      await loadScriptOnce('three-mode-clock-mode.js', 'data-clock-mode-ui');
+      await loadScriptOnce('three-mode-auto-render.js', 'data-three-mode-render-coordinator');
     } catch (error) {
-      console.error('タイマーモードの追加処理を読み込めませんでした。読み込み済みの従来処理を継続します。', error);
+      console.error('3モードの追加処理を読み込めませんでした。読み込み済みの従来処理を継続します。', error);
     }
   }
 
