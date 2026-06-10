@@ -20,6 +20,24 @@
     };
   }
 
+  function loadStylesheetOnce(href, marker) {
+    return new Promise((resolve, reject) => {
+      const existing = document.querySelector(`link[${marker}]`);
+      if (existing) {
+        resolve(existing);
+        return;
+      }
+
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = href;
+      link.setAttribute(marker, 'true');
+      link.addEventListener('load', () => resolve(link), { once:true });
+      link.addEventListener('error', reject, { once:true });
+      document.head.appendChild(link);
+    });
+  }
+
   function loadScriptOnce(src, marker) {
     return new Promise((resolve, reject) => {
       const existing = document.querySelector(`script[${marker}]`);
@@ -47,6 +65,7 @@
 
   async function loadStage9Modules() {
     try {
+      await loadStylesheetOnce('three-mode-regression.css', 'data-three-mode-regression-style');
       await loadScriptOnce('three-mode-regression-core.js', 'data-three-mode-regression-core');
       await loadScriptOnce('three-mode-regression-ui.js', 'data-three-mode-regression-ui');
     } catch (error) {
