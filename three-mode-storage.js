@@ -82,12 +82,11 @@
       fallback.requestedMode ?? fallback.mode ?? 'timer'
     );
 
-    // 第3段階では自動タイマーを選択・保存できますが、
-    // 自動進行処理は次段階のため、実行モードは安全なtimerとして保持します。
+    // 自動タイマーはrequestedModeで識別し、既存画面との互換性のため
+    // 内部表示モードは所要時間型のtimerを利用します。
     merged.requestedMode = requestedMode;
     merged.mode = requestedMode === 'auto' ? 'timer' : requestedMode;
 
-    // モード情報を持たない旧プリセットは、従来どおりtimerとして移行します。
     const sourcePresets = Array.isArray(incoming.presets)
       ? incoming.presets
       : (Array.isArray(fallback.presets) ? fallback.presets : []);
@@ -95,7 +94,7 @@
       .map((preset) => normalizePresetMode(preset, 'timer'))
       .filter(Boolean);
 
-    merged.autoRunning = incoming.autoRunning === true;
+    merged.autoRunning = requestedMode === 'auto' && incoming.autoRunning === true;
     merged.autoStartedAt = Number.isFinite(Number(incoming.autoStartedAt))
       ? Number(incoming.autoStartedAt)
       : null;
@@ -105,9 +104,16 @@
         ? Number(incoming.autoPausedElapsedMs)
         : 0
     );
+    merged.autoCompletedNotified = incoming.autoCompletedNotified === true;
 
     if (!merged.autoRunning) merged.autoStartedAt = null;
     if (merged.autoRunning && !merged.autoStartedAt) merged.autoRunning = false;
+    if (requestedMode !== 'auto') {
+      merged.autoRunning = false;
+      merged.autoStartedAt = null;
+      merged.autoPausedElapsedMs = 0;
+      merged.autoCompletedNotified = false;
+    }
 
     merged.schemaVersion = STORAGE_SCHEMA_VERSION;
     return merged;
@@ -123,7 +129,7 @@
     prepared.presets = (Array.isArray(prepared.presets) ? prepared.presets : [])
       .map((preset) => normalizePresetMode(preset, 'timer'))
       .filter(Boolean);
-    prepared.autoRunning = prepared.autoRunning === true;
+    prepared.autoRunning = requestedMode === 'auto' && prepared.autoRunning === true;
     prepared.autoStartedAt = Number.isFinite(Number(prepared.autoStartedAt))
       ? Number(prepared.autoStartedAt)
       : null;
@@ -133,8 +139,16 @@
         ? Number(prepared.autoPausedElapsedMs)
         : 0
     );
+    prepared.autoCompletedNotified = prepared.autoCompletedNotified === true;
+
     if (!prepared.autoRunning) prepared.autoStartedAt = null;
     if (prepared.autoRunning && !prepared.autoStartedAt) prepared.autoRunning = false;
+    if (requestedMode !== 'auto') {
+      prepared.autoRunning = false;
+      prepared.autoStartedAt = null;
+      prepared.autoPausedElapsedMs = 0;
+      prepared.autoCompletedNotified = false;
+    }
     prepared.schemaVersion = STORAGE_SCHEMA_VERSION;
     return prepared;
   }
@@ -172,13 +186,9 @@
   }
 
   const saved = readNewestState();
-  // V20以前はapp.jsが既に移行・検証したstateを利用します。
-  // V21が存在するときだけ、V21を現在のstateへ重ねます。
   const sourceForRuntime = saved.sourceKey === STORAGE_KEY ? saved.value : state;
   state = normalizeRuntimeState(sourceForRuntime, state);
 
-  // V21用の保存処理へ切り替えます。V20以前のキーは削除せず、
-  // 問題が起きた場合に戻せる移行元として残します。
   saveState = function saveThreeModeState() {
     try {
       const prepared = prepareStateForStorage(state);
@@ -214,7 +224,6 @@
     };
   }
 
-  // 既存のモード選択では、app.jsの処理より先に希望モードを同期します。
   document.querySelector('#timerModeBtn')?.addEventListener('click', () => {
     state.requestedMode = 'timer';
   }, { capture:true });
@@ -222,7 +231,6 @@
     state.requestedMode = 'clock';
   }, { capture:true });
 
-  // 新しく保存したプリセットには、保存時点の進み方を標準モードとして付けます。
   const savePresetButton = document.querySelector('#savePresetBtn');
   savePresetButton?.addEventListener('click', () => {
     const preset = state.presets.find((item) => item.id === state.currentPresetId);
@@ -232,8 +240,6 @@
     if (typeof renderPresetControls === 'function') renderPresetControls();
   });
 
-  // 一覧、To Do、初回ガイドなど、どの経路からプリセットを開いても
-  // 保存された標準モードを復元します。
   if (typeof applyPreset === 'function') {
     const baseApplyPreset = applyPreset;
     applyPreset = function applyThreeModePreset(id, options = {}) {
@@ -251,7 +257,6 @@
     };
   }
 
-  // V20以前から読み込んだ場合も、初回読み込み時にV21へ保存します。
   saveState();
 
   if (typeof renderEditor === 'function') renderEditor();
