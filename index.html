@@ -13,7 +13,7 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <link rel="stylesheet" href="style.css?v=1.1" />
+  <link rel="stylesheet" href="style.css?v=1.2" />
 </head>
 <body class="edit-mode timeline-horizontal">
   <div class="app">
@@ -119,7 +119,11 @@
             <p class="field-help">見る画面の上部に表示される予定名です。</p>
             <label for="vehicleSelect">
               <span>乗り物</span>
-              <select id="vehicleSelect"><option>🚃</option><option>🚄</option><option>✈️</option><option>🚌</option><option>🚀</option><option>🚢</option><option>🐰</option></select>
+              <select id="vehicleSelect"><option>🚃</option><option>🚄</option><option>✈️</option><option>🚌</option><option>🚀</option><option>🚢</option><option>🐰</option>
+              <option value="🚢">🚢 船</option>
+              <option value="🚄">🚄 新幹線</option>
+              <option value="🚌">🚌 バス</option>
+            </select>
             </label>
           </section>
 <section class="editor-section">
@@ -407,7 +411,7 @@
   </div>
 
   <output id="selfTestResult" class="visually-hidden"></output>
-  <script src="data-layer.js?v=1.1" defer></script>
-  <script src="app.js?v=1.1" defer></script>
+  <script src="data-layer.js?v=1.2" defer></script>
+  <script src="app.js?v=1.2" defer></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = '1.1';
+  const VERSION = '1.2';
 
   const EMOJI_CATEGORIES = [
     { key: 'common', label: 'よく使う', icons: ['🏠', '👕', '🪥', '🍚', '🎒', '👟', '🛁', '🌙', '⭐', '🎉'] },
@@ -26,8 +26,9 @@
   }
 
 
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoState1.1';
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoState1.2';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoState1.1',
     'oshitakuTrainNoPhotoState1.0',
     'oshitakuTrainNoPhotoStateV47',
     'oshitakuTrainNoPhotoStateV46',
@@ -944,6 +945,20 @@
     }
   }
 
+
+  function vehicleNeedsFlip(vehicle) {
+    return ['🚢', '⛴️', '🛳️', '🚄', '🚅', '🚌'].includes(vehicle);
+  }
+
+  function updateVehicleDirection() {
+    const vehicle = byId('vehicle');
+    if (!vehicle) return;
+    const shouldFlip = vehicleNeedsFlip(state.vehicle);
+    vehicle.classList.toggle('vehicle-flip', shouldFlip);
+    vehicle.dataset.direction = shouldFlip ? 'flipped' : 'normal';
+    vehicle.setAttribute('aria-label', shouldFlip ? `${state.vehicle} 進行方向に合わせて表示` : `${state.vehicle}`);
+  }
+
   function renderTrack(index) {
     const track = byId('track');
     if (!track) return;
@@ -976,6 +991,7 @@ track.append(dot);
       byId('trackDone').style.height = '';
     }
     setText('vehicle', state.vehicle);
+    updateVehicleDirection();
   }
 
   function upcomingTimeLabel(station) {

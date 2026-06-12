@@ -1824,3 +1824,16 @@ body.hide-numbers .number-status-panel,
     transform: translate(-50%, -90%) !important;
   }
 }
+
+
+/* Vehicle direction correction */
+.vehicle.vehicle-flip {
+  transform: translate(-50%, -92%) scaleX(-1) !important;
+  transform-origin: center center;
+}
+
+@media (max-width: 640px) {
+  body.view-mode .vehicle.vehicle-flip {
+    transform: translate(-50%, -90%) scaleX(-1) !important;
+  }
+}
