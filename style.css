@@ -1393,3 +1393,23 @@ body.timeline-horizontal .station-label,
     grid-column: 1 / -1;
   }
 }
+
+
+/* Interval time explanation */
+.station-edit-fields label {
+  position: relative;
+}
+
+.station-edit-fields label:has(.minutes-input-row) {
+  padding: 10px;
+  border: 1px solid #dbeafe;
+  border-radius: 14px;
+  background: #f7fbff;
+}
+
+.station-preview-card small {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #edf4ff;
+  color: #1d4f91;
+}

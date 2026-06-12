@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 37;
+  const VERSION = 38;
 
   const EMOJI_CATEGORIES = [
     { key: 'common', label: 'よく使う', icons: ['🏠', '👕', '🪥', '🍚', '🎒', '👟', '🛁', '🌙', '⭐', '🎉'] },
@@ -26,8 +26,9 @@
   }
 
 
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV37';
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV38';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoStateV37',
     'oshitakuTrainNoPhotoStateV36',
     'oshitakuTrainNoPhotoStateV35',
     'oshitakuTrainNoPhotoStateV34',
@@ -289,6 +290,7 @@
 
     if (!source) {
       const fresh = clone(defaults);
+      normalizeIntervalDurations(fresh.stations);
       return dataLayer ? dataLayer.prepareState(fresh) : fresh;
     }
 
@@ -314,6 +316,7 @@
         ? source.stations
         : migrated.presets[0].stations
     ).map(normalizeStation);
+    normalizeIntervalDurations(migrated.stations);
 
     migrated.todos = (Array.isArray(source.todos) ? source.todos : [])
       .map((todo, index) => {
@@ -637,11 +640,49 @@
     return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
   }
 
+
+  function intervalMinutes(index) {
+    if (!state.stations[index]) return 0;
+    const currentMinutes = Math.max(0, Number(state.stations[index].minutes) || 0);
+    if (currentMinutes > 0) return currentMinutes;
+
+    // Safety net for older data: if the first station was saved as 0 and the next station has time,
+    // treat the next station's minutes as the first interval.
+    if (index === 0 && isLikelyLegacyDestinationDuration(state.stations)) {
+      return Math.max(0, Number(state.stations[1]?.minutes) || 0);
+    }
+    return currentMinutes;
+  }
+
+
   function durationBefore(index) {
     return state.stations.slice(0, index).reduce(
-      (sum, station) => sum + (Number(station.minutes) || 0),
+      (sum, _station, stationIndex) => sum + intervalMinutes(stationIndex),
       0
     );
+  }
+
+
+
+  function isLikelyLegacyDestinationDuration(stations) {
+    if (!Array.isArray(stations) || stations.length < 3) return false;
+    const first = Number(stations[0]?.minutes) || 0;
+    const second = Number(stations[1]?.minutes) || 0;
+    const last = Number(stations[stations.length - 1]?.minutes) || 0;
+    return first === 0 && second > 0 && last === 0;
+  }
+
+  function normalizeIntervalDurations(stations) {
+    if (!Array.isArray(stations)) return stations;
+    if (!isLikelyLegacyDestinationDuration(stations)) return stations;
+
+    for (let index = 0; index < stations.length - 1; index += 1) {
+      stations[index].minutes = Math.max(0, Number(stations[index + 1]?.minutes) || 0);
+      stations[index].updatedAt = new Date().toISOString();
+    }
+    stations[stations.length - 1].minutes = 0;
+    stations[stations.length - 1].updatedAt = new Date().toISOString();
+    return stations;
   }
 
 
@@ -881,7 +922,7 @@
 
     const elapsedInCurrent = Math.max(0, progressElapsedMs() - durationBefore(index) * 60000);
     const currentRemaining = next
-      ? Math.max(0, (Number(current?.minutes) || 0) * 60000 - elapsedInCurrent)
+      ? Math.max(0, intervalMinutes(index) * 60000 - elapsedInCurrent)
       : 0;
     setText('nextMetric', next ? formatDuration(currentRemaining) : 'ゴール');
 
@@ -964,7 +1005,7 @@
 
     state.stations.forEach((station, index) => {
       const isLast = index === state.stations.length - 1;
-      const stationMinutes = Number(station.minutes) || 0;
+      const stationMinutes = intervalMinutes(index);
       const row = document.createElement('article');
       row.className = 'station-edit-card improved-station-card';
       row.dataset.stationIndex = String(index);
@@ -973,7 +1014,7 @@
           <div class="station-number-badge">${index + 1}</div>
           <div>
             <h3>${isLast ? 'ゴール駅' : `${index + 1}番目の駅`}</h3>
-            <p>${isLast ? '最後の駅です。時間は設定しません。' : '子ども画面に出る絵カードを作ります。'}</p>
+            <p>${isLast ? '最後の駅です。時間は設定しません。' : 'この駅から次の駅までの絵と時間を決めます。'}</p>
           </div>
         </div>
 
@@ -999,7 +1040,7 @@
             ${emojiOptionsMarkup(station, index)}
           </div>
 
-          <label class="${isLast ? 'hidden' : ''}">次の駅までの時間
+          <label class="${isLast ? 'hidden' : ''}">この駅から次の駅までの時間
             <div class="minutes-input-row">
               <input data-field="minutes" data-index="${index}" type="number" min="1" max="120" value="${stationMinutes || 5}" aria-label="所要時間（分）">
               <span>分</span>
