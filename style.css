@@ -1837,3 +1837,11 @@ body.hide-numbers .number-status-panel,
     transform: translate(-50%, -90%) scaleX(-1) !important;
   }
 }
+
+
+/* Editor preview removed */
+.station-visual-preview,
+.child-screen-preview,
+.child-preview-card {
+  display: none !important;
+}

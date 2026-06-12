@@ -5,7 +5,8 @@ STATIC_CHECK_RESULT.txt
 TEST_REPORT.md
 app.js
 data-layer.js
-docs/VEHICLE_DIRECTION_FIX.md
+docs/NEXT_TIME_CAUSE_AND_FIX.md
+docs/REMOVE_EDITOR_PREVIEW.md
 icons/favicon-32.png
 icons/icon-192.png
 icons/icon-512.png

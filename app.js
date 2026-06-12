@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = '1.2';
+  const VERSION = '1.2.1';
 
   const EMOJI_CATEGORIES = [
     { key: 'common', label: 'よく使う', icons: ['🏠', '👕', '🪥', '🍚', '🎒', '👟', '🛁', '🌙', '⭐', '🎉'] },
@@ -26,8 +26,9 @@
   }
 
 
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoState1.2';
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoState1.2.1';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoState1.2',
     'oshitakuTrainNoPhotoState1.1',
     'oshitakuTrainNoPhotoState1.0',
     'oshitakuTrainNoPhotoStateV47',
@@ -597,7 +598,7 @@
 
   function totalMinutes() {
     return state.stations.slice(0, -1).reduce(
-      (sum, station) => sum + Math.max(0, Number(station.minutes) || 0),
+      (sum, _station, stationIndex) => sum + intervalMinutes(stationIndex),
       0
     );
   }
@@ -610,7 +611,7 @@
     const minutes = currentElapsed() / 60000;
     let accumulated = 0;
     for (let index = 0; index < state.stations.length - 1; index += 1) {
-      accumulated += Math.max(0, Number(state.stations[index].minutes) || 0);
+      accumulated += intervalMinutes(index);
       if (minutes < accumulated) return index;
     }
     return state.stations.length - 1;
@@ -674,8 +675,10 @@
     if (!Array.isArray(stations) || stations.length < 3) return false;
     const first = Number(stations[0]?.minutes) || 0;
     const second = Number(stations[1]?.minutes) || 0;
-    const last = Number(stations[stations.length - 1]?.minutes) || 0;
-    return first === 0 && second > 0 && last === 0;
+    // Some saved data stores interval minutes on the destination station.
+    // In that format the first station becomes 0, so "つぎまで" is shown as 00:00.
+    // Treat first=0 and second>0 as legacy/destination-duration data, regardless of the last station value.
+    return first === 0 && second > 0;
   }
 
   function normalizeIntervalDurations(stations) {
@@ -1042,15 +1045,6 @@ track.append(dot);
           <div>
             <h3>${isLast ? 'ゴール駅' : `${index + 1}番目の駅`}</h3>
             <p>${isLast ? '最後の駅です。時間は設定しません。' : 'この駅から次の駅までの絵と時間を決めます。'}</p>
-          </div>
-        </div>
-
-        <div class="station-visual-preview" aria-label="子ども画面での見え方">
-          <span class="station-preview-caption">子ども画面ではこう見えます</span>
-          <div class="station-preview-card">
-            <span class="station-preview-icon">${escapeHtml(station.icon || '⭐')}</span>
-            <strong>${escapeHtml(station.name || '予定')}</strong>
-            ${isLast ? '<small>ゴール</small>' : `<small>次まで ${stationMinutes}分</small>`}
           </div>
         </div>
 
@@ -1710,6 +1704,22 @@ track.append(dot);
       check('これからすること表示なし', !document.body.textContent.includes('これからすること'));
       check('数字表示パネルあり', Boolean(byId('numberStatusPanel')));
       check('出発で進み具合が1になる', byId('progressNumberText')?.textContent === `1/${totalStations}`);
+      check('編集プレビュー削除', !document.querySelector('.station-visual-preview') && !document.querySelector('.child-screen-preview'));
+
+      const originalStations = clone(state.stations);
+      state.stations = [
+        { id: 'legacy-1', name: 'おうち', icon: '🏠', minutes: 0 },
+        { id: 'legacy-2', name: 'きがえ', icon: '👕', minutes: 5 },
+        { id: 'legacy-3', name: 'ゴール', icon: '🏁', minutes: 0 }
+      ].map(normalizeStation);
+      normalizeIntervalDurations(state.stations);
+      state.doneIndex = -1;
+      state.elapsedMs = 0;
+      render();
+      check('つぎまでが00:00にならない', byId('nextNumberText')?.textContent === '05:00');
+      state.stations = originalStations;
+      state.doneIndex = -1;
+      state.elapsedMs = 0;
 
       done();
       check('できたで進み具合が2になる', byId('progressNumberText')?.textContent === `2/${totalStations}`);
