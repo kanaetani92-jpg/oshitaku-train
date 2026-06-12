@@ -1,9 +1,10 @@
 (() => {
   'use strict';
 
-  const VERSION = 32;
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV32';
+  const VERSION = 33;
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV33';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoStateV32',
     'oshitakuTrainNoPhotoStateV31',
     'oshitakuTrainNoPhotoStateV30',
     'oshitakuTrainNoPhotoStateV29',
@@ -85,7 +86,7 @@
     cardSize: ['normal', 'large'],
     appearance: ['light', 'dark'],
     contrast: ['standard', 'high'],
-    timelineMode: ['auto', 'horizontal', 'vertical'],
+    timelineMode: ['horizontal'],
     timelineScope: ['all', 'currentNext'],
     doneButtonSize: ['normal', 'large'],
     lateBehavior: ['display', 'wait']
@@ -184,7 +185,7 @@
   function normalizeSettings(source) {
     const incoming = source && typeof source === 'object' ? source : {};
     const legacy = {
-      timelineMode: incoming.timelineMode,
+      timelineMode: 'horizontal',
       showTopCards: incoming.showTopCards,
       showUpcoming: incoming.showBottomCards,
       showNumbers: incoming.showNumbers,
@@ -622,12 +623,12 @@
 
 
   function effectiveTimelineMode() {
-    if (state.settings.timelineMode !== 'auto') return state.settings.timelineMode;
-    return window.matchMedia('(max-width: 620px)').matches ? 'vertical' : 'horizontal';
+    return 'horizontal';
   }
 
   function applySettings() {
     state.settings = normalizeSettings(state.settings);
+    state.settings.timelineMode = 'horizontal';
     const root = document.documentElement;
     root.dataset.fontSize = state.settings.fontSize;
     root.dataset.cardSize = state.settings.cardSize;
@@ -879,16 +880,14 @@
     const progress = index / last * 100;
     track.style.setProperty('--track-progress', `${progress}%`);
     track.style.setProperty('--station-count', String(state.stations.length));
-    track.style.height = effectiveTimelineMode() === 'vertical'
-      ? `${Math.max(320, state.stations.length * 86)}px`
-      : '';
+    track.style.height = '';
     if (byId('vehicle')) {
       byId('vehicle').style.left = `${progress}%`;
-      byId('vehicle').style.top = effectiveTimelineMode() === 'vertical' ? `${progress}%` : '';
+      byId('vehicle').style.top = '';
     }
     if (byId('trackDone')) {
-      byId('trackDone').style.width = effectiveTimelineMode() === 'vertical' ? '100%' : `${progress}%`;
-      byId('trackDone').style.height = effectiveTimelineMode() === 'vertical' ? `${progress}%` : '';
+      byId('trackDone').style.width = `${progress}%`;
+      byId('trackDone').style.height = '';
     }
     setText('vehicle', state.vehicle);
   }
@@ -1581,7 +1580,7 @@
     });
 
     window.addEventListener('resize', () => {
-      if (state.settings.timelineMode === 'auto') render();
+      render();
     });
 
     window.addEventListener('error', (event) => {

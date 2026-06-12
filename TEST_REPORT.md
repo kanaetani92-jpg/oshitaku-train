@@ -1,4 +1,4 @@
-# Android・iPhoneスマホ配置統一 修正レポート
+# 横軸タイムライン固定 修正レポート
 
 ## 確認結果
 
@@ -6,26 +6,23 @@
 - data-layer.js: OK
 - service-worker.js: OK
 - HTML ID重複：なし
-- initAccountAuthUi呼び出し削除：OK
-- 未定義accountページ初期値削除：OK
-- metricsセクション削除：OK
-- nowMetric削除：OK
-- nextMetric削除：OK
-- percentMetric削除：OK
-- 大きい絵カード内のいますること削除：OK
-- スマホ共通Gridあり：OK
-- Android/iPhone共通CSSあり：OK
-- status-areaをスマホで非表示：OK
-- currentCardが1番目：OK
-- actionRowが2番目：OK
-- doneBtnが前の駅より先：OK
-- trackWrapがtimer前：OK
-- 保存形式V32：OK
-- PWA V32：OK
-- HTML参照V32：OK
+- effectiveTimelineModeがhorizontal固定：OK
+- timelineMode enumがhorizontalのみ：OK
+- normalizeでhorizontal固定：OK
+- 縦ボタン削除：OK
+- auto方向ボタン削除：OK
+- 横ボタンも操作UIから削除：OK
+- 横軸表示ノートあり：OK
+- 横軸固定CSSあり：OK
+- track横幅100：OK
+- track高さ14：OK
+- 保存形式V33：OK
+- PWA V33：OK
+- HTML参照V33：OK
 
 ## 未確認
 
+- PC実ブラウザ
 - iPhone Safari実機
 - Android Chrome実機
 - Service Workerの実登録

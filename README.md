@@ -1,36 +1,27 @@
-# おしたくトレイン Android・iPhoneスマホ配置統一版
+# おしたくトレイン 横軸タイムライン固定版
 
 作成日：2026-06-12
 
-この版では、Android Chrome と iPhone Safari で子ども画面の配置が同じになるよう、スマホ共通レイアウトを整理しました。
+この版では、Web版・スマホ版ともに、タイムラインを横軸表示へ固定しました。
 
 ## 実施内容
 
-- 起動時の `initAccountAuthUi()` エラーを削除
-- iPhone/Androidを端末判定せず、`max-width: 640px` のスマホ共通CSSへ統一
-- スマホ子ども画面をCSS Gridで固定
-- 表示順を次に統一
+- `effectiveTimelineMode()` を常に `horizontal` に変更
+- 旧保存データで `auto` や `vertical` が残っていても横軸へ移行
+- 設定画面から縦表示の選択肢を削除
+- CSSで `timeline-vertical` が残っても横軸表示になるよう上書き
+- PWAキャッシュと保存形式をV33へ更新
 
-1. 大きい絵カード
-2. できた！
-3. 前の駅にもどる
-4. タイムライン
-5. タイマー操作
-6. これからすること
+## 表示方針
 
-## 削除・非表示
-
-- 進捗パネル `metrics`
-- `いま`
-- `つぎまで`
-- 進捗ラベルとしての `できた`
-- 大きい絵カード内の `いますること` ラベル
-
-`できた！` ボタンは必要な操作として残しています。
+- PC / Web版：横軸タイムライン
+- Android：横軸タイムライン
+- iPhone：横軸タイムライン
+- タブレット：横軸タイムライン
 
 ## 保存形式
 
-`oshitakuTrainNoPhotoStateV32`
+`oshitakuTrainNoPhotoStateV33`
 
 ## GitHub
 

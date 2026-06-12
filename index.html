@@ -13,7 +13,7 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <link rel="stylesheet" href="style.css?v=32" />
+  <link rel="stylesheet" href="style.css?v=33" />
 </head>
 <body class="edit-mode timeline-horizontal">
   <div class="app">
@@ -182,11 +182,7 @@
           <h2 id="timelineSettingsTitle">2．タイムライン</h2>
           <div class="setting-group">
             <span class="setting-label">表示方向</span>
-            <div class="segmented-control segmented-control--three" role="radiogroup" aria-label="タイムラインの表示方向">
-              <button type="button" data-setting="timelineMode" data-value="auto">自動</button>
-              <button type="button" data-setting="timelineMode" data-value="horizontal">横</button>
-              <button type="button" data-setting="timelineMode" data-value="vertical">縦</button>
-            </div>
+            <div class="timer-only-note horizontal-timeline-note" role="note"><strong>横軸表示</strong><span>Web版・スマホ版ともに、タイムラインは横方向で表示します。</span></div>
           </div>
           <div class="setting-group">
             <span class="setting-label">表示する駅</span>
@@ -415,7 +411,7 @@
   </div>
 
   <output id="selfTestResult" class="visually-hidden"></output>
-  <script src="data-layer.js?v=32" defer></script>
-  <script src="app.js?v=32" defer></script>
+  <script src="data-layer.js?v=33" defer></script>
+  <script src="app.js?v=33" defer></script>
 </body>
 </html>
