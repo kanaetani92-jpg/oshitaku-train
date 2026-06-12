@@ -1,27 +1,25 @@
-# おしたくトレイン 横軸タイムライン固定版
+# おしたくトレイン 最終修正版：これからすること削除・時間表示反映
 
 作成日：2026-06-12
 
-この版では、Web版・スマホ版ともに、タイムラインを横軸表示へ固定しました。
+このZIPは、以下の修正を反映した版です。
 
-## 実施内容
+## 修正内容
 
-- `effectiveTimelineMode()` を常に `horizontal` に変更
-- 旧保存データで `auto` や `vertical` が残っていても横軸へ移行
-- 設定画面から縦表示の選択肢を削除
-- CSSで `timeline-vertical` が残っても横軸表示になるよう上書き
-- PWAキャッシュと保存形式をV33へ更新
-
-## 表示方針
-
-- PC / Web版：横軸タイムライン
-- Android：横軸タイムライン
-- iPhone：横軸タイムライン
-- タブレット：横軸タイムライン
+- 「これからすること」の表示を削除
+- `upcoming-section` / `upcomingCards` / `showUpcomingToggle` を削除
+- 大きい絵カード内に「ゴールまで」の残り時間を表示
+- 「できた！」を押すと、完了した駅の時間ぶん残り時間がすぐ減る
+- 「前の駅にもどる」を押すと、戻った駅の時間に合わせて残り時間が戻る
+- 古いPWAキャッシュと混ざりにくいよう、保存形式とキャッシュをV36へ更新
 
 ## 保存形式
 
-`oshitakuTrainNoPhotoStateV33`
+`oshitakuTrainNoPhotoStateV36`
+
+## PWAキャッシュ
+
+`oshitaku-train-pwa-v36`
 
 ## GitHub
 

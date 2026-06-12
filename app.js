@@ -1,9 +1,12 @@
 (() => {
   'use strict';
 
-  const VERSION = 33;
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV33';
+  const VERSION = 36;
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV36';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoStateV35',
+    'oshitakuTrainNoPhotoStateV34',
+    'oshitakuTrainNoPhotoStateV33',
     'oshitakuTrainNoPhotoStateV32',
     'oshitakuTrainNoPhotoStateV31',
     'oshitakuTrainNoPhotoStateV30',
@@ -67,7 +70,7 @@
     timelineMode: 'horizontal',
     timelineScope: 'all',
     showTopCards: true,
-    showUpcoming: true,
+    showUpcoming: false,
     showNumbers: true,
     arrivalSound: true,
     speech: false,
@@ -594,8 +597,14 @@
     return index;
   }
 
+  function progressElapsedMs() {
+    const index = activeIndex();
+    const completedBaseline = durationBefore(index) * 60000;
+    return Math.max(currentElapsed(), completedBaseline);
+  }
+
   function remainingMs() {
-    return Math.max(0, totalMinutes() * 60000 - currentElapsed());
+    return Math.max(0, totalMinutes() * 60000 - progressElapsedMs());
   }
 
   function formatDuration(milliseconds) {
@@ -673,7 +682,6 @@
     const toggles = {
       reduceMotionToggle: 'reduceMotion',
       showTopCardsToggle: 'showTopCards',
-      showUpcomingToggle: 'showUpcoming',
       showNumbersToggle: 'showNumbers',
       arrivalSoundToggle: 'arrivalSound',
       speechToggle: 'speech',
@@ -774,7 +782,6 @@
       renderCurrentCard(index);
       renderTimeInformation(index);
       renderTrack(index);
-      renderUpcoming(index);
       renderEditor();
       renderTodos();
       renderPresets();
@@ -835,7 +842,9 @@
     const current = state.stations[index];
     const next = state.stations[index + 1];
 
-    setText('remainingText', formatDuration(remainingMs()));
+    const goalRemainingText = formatDuration(remainingMs());
+    setText('remainingText', goalRemainingText);
+    setText('childRemainingText', goalRemainingText);
     setText('timeLabel', 'ゴールまで');
     const late = isCurrentStationLate(index);
     const lateMessage = state.settings.lateBehavior === 'wait'
@@ -845,7 +854,7 @@
     byId('nextBox')?.classList.toggle('late', late);
     setText('nowMetric', current?.name || '予定');
 
-    const elapsedInCurrent = Math.max(0, currentElapsed() - durationBefore(index) * 60000);
+    const elapsedInCurrent = Math.max(0, progressElapsedMs() - durationBefore(index) * 60000);
     const currentRemaining = next
       ? Math.max(0, (Number(current?.minutes) || 0) * 60000 - elapsedInCurrent)
       : 0;
@@ -900,37 +909,7 @@
 
   function renderUpcoming(index) {
     const box = byId('upcomingCards');
-    if (!box) return;
-    box.replaceChildren();
-
-    const upcoming = state.settings.timelineScope === 'currentNext'
-      ? state.stations.slice(index + 1, index + 2)
-      : state.stations.slice(index + 1);
-    if (!upcoming.length) {
-      const empty = document.createElement('p');
-      empty.className = 'upcoming-empty';
-      empty.textContent = 'これからの予定はありません。';
-      box.append(empty);
-      return;
-    }
-
-    upcoming.forEach((station) => {
-      const card = document.createElement('div');
-      card.className = 'upcoming-card';
-
-      const icon = document.createElement('span');
-      icon.className = 'upcoming-icon';
-      icon.textContent = station.icon;
-
-      const name = document.createElement('strong');
-      name.textContent = station.name;
-
-      const time = document.createElement('small');
-      time.textContent = upcomingTimeLabel(station);
-
-      card.append(icon, name, time);
-      box.append(card);
-    });
+    if (box) box.replaceChildren();
   }
 
   function escapeHtml(value) {
@@ -1168,7 +1147,17 @@
   function done() {
     if (state.settings.mistakePrevention && !window.confirm('「できた！」で次の予定へ進みますか？')) return;
     hideUndo();
+
+    const wasRunning = state.running;
+    const beforeElapsed = currentElapsed();
     state.doneIndex = Math.min(state.doneIndex + 1, state.stations.length - 1);
+
+    const newActiveIndex = activeIndex();
+    const completedBaseline = durationBefore(newActiveIndex) * 60000;
+    state.elapsedMs = Math.max(beforeElapsed, completedBaseline);
+    state.startedAt = wasRunning ? nowMs() : null;
+    state.running = wasRunning && state.doneIndex < state.stations.length - 1;
+
     const next = state.stations[state.doneIndex + 1];
     playTone(state.doneIndex >= state.stations.length - 1 ? 'complete' : 'arrival');
     if (next) speakText(next.name);
@@ -1433,7 +1422,6 @@
     const toggleSettings = {
       reduceMotionToggle: 'reduceMotion',
       showTopCardsToggle: 'showTopCards',
-      showUpcomingToggle: 'showUpcoming',
       showNumbersToggle: 'showNumbers',
       arrivalSoundToggle: 'arrivalSound',
       speechToggle: 'speech',
@@ -1603,7 +1591,7 @@
     const originalSnapshot = clone(state);
     try {
       state.mode = 'timer';
-      state.uiMode = 'edit';
+      state.uiMode = 'view';
       state.currentPage = 'schedule';
       state.doneIndex = -1;
       state.elapsedMs = 0;
@@ -1614,23 +1602,20 @@
       hideUndo();
       render();
 
-      check('プレビュー文言なし', !document.body.textContent.includes('プレビュー'));
-      check('編集画面にタイマー操作を表示しない', !document.getElementById('editorPanel')?.textContent.includes('タイマー操作'));
-
-      startPlan();
-      check('この予定で始めるは子ども画面へ移動', state.uiMode === 'view' && state.currentPage === 'schedule');
-      check('この予定で始めるではタイマー開始しない', state.running === false);
-      check('見るモードにタイマー操作を表示', !byId('viewTimerControls')?.classList.contains('hidden'));
-
-      startTimer();
-      check('見るモードでスタートできる', state.running === true);
-      pauseTimer();
-      check('見るモードで一時停止できる', state.running === false);
-
+      check('これからすること表示なし', !document.body.textContent.includes('これからすること'));
+      check('子ども画面に残り時間表示あり', Boolean(byId('childRemainingText')));
+      const beforeRemaining = remainingMs();
+      const beforeText = byId('childRemainingText')?.textContent || '';
       done();
-      check('できたで次の駅へ進む', activeIndex() === 1);
+      const afterRemaining = remainingMs();
+      const afterText = byId('childRemainingText')?.textContent || '';
+      check('できたで残り時間が減る', afterRemaining < beforeRemaining);
+      check('できたで残り時間表示が変わる', beforeText !== afterText);
+
       previousStation();
+      const previousText = byId('childRemainingText')?.textContent || '';
       check('前の駅へ戻る', activeIndex() === 0);
+      check('前の駅へ戻ると残り時間表示が戻る', previousText !== afterText);
 
       state = originalSnapshot;
       previousActionLocked = false;
@@ -1652,7 +1637,7 @@
     document.title = results.some((result) => result.startsWith('FAIL'))
       ? 'SELFTEST_FAIL'
       : 'SELFTEST_PASS';
-    console.log(results.join('\n'));
+    console.log(results.join('\\n'));
   }
 
   const initialPage = new URLSearchParams(location.search).get('page');

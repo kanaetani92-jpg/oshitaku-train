@@ -13,7 +13,7 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <link rel="stylesheet" href="style.css?v=33" />
+  <link rel="stylesheet" href="style.css?v=36" />
 </head>
 <body class="edit-mode timeline-horizontal">
   <div class="app">
@@ -42,6 +42,7 @@
           <section id="currentCard" class="current-card" aria-label="現在の大きい絵カード">
             <span id="currentIcon" class="current-icon">🏠</span>
             <strong id="currentName">おうち</strong>
+            <div id="childTimeBox" class="child-time-box" aria-live="polite" aria-atomic="true"><small>ゴールまで</small><strong id="childRemainingText">20:00</strong></div>
           </section>
 
           <section id="actionRow" class="action-row" aria-label="予定を進める操作">
@@ -60,11 +61,6 @@
 
           <section class="track-wrap" aria-label="予定の進み具合">
             <div id="track" class="track"><div id="trackDone" class="track-done"></div><div id="vehicle" class="vehicle">🚃</div></div>
-          </section>
-
-          <section class="upcoming-section" aria-labelledby="upcomingTitle">
-            <h2 id="upcomingTitle" class="section-title">これからすること</h2>
-            <div id="upcomingCards" class="upcoming-grid"></div>
           </section>
 <p id="completion" class="completion hidden" role="status">🎉 ゴールです。よくできました！</p>
         </main>
@@ -192,8 +188,7 @@
             </div>
           </div>
           <label class="switch-row" for="showTopCardsToggle"><span><strong>上の大きな絵カードを表示</strong></span><input id="showTopCardsToggle" type="checkbox" role="switch" /></label>
-          <label class="switch-row" for="showUpcomingToggle"><span><strong>これからの絵カードを表示</strong></span><input id="showUpcomingToggle" type="checkbox" role="switch" /></label>
-          <label class="switch-row" for="showNumbersToggle"><span><strong>数字を表示</strong><small>残り時間と進み具合を数字で表示します</small></span><input id="showNumbersToggle" type="checkbox" role="switch" /></label>
+<label class="switch-row" for="showNumbersToggle"><span><strong>数字を表示</strong><small>残り時間と進み具合を数字で表示します</small></span><input id="showNumbersToggle" type="checkbox" role="switch" /></label>
         </section>
 
         <section class="card settings-card" aria-labelledby="audioSettingsTitle">
@@ -411,7 +406,7 @@
   </div>
 
   <output id="selfTestResult" class="visually-hidden"></output>
-  <script src="data-layer.js?v=33" defer></script>
-  <script src="app.js?v=33" defer></script>
+  <script src="data-layer.js?v=36" defer></script>
+  <script src="app.js?v=36" defer></script>
 </body>
 </html>

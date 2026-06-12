@@ -4,16 +4,19 @@
 - data-layer.js: OK
 - service-worker.js: OK
 - HTML ID重複：なし
-- effectiveTimelineModeがhorizontal固定：OK
-- timelineMode enumがhorizontalのみ：OK
-- normalizeでhorizontal固定：OK
-- 縦ボタン削除：OK
-- auto方向ボタン削除：OK
-- 横ボタンも操作UIから削除：OK
-- 横軸表示ノートあり：OK
-- 横軸固定CSSあり：OK
-- track横幅100：OK
-- track高さ14：OK
-- 保存形式V33：OK
-- PWA V33：OK
-- HTML参照V33：OK
+- これからすること表示削除：OK
+- upcoming-section削除：OK
+- upcomingCards削除：OK
+- showUpcomingToggle削除：OK
+- 子ども用残り時間HTMLあり：OK
+- 子ども用残り時間CSSあり：OK
+- renderでchildRemainingText更新：OK
+- progressElapsedMs追加：OK
+- remainingMsがprogressElapsedMs使用：OK
+- doneでcompletedBaseline使用：OK
+- doneでelapsedMs更新：OK
+- previousでelapsedMs戻し：OK
+- 保存形式V36：OK
+- PWA V36：OK
+- HTML参照V36：OK
+- 残り時間の数値シミュレーション：OK

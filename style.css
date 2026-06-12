@@ -846,7 +846,6 @@ button {
       "actions"
       "timeline"
       "timer"
-      "upcoming"
       "completion";
     gap: 12px;
     padding: 12px;
@@ -1041,5 +1040,110 @@ body.timeline-horizontal .station-label,
     width: min(96px, 24vw);
     transform: translateX(-50%);
     text-align: center;
+  }
+}
+
+
+/* Remove upcoming cards display */
+.upcoming-section,
+#upcomingCards,
+.hide-upcoming .upcoming-section {
+  display: none !important;
+}
+
+
+/* Visible goal remaining time in child card */
+.child-time-box {
+  display: grid;
+  gap: 4px;
+  min-width: min(220px, 100%);
+  padding: 10px 16px;
+  border: 2px solid #dbeafe;
+  border-radius: 18px;
+  background: #f6f9ff;
+  color: #1d4f91;
+  text-align: center;
+}
+
+.child-time-box small {
+  display: block;
+  font-weight: 900;
+  letter-spacing: .02em;
+}
+
+.child-time-box strong {
+  display: block;
+  font-size: clamp(1.55rem, 7vw, 2.35rem);
+  line-height: 1.1;
+}
+
+.upcoming-section,
+#upcomingCards,
+.hide-upcoming .upcoming-section {
+  display: none !important;
+}
+
+@media (max-width: 640px) {
+  body.view-mode #currentCard,
+  body.view-mode .current-card {
+    align-content: center;
+    grid-template-rows: auto auto auto;
+    gap: 10px;
+  }
+
+  body.view-mode .child-time-box {
+    width: min(260px, 92%);
+    margin-top: 2px;
+  }
+
+  body.view-mode .status-area {
+    display: none !important;
+  }
+}
+
+
+/* Final remove upcoming display */
+.upcoming-section,
+#upcomingCards,
+[data-section="upcoming"] {
+  display: none !important;
+}
+
+
+/* Final child time display */
+.child-time-box {
+  display: grid;
+  gap: 4px;
+  min-width: min(220px, 100%);
+  padding: 10px 16px;
+  border: 2px solid #dbeafe;
+  border-radius: 18px;
+  background: #f6f9ff;
+  color: #1d4f91;
+  text-align: center;
+}
+
+.child-time-box small {
+  display: block;
+  font-weight: 900;
+}
+
+.child-time-box strong {
+  display: block;
+  font-size: clamp(1.55rem, 7vw, 2.35rem);
+  line-height: 1.1;
+}
+
+@media (max-width: 640px) {
+  body.view-mode #currentCard,
+  body.view-mode .current-card {
+    align-content: center;
+    grid-template-rows: auto auto auto;
+    gap: 10px;
+  }
+
+  body.view-mode .child-time-box {
+    width: min(260px, 92%);
+    margin-top: 2px;
   }
 }
