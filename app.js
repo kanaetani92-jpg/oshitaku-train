@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 45;
+  const VERSION = 46;
 
   const EMOJI_CATEGORIES = [
     { key: 'common', label: 'よく使う', icons: ['🏠', '👕', '🪥', '🍚', '🎒', '👟', '🛁', '🌙', '⭐', '🎉'] },
@@ -26,8 +26,9 @@
   }
 
 
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV45';
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV46';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoStateV45',
     'oshitakuTrainNoPhotoStateV44',
     'oshitakuTrainNoPhotoStateV43',
     'oshitakuTrainNoPhotoStateV42',
@@ -909,6 +910,15 @@
     setText('currentName', station?.name || '予定');
   }
 
+
+  function completedStationCount(index = activeIndex()) {
+    const total = state.stations.length;
+    if (!total) return 0;
+    if (index >= total - 1) return total;
+    return Math.max(0, Math.min(total, state.doneIndex + 1));
+  }
+
+
   function renderTimeInformation(index) {
     const current = state.stations[index];
     const next = state.stations[index + 1];
@@ -925,7 +935,7 @@
       ? Math.max(0, intervalMinutes(index) * 60000 - elapsedInCurrent)
       : 0;
 
-    const completed = Math.max(0, state.doneIndex + 1);
+    const completed = completedStationCount(index);
     const totalStations = Math.max(0, state.stations.length);
     const totalGoalRemaining = remainingMs();
 
@@ -1730,16 +1740,22 @@ track.append(dot);
       check('これからすること表示なし', !document.body.textContent.includes('これからすること'));
       check('数字表示パネルあり', Boolean(byId('numberStatusPanel')));
       check('数字表示ONで見える', !byId('numberStatusPanel')?.classList.contains('hidden'));
-      const beforeRemaining = byId('remainingNumberText')?.textContent || '';
+
+      const totalStations = state.stations.length;
       const beforeProgress = byId('progressNumberText')?.textContent || '';
       done();
-      const afterRemaining = byId('remainingNumberText')?.textContent || '';
       const afterProgress = byId('progressNumberText')?.textContent || '';
-      check('できたで残り時間表示が変わる', beforeRemaining !== afterRemaining);
       check('できたで進み具合表示が変わる', beforeProgress !== afterProgress);
 
+      state.doneIndex = totalStations - 2;
+      state.elapsedMs = totalMinutes() * 60000;
+      state.running = false;
+      state.startedAt = null;
+      render();
+      check('ゴールで進み具合が満点になる', byId('progressNumberText')?.textContent === `${totalStations}/${totalStations}`);
+
       previousStation();
-      check('前の駅へ戻る', activeIndex() === 0);
+      check('前の駅へ戻る', activeIndex() === Math.max(0, totalStations - 2));
 
       state.settings.showNumbers = false;
       render();
