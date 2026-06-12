@@ -1,9 +1,10 @@
 (() => {
   'use strict';
 
-  const VERSION = 30;
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV30';
+  const VERSION = 31;
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV31';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoStateV30',
     'oshitakuTrainNoPhotoStateV29',
     'oshitakuTrainNoPhotoStateV28',
     'oshitakuTrainNoPhotoStateV27',

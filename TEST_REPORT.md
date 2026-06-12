@@ -1,4 +1,4 @@
-# 子ども画面タイマー操作・プレビュー削除 修正レポート
+# スマホ表示順整理・進捗パネル削除 修正レポート
 
 ## 確認結果
 
@@ -6,16 +6,20 @@
 - data-layer.js: OK
 - service-worker.js: OK
 - HTML ID重複：なし
-- プレビューボタン削除：OK
-- プレビュー中バナー削除：OK
-- 表示上のプレビュー文言なし：OK
-- 子ども画面へ進むボタンあり：OK
-- 編集画面からタイマー操作削除：OK
-- 子ども画面タイマー操作あり：OK
-- startPlanはrunning trueにしない：OK
-- 保存形式V30：OK
-- PWA V30：OK
-- HTML参照V30：OK
+- metricsセクション削除：OK
+- nowMetric削除：OK
+- nextMetric削除：OK
+- percentMetric削除：OK
+- 進捗ラベル『いま』削除：OK
+- 進捗ラベル『つぎまで』削除：OK
+- 進捗ラベル『できた』削除：OK
+- スマホ順序CSSあり：OK
+- 大きい絵カード順序：OK
+- できたと前の駅ボタン順序：OK
+- タイムラインがタイマー操作より前：OK
+- 保存形式V31：OK
+- PWA V31：OK
+- HTML参照V31：OK
 
 ## 未確認
 

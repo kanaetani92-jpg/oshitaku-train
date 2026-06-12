@@ -774,3 +774,59 @@ body.view-mode .view-timer-controls.hidden {
     grid-column: auto;
   }
 }
+
+
+/* Mobile child view order cleanup */
+.progress-panel {
+  display: none !important;
+}
+
+@media (max-width: 640px) {
+  body.view-mode .main-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  body.view-mode .status-area {
+    order: 0;
+  }
+
+  body.view-mode .current-card-section,
+  body.view-mode #currentCardSection {
+    order: 1;
+  }
+
+  body.view-mode .action-row {
+    order: 2;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  body.view-mode .done-btn {
+    order: 1;
+  }
+
+  body.view-mode .previous-station-btn,
+  body.view-mode #previousStationBtn {
+    order: 2;
+  }
+
+  body.view-mode .track-wrap {
+    order: 3;
+  }
+
+  body.view-mode .view-timer-controls,
+  body.view-mode #viewTimerControls {
+    order: 4;
+  }
+
+  body.view-mode .upcoming-section,
+  body.view-mode #upcomingSection {
+    order: 5;
+  }
+
+  body.view-mode .completion {
+    order: 6;
+  }
+}
