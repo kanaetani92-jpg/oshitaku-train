@@ -1,26 +1,27 @@
-# おしたくトレイン タイムライン→タイマー操作順修正版
+# おしたくトレイン ゴール文言削除版
 
 作成日：2026-06-12
 
-この版では、PC版・スマホ版ともに、タイムラインがタイマー操作より上に来るように表示順を明示しました。
+この版では、残っていた `completion` の「🎉 ゴールです。よくできました！」表示を削除しました。
 
 ## 修正内容
 
-- PC版で `タイムライン → タイマー操作` の順番になるようCSSで明示
-- スマホ版で `カード → できた！ → タイムライン → タイマー操作` の順番になるようCSSで明示
-- `.track-wrap` を `order: 30`
-- `#viewTimerControls` を `order: 40`
-- DOM順も `actionRow → track-wrap → viewTimerControls` になるよう補正
+- `class="completion"` のゴール表示要素をHTMLから削除
+- 「🎉 ゴールです。よくできました！」の文言を削除
+- JavaScript側の completion 表示更新・表示切替処理を削除
+- 古いHTMLやPWAキャッシュが混ざった場合に備えて、CSSでも `.completion` を非表示
+- スマホ用gridの `completion` 行を削除
+- タイムライン → タイマー操作の順番は維持
 - ゴールまで時間表示の削除、絵文字UI、駅間時間補正は維持
-- 保存形式とPWAキャッシュをV41へ更新
+- 保存形式とPWAキャッシュをV42へ更新
 
 ## 保存形式
 
-`oshitakuTrainNoPhotoStateV41`
+`oshitakuTrainNoPhotoStateV42`
 
 ## PWAキャッシュ
 
-`oshitaku-train-pwa-v41`
+`oshitaku-train-pwa-v42`
 
 ## GitHub
 

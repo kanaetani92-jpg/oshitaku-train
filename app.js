@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 41;
+  const VERSION = 42;
 
   const EMOJI_CATEGORIES = [
     { key: 'common', label: 'よく使う', icons: ['🏠', '👕', '🪥', '🍚', '🎒', '👟', '🛁', '🌙', '⭐', '🎉'] },
@@ -26,8 +26,9 @@
   }
 
 
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV41';
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV42';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoStateV41',
     'oshitakuTrainNoPhotoStateV40',
     'oshitakuTrainNoPhotoStateV39',
     'oshitakuTrainNoPhotoStateV38',
@@ -893,8 +894,6 @@
         resetButton.disabled = !childViewActive && state.uiMode !== 'edit';
         resetButton.setAttribute('aria-disabled', String(resetButton.disabled));
       }
-
-      byId('completion')?.classList.toggle('hidden', index < state.stations.length - 1);
     } catch (error) {
       console.error('描画エラー', error);
       showError('画面の一部を表示できませんでした。');
