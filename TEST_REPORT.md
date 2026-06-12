@@ -1,4 +1,4 @@
-# ZIP出力版 動作確認レポート
+# 編集画面・絵文字選択UI改善レポート
 
 ## 確認結果
 
@@ -6,26 +6,24 @@
 - data-layer.js: OK
 - service-worker.js: OK
 - HTML ID重複：なし
-- これからすること表示削除：OK
-- upcoming-section削除：OK
-- upcomingCards削除：OK
-- showUpcomingToggle削除：OK
-- 子ども用残り時間HTMLあり：OK
-- 子ども用残り時間CSSあり：OK
-- renderでchildRemainingText更新：OK
-- progressElapsedMs追加：OK
-- remainingMsがprogressElapsedMs使用：OK
-- doneでcompletedBaseline使用：OK
-- doneでelapsedMs更新：OK
-- previousでelapsedMs戻し：OK
-- 保存形式V36：OK
-- PWA V36：OK
-- HTML参照V36：OK
-- 残り時間の数値シミュレーション：OK
+- 絵文字カテゴリ定義あり：OK
+- 絵文字候補HTML生成あり：OK
+- 駅カード改善クラスあり：OK
+- 子ども画面プレビューあり：OK
+- 絵文字候補ボタンあり：OK
+- 絵文字クリック処理あり：OK
+- 入力即時反映あり：OK
+- 選択中絵文字強調CSSあり：OK
+- 編集ガイドあり：OK
+- 保存形式V37：OK
+- PWA V37：OK
+- HTML参照V37：OK
+- これからすること未復活：OK
+- childRemainingText維持：OK
 
 ## 未確認
 
-- PC実ブラウザ
+- PC実ブラウザでの絵文字選択
 - iPhone Safari実機
 - Android Chrome実機
 - Service Workerの実登録

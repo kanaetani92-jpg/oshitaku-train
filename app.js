@@ -1,9 +1,34 @@
 (() => {
   'use strict';
 
-  const VERSION = 36;
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV36';
+  const VERSION = 37;
+
+  const EMOJI_CATEGORIES = [
+    { key: 'common', label: 'よく使う', icons: ['🏠', '👕', '🪥', '🍚', '🎒', '👟', '🛁', '🌙', '⭐', '🎉'] },
+    { key: 'morning', label: '朝の支度', icons: ['🏠', '☀️', '👕', '🪥', '🍚', '🥛', '🎒', '👟', '🧢', '🚻'] },
+    { key: 'move', label: '移動', icons: ['🚶', '🚗', '🚲', '🚌', '🚃', '✈️', '🚪', '🏫', '🏡', '🛤️'] },
+    { key: 'school', label: '学校・園', icons: ['🏫', '📛', '📚', '✏️', '🎨', '🎵', '⚽', '🍱', '🧃', '🧑‍🏫'] },
+    { key: 'life', label: '生活', icons: ['🛁', '🧴', '🧺', '🍽️', '🧸', '📺', '📖', '💤', '🌙', '🛏️'] },
+    { key: 'reward', label: 'ごほうび', icons: ['⭐', '🎉', '💎', '🏆', '🍪', '🎈', '🧁', '🌈', '💮', '👏'] }
+  ];
+
+  function emojiOptionsMarkup(station, stationIndex) {
+    const currentIcon = station?.icon || '⭐';
+    const categories = EMOJI_CATEGORIES.map(category => {
+      const buttons = category.icons.map(icon => {
+        const selected = icon === currentIcon ? ' selected' : '';
+        const pressed = icon === currentIcon ? 'true' : 'false';
+        return `<button class="emoji-choice${selected}" type="button" data-station-index="${stationIndex}" data-emoji="${escapeHtml(icon)}" aria-pressed="${pressed}" aria-label="${escapeHtml(icon)}を選ぶ">${escapeHtml(icon)}</button>`;
+      }).join('');
+      return `<section class="emoji-category" aria-label="${escapeHtml(category.label)}"><h4>${escapeHtml(category.label)}</h4><div class="emoji-choice-grid">${buttons}</div></section>`;
+    }).join('');
+    return `<div class="emoji-picker" id="emojiPicker-${stationIndex}">${categories}</div>`;
+  }
+
+
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV37';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoStateV36',
     'oshitakuTrainNoPhotoStateV35',
     'oshitakuTrainNoPhotoStateV34',
     'oshitakuTrainNoPhotoStateV33',
@@ -938,22 +963,54 @@
     editor.replaceChildren();
 
     state.stations.forEach((station, index) => {
-      const row = document.createElement('div');
-      row.className = 'station-row';
+      const isLast = index === state.stations.length - 1;
+      const stationMinutes = Number(station.minutes) || 0;
+      const row = document.createElement('article');
+      row.className = 'station-edit-card improved-station-card';
+      row.dataset.stationIndex = String(index);
       row.innerHTML = `
-        <select class="station-icon-select" data-field="icon" data-index="${index}" aria-label="絵カード">
-          <option>${escapeHtml(station.icon)}</option>
-          <option>🏠</option><option>👕</option><option>🍚</option><option>🪥</option>
-          <option>📖</option><option>✏️</option><option>⭐</option><option>🏁</option>
-        </select>
-        <div>
-          <input data-field="name" data-index="${index}" value="${escapeHtml(station.name)}" aria-label="駅名">
-          <input data-field="minutes" data-index="${index}" type="number" min="0" max="240" value="${station.minutes}" aria-label="所要時間（分）">
+        <div class="station-card-head">
+          <div class="station-number-badge">${index + 1}</div>
+          <div>
+            <h3>${isLast ? 'ゴール駅' : `${index + 1}番目の駅`}</h3>
+            <p>${isLast ? '最後の駅です。時間は設定しません。' : '子ども画面に出る絵カードを作ります。'}</p>
+          </div>
         </div>
-        <div class="station-actions">
-          <button type="button" data-move="up" data-index="${index}" aria-label="上へ">↑</button>
-          <button type="button" data-move="down" data-index="${index}" aria-label="下へ">↓</button>
-          <button type="button" data-delete="${index}" aria-label="削除">削除</button>
+
+        <div class="station-visual-preview" aria-label="子ども画面での見え方">
+          <span class="station-preview-caption">子ども画面ではこう見えます</span>
+          <div class="station-preview-card">
+            <span class="station-preview-icon">${escapeHtml(station.icon || '⭐')}</span>
+            <strong>${escapeHtml(station.name || '予定')}</strong>
+            ${isLast ? '<small>ゴール</small>' : `<small>次まで ${stationMinutes}分</small>`}
+          </div>
+        </div>
+
+        <div class="station-edit-fields">
+          <label>駅の名前
+            <input data-field="name" data-index="${index}" value="${escapeHtml(station.name || '')}" aria-label="駅名" placeholder="例：はみがき">
+          </label>
+
+          <div class="emoji-select-block">
+            <div class="emoji-select-head">
+              <span>絵文字を選ぶ</span>
+              <strong class="selected-emoji-preview">${escapeHtml(station.icon || '⭐')}</strong>
+            </div>
+            ${emojiOptionsMarkup(station, index)}
+          </div>
+
+          <label class="${isLast ? 'hidden' : ''}">次の駅までの時間
+            <div class="minutes-input-row">
+              <input data-field="minutes" data-index="${index}" type="number" min="1" max="120" value="${stationMinutes || 5}" aria-label="所要時間（分）">
+              <span>分</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="station-actions station-card-actions">
+          <button type="button" class="btn tiny" data-move="up" data-index="${index}" aria-label="上へ" ${index === 0 ? 'disabled' : ''}>↑ 上へ</button>
+          <button type="button" class="btn tiny" data-move="down" data-index="${index}" aria-label="下へ" ${isLast ? 'disabled' : ''}>↓ 下へ</button>
+          <button type="button" class="btn tiny danger-soft" data-delete="${index}" aria-label="削除" ${state.stations.length <= 2 ? 'disabled' : ''}>削除</button>
         </div>`;
       editor.append(row);
     });
@@ -1537,6 +1594,20 @@
       const presetId = event.target.closest('[data-preset]')?.dataset.preset;
       if (presetId) applyPreset(presetId);
 
+      const emojiButton = event.target.closest('[data-emoji]');
+      if (emojiButton) {
+        const stationIndex = Number(emojiButton.dataset.stationIndex);
+        const emoji = emojiButton.dataset.emoji || '⭐';
+        if (Number.isFinite(stationIndex) && state.stations[stationIndex]) {
+          state.stations[stationIndex].icon = emoji;
+          state.stations[stationIndex].updatedAt = new Date().toISOString();
+          saveState();
+          render();
+          announce(`${state.stations[stationIndex].name || '駅'}の絵を${emoji}にしました。`);
+        }
+        return;
+      }
+
       const deleteIndex = event.target.closest('[data-delete]')?.dataset.delete;
       if (deleteIndex !== undefined) deleteStation(Number(deleteIndex));
 
@@ -1559,6 +1630,11 @@
     document.addEventListener('change', (event) => {
       if (event.target.matches('#stationEditor [data-field]')) updateStation(event.target);
     });
+
+    document.addEventListener('input', (event) => {
+      if (event.target.matches('#stationEditor [data-field]')) updateStation(event.target);
+    });
+
 
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
