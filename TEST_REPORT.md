@@ -1,4 +1,4 @@
-# 出発時の進み具合修正レポート
+# To Do削除・バージョン1.0化レポート
 
 ## 確認結果
 
@@ -6,26 +6,28 @@
 - data-layer.js: OK
 - service-worker.js: OK
 - HTML ID重複：なし
-- completedStationCount追加：OK
-- 出発時1になるロジックあり：OK
-- renderでcompletedStationCount使用：OK
-- selftestで出発1確認：OK
+- To Doページ削除：OK
+- To Doメニュー削除：OK
+- To Doフォーム削除：OK
+- To Do一覧削除：OK
+- renderTodos削除：OK
+- todoForm処理削除：OK
+- deleteTodo処理削除：OK
+- currentPage todo削除：OK
+- 旧todos破棄：OK
+- CSSでToDo非表示補強：OK
+- VERSIONが1.0：OK
+- 保存キー1.0：OK
+- PWAキャッシュ1.0：OK
+- HTML参照1.0：OK
+- 旧V47をLEGACYに保持：OK
 - 数字表示パネル維持：OK
-- 線路上ラベル生成削除維持：OK
-- 絵文字のみタイムライン維持：OK
-- completion削除維持：OK
-- これからすること未復活：OK
-- タイムライン→タイマー順維持：OK
-- 絵文字UI維持：OK
-- 駅間時間補正維持：OK
-- 保存形式V47：OK
-- PWA V47：OK
-- HTML参照V47：OK
-- 出発時進み具合シミュレーション：OK
+- 線路上絵文字のみ維持：OK
+- 出発時1始まり維持：OK
 
 ## 未確認
 
-- PC実ブラウザでの出発時表示
+- PC実ブラウザでのTo Do削除確認
 - iPhone Safari実機
 - Android Chrome実機
 - Service Workerの実登録

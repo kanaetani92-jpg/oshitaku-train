@@ -135,10 +135,6 @@ button { touch-action: manipulation; }
 
 .app-page { display: none; min-width: 0; }
 .app-page.active { display: block; }
-.todo-header { display: flex; gap: 16px; align-items: center; }
-.todo-form { display: grid; max-width: 500px; gap: 10px; padding: 18px; }
-.todo-list { display: grid; gap: 9px; margin-top: 14px; }
-.todo-item { display: flex; justify-content: space-between; gap: 10px; padding: 13px; align-items: center; border: 1px solid var(--line); border-radius: 15px; background: #fff; }
 .error-banner { padding: 10px 14px; border-radius: 12px; background: #fff0f1; color: #8c2532; }
 
 .menu-backdrop { position: fixed; inset: 0; z-index: 90; visibility: hidden; background: rgba(21, 31, 44, 0.36); opacity: 0; pointer-events: none; transition: opacity 0.18s; }
@@ -1781,4 +1777,15 @@ body.hide-numbers .number-status-panel,
   body.view-mode .vehicle {
     transform: translate(-50%, 28px);
   }
+}
+
+
+/* To Do feature removed */
+#todoPage,
+.todo-header,
+.todo-form,
+.todo-list,
+.todo-item,
+[data-page="todo"] {
+  display: none !important;
 }

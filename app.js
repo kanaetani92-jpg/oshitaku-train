@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 47;
+  const VERSION = '1.0';
 
   const EMOJI_CATEGORIES = [
     { key: 'common', label: 'よく使う', icons: ['🏠', '👕', '🪥', '🍚', '🎒', '👟', '🛁', '🌙', '⭐', '🎉'] },
@@ -26,8 +26,9 @@
   }
 
 
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV47';
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoState1.0';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoStateV47',
     'oshitakuTrainNoPhotoStateV46',
     'oshitakuTrainNoPhotoStateV45',
     'oshitakuTrainNoPhotoStateV44',
@@ -182,7 +183,6 @@
     stations: clone(presets[0].stations),
     presets: clone(presets),
     currentPresetId: 'morning',
-    todos: [],
     settings: clone(DEFAULT_SETTINGS),
     doneIndex: -1,
     running: false,
@@ -310,7 +310,7 @@
       schemaVersion: VERSION,
       mode,
       uiMode: ['view', 'edit'].includes(source.uiMode) ? source.uiMode : 'edit',
-      currentPage: ['schedule', 'todo', 'settings', 'account'].includes(source.currentPage) ? source.currentPage : 'schedule'
+      currentPage: ['schedule', 'settings', 'account'].includes(source.currentPage) ? source.currentPage : 'schedule'
     };
 
     migrated.accountAuth = normalizeAccountAuth(source.accountAuth);
@@ -327,17 +327,7 @@
     ).map(normalizeStation);
     normalizeIntervalDurations(migrated.stations);
 
-    migrated.todos = (Array.isArray(source.todos) ? source.todos : [])
-      .map((todo, index) => {
-        const normalized = {
-          id: String(todo.id || `todo-${index}`),
-          text: String(todo.text || todo.name || '').slice(0, 24),
-          minutes: Math.max(1, Number(todo.minutes) || 5)
-        };
-        return dataLayer ? dataLayer.attachEntityMeta(normalized, todo, 'todo') : normalized;
-      })
-      .filter((todo) => todo.text);
-
+    delete migrated.todos;
     migrated.settings = normalizeSettings(source.settings || source);
     migrated.settings.lateBehavior = ['display', 'wait'].includes(migrated.settings.lateBehavior) ? migrated.settings.lateBehavior : 'display';
     migrated.mode = 'timer';
@@ -848,7 +838,6 @@
         viewToggle.setAttribute('aria-pressed', String(displayMode));
       }
       byId('schedulePage')?.classList.toggle('active', state.currentPage === 'schedule');
-      byId('todoPage')?.classList.toggle('active', state.currentPage === 'todo');
       byId('settingsPage')?.classList.toggle('active', state.currentPage === 'settings');
       viewToggle?.classList.toggle('hidden', state.currentPage !== 'schedule');
 
@@ -858,7 +847,6 @@
       renderTimeInformation(index);
       renderTrack(index);
       renderEditor();
-      renderTodos();
       renderPresets();
       renderSettings();
 
@@ -1094,25 +1082,6 @@ track.append(dot);
     });
   }
 
-  function renderTodos() {
-    const box = byId('todoList');
-    if (!box) return;
-    box.replaceChildren();
-    if (!state.todos.length) {
-      box.innerHTML = '<p>まだTo Doはありません。</p>';
-      return;
-    }
-
-    state.todos.forEach((todo) => {
-      const item = document.createElement('div');
-      item.className = 'todo-item';
-      item.innerHTML = `
-        <span><strong>${escapeHtml(todo.text)}</strong><small>${todo.minutes}分</small></span>
-        <button class="btn danger" type="button" data-delete-todo="${escapeHtml(todo.id)}">削除</button>`;
-      box.append(item);
-    });
-  }
-
   function hideUndo() {
     if (undoHandle) {
       clearTimeout(undoHandle);
@@ -1337,7 +1306,7 @@ track.append(dot);
   }
 
   function showPage(page) {
-    if (!['schedule', 'todo', 'settings', 'account'].includes(page)) return;
+    if (!['schedule', 'settings', 'account'].includes(page)) return;
     hideUndo();
     previewing = false;
     state.currentPage = page;
@@ -1627,21 +1596,6 @@ track.append(dot);
       setText('vehicle', state.vehicle);
     });
 
-    safeOn('todoForm', 'submit', (event) => {
-      event.preventDefault();
-      const text = byId('todoText')?.value.trim();
-      if (!text) return;
-      const todo = {
-        id: `todo-${Date.now()}`,
-        text: text.slice(0, 24),
-        minutes: Math.max(1, Number(byId('todoMinutes')?.value) || 5)
-      };
-      state.todos.push(dataLayer ? dataLayer.attachEntityMeta(todo, {}, 'todo') : todo);
-      byId('todoText').value = '';
-      saveState();
-      render();
-    });
-
     document.addEventListener('click', (event) => {
       const option = event.target.closest('[data-setting][data-value]');
       if (option) updateSetting(option.dataset.setting, option.dataset.value);
@@ -1675,13 +1629,6 @@ track.append(dot);
           Number(moveButton.dataset.index),
           moveButton.dataset.move === 'up' ? -1 : 1
         );
-      }
-
-      const todoId = event.target.closest('[data-delete-todo]')?.dataset.deleteTodo;
-      if (todoId) {
-        state.todos = state.todos.filter((todo) => todo.id !== todoId);
-        saveState();
-        render();
       }
     });
 

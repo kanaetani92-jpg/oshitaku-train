@@ -13,7 +13,7 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <link rel="stylesheet" href="style.css?v=47" />
+  <link rel="stylesheet" href="style.css?v=1.0" />
 </head>
 <body class="edit-mode timeline-horizontal">
   <div class="app">
@@ -131,18 +131,7 @@
         </aside>
       </div>
     </section>
-
-    <section id="todoPage" class="app-page" aria-label="To Do">
-      <div class="todo-header"><button id="todoBackButton" class="btn secondary" type="button">← 予定へ戻る</button><h1>To Do</h1></div>
-      <form id="todoForm" class="card todo-form">
-        <label>すること<input id="todoText" type="text" maxlength="24" required /></label>
-        <label>目安時間（分）<input id="todoMinutes" type="number" min="1" max="240" value="5" /></label>
-        <button class="btn success" type="submit">追加する</button>
-      </form>
-      <div id="todoList" class="todo-list"></div>
-    </section>
-
-    <section id="settingsPage" class="app-page settings-page" aria-labelledby="settingsTitle">
+<section id="settingsPage" class="app-page settings-page" aria-labelledby="settingsTitle">
       <div class="settings-header">
         <button id="settingsBackButton" class="btn secondary" type="button">← 予定へ戻る</button>
         <div>
@@ -374,7 +363,7 @@
             <button class="btn secondary" id="accountExportStatusButton" type="button">認証状態を書き出す</button>
             <button class="btn danger" id="accountLogoutButton" type="button">この端末からログアウト</button>
           </div>
-          <p class="help">ログアウトしても、予定・プリセット・To Doはこの端末に残ります。クラウド同期はまだ未実装です。</p>
+          <p class="help">ログアウトしても、予定・プリセット・はこの端末に残ります。クラウド同期はまだ未実装です。</p>
         </section>
 
         <section class="card account-card">
@@ -395,8 +384,7 @@
   <nav id="appMenu" class="app-menu" aria-label="メニュー" aria-hidden="true" inert>
     <div class="menu-head"><strong>メニュー</strong><button id="menuCloseButton" class="icon-button" type="button" aria-label="メニューを閉じる">×</button></div>
     <button class="menu-link" data-page="schedule" type="button">🚃 予定</button>
-    <button class="menu-link" data-page="todo" type="button">📝 To Do</button>
-    <button class="menu-link" data-page="settings" type="button">⚙️ 設定 <small>表示・音・操作を調整</small></button>
+<button class="menu-link" data-page="settings" type="button">⚙️ 設定 <small>表示・音・操作を調整</small></button>
     <button class="menu-link" data-page="account" type="button">🔐 アカウント <small>任意ログイン・バックアップ準備</small></button>
     <p class="menu-note">子ども画面は実際に使う画面です。表示だけ確認するときは編集画面の「」を使います。</p>
   </nav>
@@ -419,7 +407,7 @@
   </div>
 
   <output id="selfTestResult" class="visually-hidden"></output>
-  <script src="data-layer.js?v=47" defer></script>
-  <script src="app.js?v=47" defer></script>
+  <script src="data-layer.js?v=1.0" defer></script>
+  <script src="app.js?v=1.0" defer></script>
 </body>
 </html>
