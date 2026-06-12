@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = '1.0';
+  const VERSION = '1.1';
 
   const EMOJI_CATEGORIES = [
     { key: 'common', label: 'よく使う', icons: ['🏠', '👕', '🪥', '🍚', '🎒', '👟', '🛁', '🌙', '⭐', '🎉'] },
@@ -26,8 +26,9 @@
   }
 
 
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoState1.0';
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoState1.1';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoState1.0',
     'oshitakuTrainNoPhotoStateV47',
     'oshitakuTrainNoPhotoStateV46',
     'oshitakuTrainNoPhotoStateV45',
@@ -284,6 +285,11 @@
     return dataLayer ? dataLayer.attachEntityMeta(normalized, preset, 'preset') : normalized;
   }
 
+
+  function normalizeCurrentPage(page) {
+    return ['schedule', 'settings', 'account'].includes(page) ? page : 'schedule';
+  }
+
   function loadState() {
     let source = null;
     for (const key of [STORAGE_KEY, ...LEGACY_KEYS]) {
@@ -310,7 +316,7 @@
       schemaVersion: VERSION,
       mode,
       uiMode: ['view', 'edit'].includes(source.uiMode) ? source.uiMode : 'edit',
-      currentPage: ['schedule', 'settings', 'account'].includes(source.currentPage) ? source.currentPage : 'schedule'
+      currentPage: normalizeCurrentPage(source.currentPage)
     };
 
     migrated.accountAuth = normalizeAccountAuth(source.accountAuth);
@@ -1306,6 +1312,7 @@ track.append(dot);
   }
 
   function showPage(page) {
+    page = normalizeCurrentPage(page);
     if (!['schedule', 'settings', 'account'].includes(page)) return;
     hideUndo();
     previewing = false;
@@ -1455,7 +1462,6 @@ track.append(dot);
     safeOn('menuCloseButton', 'click', closeMenu);
     safeOn('menuBackdrop', 'click', closeMenu);
     safeOn('viewEditToggle', 'click', toggleView);
-    safeOn('todoBackButton', 'click', () => showPage('schedule'));
     safeOn('settingsBackButton', 'click', () => showPage('schedule'));
     safeOn('doneBtn', 'click', done);
     safeOn('previousStationBtn', 'click', previousStation);
@@ -1730,7 +1736,8 @@ track.append(dot);
   }
 
   const initialPage = new URLSearchParams(location.search).get('page');
-  if (['schedule', 'todo', 'settings'].includes(initialPage)) state.currentPage = initialPage;
+  if (initialPage) state.currentPage = normalizeCurrentPage(initialPage);
+  state.currentPage = normalizeCurrentPage(state.currentPage);
   bind();
 applySettings();
   startTick();

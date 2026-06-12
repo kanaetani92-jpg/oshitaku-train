@@ -1,4 +1,4 @@
-# To Do削除・バージョン1.0化レポート
+# でんしゃレイヤー修正レポート
 
 ## 確認結果
 
@@ -6,30 +6,29 @@
 - data-layer.js: OK
 - service-worker.js: OK
 - HTML ID重複：なし
-- To Doページ削除：OK
-- To Doメニュー削除：OK
-- To Doフォーム削除：OK
-- To Do一覧削除：OK
-- renderTodos削除：OK
-- todoForm処理削除：OK
-- deleteTodo処理削除：OK
-- currentPage todo削除：OK
-- 旧todos破棄：OK
-- CSSでToDo非表示補強：OK
-- VERSIONが1.0：OK
-- 保存キー1.0：OK
-- PWAキャッシュ1.0：OK
-- HTML参照1.0：OK
-- 旧V47をLEGACYに保持：OK
-- 数字表示パネル維持：OK
+- VERSIONが1.1：OK
+- 保存キー1.1：OK
+- PWAキャッシュ1.1：OK
+- HTML参照1.1：OK
+- でんしゃ上レイヤーCSSあり：OK
+- vehicle z-index 20：OK
+- 駅アイコンより上設定：OK
+- でんしゃ上側位置：OK
+- normalizeCurrentPage追加：OK
+- todoページ指定を予定へ戻す：OK
+- showPageからtodo削除：OK
+- todoBackButton削除：OK
+- ToDo UI削除維持：OK
 - 線路上絵文字のみ維持：OK
 - 出発時1始まり維持：OK
+- 数字表示パネル維持：OK
 
 ## 未確認
 
-- PC実ブラウザでのTo Do削除確認
+- PC実ブラウザでの電車レイヤー表示
 - iPhone Safari実機
 - Android Chrome実機
+- 出発・再開・一時停止の実操作
 - Service Workerの実登録
 - ホーム画面からの起動
 - 長時間利用

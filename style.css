@@ -1789,3 +1789,38 @@ body.hide-numbers .number-status-panel,
 [data-page="todo"] {
   display: none !important;
 }
+
+
+/* Vehicle above stations layer fix */
+.track {
+  position: relative;
+  isolation: isolate;
+}
+
+.track::before,
+.track-done {
+  z-index: 1;
+}
+
+.station-dot {
+  z-index: 4;
+}
+
+.station-dot.current,
+.station-dot.next {
+  z-index: 5;
+}
+
+.vehicle {
+  z-index: 20 !important;
+  transform: translate(-50%, -92%) !important;
+  filter: drop-shadow(0 4px 5px rgba(15, 23, 42, 0.25));
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  body.view-mode .vehicle {
+    z-index: 20 !important;
+    transform: translate(-50%, -90%) !important;
+  }
+}
