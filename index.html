@@ -13,7 +13,7 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <link rel="stylesheet" href="style.css?v=42" />
+  <link rel="stylesheet" href="style.css?v=43" />
 </head>
 <body class="edit-mode timeline-horizontal">
   <div class="app">
@@ -41,6 +41,20 @@
           <section id="currentCard" class="current-card" aria-label="現在の大きい絵カード">
             <span id="currentIcon" class="current-icon">🏠</span>
             <strong id="currentName">おうち</strong>
+            <div id="numberStatusPanel" class="number-status-panel" aria-label="数字で見る予定">
+              <div class="number-chip">
+                <span>残り時間</span>
+                <strong id="remainingNumberText">--:--</strong>
+              </div>
+              <div class="number-chip">
+                <span>進み具合</span>
+                <strong id="progressNumberText">0/0</strong>
+              </div>
+              <div class="number-chip">
+                <span>つぎまで</span>
+                <strong id="nextNumberText">--:--</strong>
+              </div>
+            </div>
 </section>
 
           <section id="actionRow" class="action-row" aria-label="予定を進める操作">
@@ -405,7 +419,7 @@
   </div>
 
   <output id="selfTestResult" class="visually-hidden"></output>
-  <script src="data-layer.js?v=42" defer></script>
-  <script src="app.js?v=42" defer></script>
+  <script src="data-layer.js?v=43" defer></script>
+  <script src="app.js?v=43" defer></script>
 </body>
 </html>

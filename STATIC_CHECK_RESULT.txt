@@ -4,16 +4,22 @@
 - data-layer.js: OK
 - service-worker.js: OK
 - HTML ID重複：なし
-- completion要素削除：OK
-- ゴール文言削除：OK
-- completion表示切替削除：OK
-- CSSでcompletion非表示補強：OK
-- スマホgridからcompletion削除：OK
-- ゴールまで時間表示削除維持：OK
+- 数字表示パネルHTMLあり：OK
+- 残り時間表示IDあり：OK
+- 進み具合表示IDあり：OK
+- つぎまで表示IDあり：OK
+- 設定説明文あり：OK
+- renderで残り時間更新：OK
+- renderで進み具合更新：OK
+- renderでつぎまで更新：OK
+- showNumbersで表示切替：OK
+- hide-numbersでCSS非表示：OK
+- 数字パネルCSSあり：OK
+- completion削除維持：OK
 - これからすること未復活：OK
 - タイムライン→タイマー順維持：OK
 - 絵文字UI維持：OK
 - 駅間時間補正維持：OK
-- 保存形式V42：OK
-- PWA V42：OK
-- HTML参照V42：OK
+- 保存形式V43：OK
+- PWA V43：OK
+- HTML参照V43：OK

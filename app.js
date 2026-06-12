@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 42;
+  const VERSION = 43;
 
   const EMOJI_CATEGORIES = [
     { key: 'common', label: 'よく使う', icons: ['🏠', '👕', '🪥', '🍚', '🎒', '👟', '🛁', '🌙', '⭐', '🎉'] },
@@ -26,8 +26,9 @@
   }
 
 
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV42';
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV43';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoStateV42',
     'oshitakuTrainNoPhotoStateV41',
     'oshitakuTrainNoPhotoStateV40',
     'oshitakuTrainNoPhotoStateV39',
@@ -909,22 +910,32 @@
   function renderTimeInformation(index) {
     const current = state.stations[index];
     const next = state.stations[index + 1];
+
     const late = isCurrentStationLate(index);
     const lateMessage = state.settings.lateBehavior === 'wait'
       ? 'ゆっくりでだいじょうぶ。できたら次へ進みます。'
       : 'ゆっくりでだいじょうぶ。';
     setText('nextBox', late ? lateMessage : (next ? `つぎは「${next.name}」です` : 'ゴールです'));
     byId('nextBox')?.classList.toggle('late', late);
-    setText('nowMetric', current?.name || '予定');
 
     const elapsedInCurrent = Math.max(0, progressElapsedMs() - durationBefore(index) * 60000);
     const currentRemaining = next
       ? Math.max(0, intervalMinutes(index) * 60000 - elapsedInCurrent)
       : 0;
-    setText('nextMetric', next ? formatDuration(currentRemaining) : 'ゴール');
 
     const completed = Math.max(0, state.doneIndex + 1);
-    setText('percentMetric', `${completed}/${state.stations.length}`);
+    const totalStations = Math.max(0, state.stations.length);
+    const totalGoalRemaining = remainingMs();
+
+    setText('remainingNumberText', formatDuration(totalGoalRemaining));
+    setText('progressNumberText', `${completed}/${totalStations}`);
+    setText('nextNumberText', next ? formatDuration(currentRemaining) : 'ゴール');
+
+    const panel = byId('numberStatusPanel');
+    if (panel) {
+      panel.classList.toggle('hidden', !state.settings.showNumbers);
+      panel.setAttribute('aria-hidden', String(!state.settings.showNumbers));
+    }
   }
 
   function renderTrack(index) {
@@ -1711,20 +1722,29 @@
       state.elapsedMs = 0;
       state.running = false;
       state.startedAt = null;
+      state.settings.showNumbers = true;
       previewing = false;
       previousActionLocked = false;
       hideUndo();
       render();
 
       check('これからすること表示なし', !document.body.textContent.includes('これからすること'));
-      check('ゴールまで時間表示なし', !document.body.textContent.includes('ゴールまで') && !byId('childRemainingText') && !byId('remainingText'));
-      const beforeRemaining = remainingMs();
+      check('数字表示パネルあり', Boolean(byId('numberStatusPanel')));
+      check('数字表示ONで見える', !byId('numberStatusPanel')?.classList.contains('hidden'));
+      const beforeRemaining = byId('remainingNumberText')?.textContent || '';
+      const beforeProgress = byId('progressNumberText')?.textContent || '';
       done();
-      const afterRemaining = remainingMs();
-      check('内部の残り時間計算は進む', afterRemaining < beforeRemaining);
+      const afterRemaining = byId('remainingNumberText')?.textContent || '';
+      const afterProgress = byId('progressNumberText')?.textContent || '';
+      check('できたで残り時間表示が変わる', beforeRemaining !== afterRemaining);
+      check('できたで進み具合表示が変わる', beforeProgress !== afterProgress);
 
       previousStation();
       check('前の駅へ戻る', activeIndex() === 0);
+
+      state.settings.showNumbers = false;
+      render();
+      check('数字表示OFFで隠れる', byId('numberStatusPanel')?.classList.contains('hidden'));
 
       state = originalSnapshot;
       previousActionLocked = false;

@@ -1086,7 +1086,7 @@ body.timeline-horizontal .station-label,
   body.view-mode #currentCard,
   body.view-mode .current-card {
     align-content: center;
-    grid-template-rows: auto auto auto;
+    grid-template-rows: auto auto auto auto;
     gap: 10px;
   }
 
@@ -1137,7 +1137,7 @@ body.timeline-horizontal .station-label,
   body.view-mode #currentCard,
   body.view-mode .current-card {
     align-content: center;
-    grid-template-rows: auto auto auto;
+    grid-template-rows: auto auto auto auto;
     gap: 10px;
   }
 
@@ -1535,4 +1535,64 @@ body.edit-mode .completion {
 #completionMessage,
 [role="status"].completion {
   display: none !important;
+}
+
+
+/* Show numbers panel */
+.number-status-panel {
+  display: grid;
+  width: min(560px, 100%);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.number-chip {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+  padding: 9px 10px;
+  border: 1px solid #dbeafe;
+  border-radius: 16px;
+  background: #f6f9ff;
+  color: #1d4f91;
+  text-align: center;
+}
+
+.number-chip span {
+  color: #506781;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.number-chip strong {
+  overflow-wrap: anywhere;
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  line-height: 1.1;
+}
+
+body.hide-numbers .number-status-panel,
+.number-status-panel.hidden {
+  display: none !important;
+}
+
+@media (max-width: 640px) {
+  body.view-mode .number-status-panel {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  body.view-mode .number-chip {
+    padding: 8px 6px;
+    border-radius: 14px;
+  }
+
+  body.view-mode .number-chip span {
+    font-size: 0.72rem;
+  }
+
+  body.view-mode .number-chip strong {
+    font-size: clamp(0.95rem, 4.2vw, 1.2rem);
+  }
 }
