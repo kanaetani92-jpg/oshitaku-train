@@ -5,7 +5,7 @@ STATIC_CHECK_RESULT.txt
 TEST_REPORT.md
 app.js
 data-layer.js
-docs/SHOW_NUMBERS_PANEL.md
+docs/READABLE_TIMELINE_LABELS.md
 icons/favicon-32.png
 icons/icon-192.png
 icons/icon-512.png

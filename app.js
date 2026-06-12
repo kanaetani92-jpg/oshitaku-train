@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 43;
+  const VERSION = 44;
 
   const EMOJI_CATEGORIES = [
     { key: 'common', label: 'よく使う', icons: ['🏠', '👕', '🪥', '🍚', '🎒', '👟', '🛁', '🌙', '⭐', '🎉'] },
@@ -26,8 +26,9 @@
   }
 
 
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV43';
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV44';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoStateV43',
     'oshitakuTrainNoPhotoStateV42',
     'oshitakuTrainNoPhotoStateV41',
     'oshitakuTrainNoPhotoStateV40',
@@ -947,14 +948,14 @@
     state.stations.forEach((station, stationIndex) => {
       const dot = document.createElement('div');
       const distant = state.settings.timelineScope === 'currentNext' && ![index, index + 1].includes(stationIndex);
-      dot.className = `station-dot${stationIndex <= index ? ' done' : ''}${distant ? ' is-distant' : ''}`;
+      dot.className = `station-dot${stationIndex <= index ? ' done' : ''}${stationIndex === index ? ' current' : ''}${stationIndex === index + 1 ? ' next' : ''}${distant ? ' is-distant' : ''}`;
       const position = stationIndex / last * 100;
       dot.style.left = `${position}%`;
       dot.style.setProperty('--station-position', `${position}%`);
       dot.textContent = station.icon;
 
       const label = document.createElement('span');
-      label.className = 'station-label';
+      label.className = `station-label${stationIndex === index ? ' current' : ''}${stationIndex === index + 1 ? ' next' : ''}${stationIndex % 2 === 1 ? ' label-below' : ' label-above'}${distant ? ' is-distant' : ''}`;
       label.textContent = station.name;
       dot.append(label);
       track.append(dot);
