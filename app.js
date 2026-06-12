@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 46;
+  const VERSION = 47;
 
   const EMOJI_CATEGORIES = [
     { key: 'common', label: 'よく使う', icons: ['🏠', '👕', '🪥', '🍚', '🎒', '👟', '🛁', '🌙', '⭐', '🎉'] },
@@ -26,8 +26,9 @@
   }
 
 
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV46';
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV47';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoStateV46',
     'oshitakuTrainNoPhotoStateV45',
     'oshitakuTrainNoPhotoStateV44',
     'oshitakuTrainNoPhotoStateV43',
@@ -914,8 +915,7 @@
   function completedStationCount(index = activeIndex()) {
     const total = state.stations.length;
     if (!total) return 0;
-    if (index >= total - 1) return total;
-    return Math.max(0, Math.min(total, state.doneIndex + 1));
+    return Math.max(1, Math.min(total, index + 1));
   }
 
 
@@ -1737,15 +1737,13 @@ track.append(dot);
       hideUndo();
       render();
 
+      const totalStations = state.stations.length;
       check('これからすること表示なし', !document.body.textContent.includes('これからすること'));
       check('数字表示パネルあり', Boolean(byId('numberStatusPanel')));
-      check('数字表示ONで見える', !byId('numberStatusPanel')?.classList.contains('hidden'));
+      check('出発で進み具合が1になる', byId('progressNumberText')?.textContent === `1/${totalStations}`);
 
-      const totalStations = state.stations.length;
-      const beforeProgress = byId('progressNumberText')?.textContent || '';
       done();
-      const afterProgress = byId('progressNumberText')?.textContent || '';
-      check('できたで進み具合表示が変わる', beforeProgress !== afterProgress);
+      check('できたで進み具合が2になる', byId('progressNumberText')?.textContent === `2/${totalStations}`);
 
       state.doneIndex = totalStations - 2;
       state.elapsedMs = totalMinutes() * 60000;
