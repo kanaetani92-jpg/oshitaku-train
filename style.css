@@ -776,57 +776,191 @@ body.view-mode .view-timer-controls.hidden {
 }
 
 
-/* Mobile child view order cleanup */
+
+
+
+/* iPhone and Android shared child layout */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100svh;
+  min-height: 100dvh;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  appearance: none;
+  -webkit-appearance: none;
+  touch-action: manipulation;
+}
+
+.metrics,
 .progress-panel {
   display: none !important;
 }
 
 @media (max-width: 640px) {
+  body.view-mode .app,
+  body.view-mode .layout,
+  body.view-mode .main-card,
+  body.view-mode #currentCard,
+  body.view-mode #actionRow,
+  body.view-mode .track-wrap,
+  body.view-mode #viewTimerControls,
+  body.view-mode .upcoming-section {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  body.view-mode .layout {
+    display: block;
+    padding-inline: max(10px, env(safe-area-inset-left));
+    padding-right: max(10px, env(safe-area-inset-right));
+  }
+
   body.view-mode .main-card {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "card"
+      "actions"
+      "timeline"
+      "timer"
+      "upcoming"
+      "completion";
+    gap: 12px;
+    padding: 12px;
+    overflow: hidden;
   }
 
   body.view-mode .status-area {
-    order: 0;
+    display: none !important;
   }
 
-  body.view-mode .current-card-section,
-  body.view-mode #currentCardSection {
-    order: 1;
+  body.view-mode #currentCard,
+  body.view-mode .current-card {
+    grid-area: card;
+    min-height: clamp(178px, 34svh, 280px);
+    padding: clamp(16px, 4.8vw, 24px);
   }
 
+  body.view-mode #currentCard .kicker,
+  body.view-mode .current-card .kicker {
+    display: none !important;
+  }
+
+  body.view-mode #currentIcon,
+  body.view-mode .current-icon {
+    font-size: clamp(4.2rem, 20vw, 6.6rem);
+    line-height: 1;
+  }
+
+  body.view-mode #currentName,
+  body.view-mode .current-name {
+    font-size: clamp(1.85rem, 8.5vw, 2.85rem);
+    line-height: 1.18;
+    overflow-wrap: anywhere;
+  }
+
+  body.view-mode #actionRow,
   body.view-mode .action-row {
+    grid-area: actions;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  body.view-mode #doneBtn,
+  body.view-mode .done-btn {
+    order: 1;
+    width: 100%;
+    min-height: 60px;
+    font-size: clamp(1.15rem, 5.5vw, 1.45rem);
+  }
+
+  body.view-mode #previousStationBtn,
+  body.view-mode .previous-station-btn {
     order: 2;
+    width: 100%;
+    min-height: 50px;
+    font-size: clamp(0.98rem, 4.5vw, 1.18rem);
+  }
+
+  body.view-mode .track-wrap {
+    grid-area: timeline;
+    min-height: clamp(118px, 27svh, 190px);
+    overflow: hidden;
+  }
+
+  body.view-mode #track,
+  body.view-mode .track {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  body.view-mode #viewTimerControls,
+  body.view-mode .view-timer-controls {
+    grid-area: timer;
+    margin: 0;
+    padding: 12px;
+  }
+
+  body.view-mode .view-timer-button-row {
     display: grid;
     grid-template-columns: 1fr;
     gap: 8px;
   }
 
-  body.view-mode .done-btn {
-    order: 1;
+  body.view-mode .view-timer-button-row .btn {
+    width: 100%;
+    min-height: 52px;
   }
 
-  body.view-mode .previous-station-btn,
-  body.view-mode #previousStationBtn {
-    order: 2;
+  body.view-mode .upcoming-section {
+    grid-area: upcoming;
   }
 
-  body.view-mode .track-wrap {
-    order: 3;
+  body.view-mode #upcomingCards,
+  body.view-mode .upcoming-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+    gap: 8px;
+    max-width: 100%;
   }
 
-  body.view-mode .view-timer-controls,
-  body.view-mode #viewTimerControls {
-    order: 4;
+  body.view-mode .upcoming-card {
+    min-width: 0;
+    max-width: 100%;
   }
 
-  body.view-mode .upcoming-section,
-  body.view-mode #upcomingSection {
-    order: 5;
-  }
-
+  body.view-mode #completion,
   body.view-mode .completion {
-    order: 6;
+    grid-area: completion;
   }
 }
+
+
+/* Hide removed metrics */
+.metrics { display: none !important; }

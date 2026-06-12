@@ -5,7 +5,7 @@ STATIC_CHECK_RESULT.txt
 TEST_REPORT.md
 app.js
 data-layer.js
-docs/MOBILE_ORDER_CLEANUP.md
+docs/ANDROID_IPHONE_LAYOUT_FIX.md
 icons/favicon-32.png
 icons/icon-192.png
 icons/icon-512.png

@@ -1,4 +1,4 @@
-# スマホ表示順整理・進捗パネル削除 修正レポート
+# Android・iPhoneスマホ配置統一 修正レポート
 
 ## 確認結果
 
@@ -6,25 +6,28 @@
 - data-layer.js: OK
 - service-worker.js: OK
 - HTML ID重複：なし
+- initAccountAuthUi呼び出し削除：OK
+- 未定義accountページ初期値削除：OK
 - metricsセクション削除：OK
 - nowMetric削除：OK
 - nextMetric削除：OK
 - percentMetric削除：OK
-- 進捗ラベル『いま』削除：OK
-- 進捗ラベル『つぎまで』削除：OK
-- 進捗ラベル『できた』削除：OK
-- スマホ順序CSSあり：OK
-- 大きい絵カード順序：OK
-- できたと前の駅ボタン順序：OK
-- タイムラインがタイマー操作より前：OK
-- 保存形式V31：OK
-- PWA V31：OK
-- HTML参照V31：OK
+- 大きい絵カード内のいますること削除：OK
+- スマホ共通Gridあり：OK
+- Android/iPhone共通CSSあり：OK
+- status-areaをスマホで非表示：OK
+- currentCardが1番目：OK
+- actionRowが2番目：OK
+- doneBtnが前の駅より先：OK
+- trackWrapがtimer前：OK
+- 保存形式V32：OK
+- PWA V32：OK
+- HTML参照V32：OK
 
 ## 未確認
 
-- iPhone Safari 実機
-- Android Chrome 実機
+- iPhone Safari実機
+- Android Chrome実機
 - Service Workerの実登録
 - ホーム画面からの起動
 - 長時間利用

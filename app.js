@@ -1,9 +1,10 @@
 (() => {
   'use strict';
 
-  const VERSION = 31;
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV31';
+  const VERSION = 32;
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV32';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoStateV31',
     'oshitakuTrainNoPhotoStateV30',
     'oshitakuTrainNoPhotoStateV29',
     'oshitakuTrainNoPhotoStateV28',
@@ -1656,10 +1657,9 @@
   }
 
   const initialPage = new URLSearchParams(location.search).get('page');
-  if (['schedule', 'todo', 'settings', 'account'].includes(initialPage)) state.currentPage = initialPage;
+  if (['schedule', 'todo', 'settings'].includes(initialPage)) state.currentPage = initialPage;
   bind();
-  initAccountAuthUi();
-  applySettings();
+applySettings();
   startTick();
   render();
   saveState();
