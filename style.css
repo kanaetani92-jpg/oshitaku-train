@@ -1735,3 +1735,50 @@ body.hide-numbers .number-status-panel,
   top: calc(100% + 22px);
   bottom: auto;
 }
+
+
+/* Timeline icons only */
+.track-wrap {
+  padding-top: clamp(36px, 5vw, 56px);
+  padding-bottom: clamp(48px, 6vw, 68px);
+}
+
+.station-label,
+.station-label.current,
+.station-label.next,
+.station-label.label-above,
+.station-label.label-below {
+  display: none !important;
+}
+
+.station-dot {
+  display: grid;
+  place-items: center;
+  font-size: clamp(1.15rem, 3vw, 1.45rem);
+}
+
+.station-dot.current {
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+.vehicle {
+  transform: translate(-50%, 30px);
+}
+
+@media (max-width: 640px) {
+  body.view-mode .track-wrap {
+    min-height: clamp(104px, 24svh, 160px);
+    padding-top: 34px;
+    padding-bottom: 54px;
+  }
+
+  body.view-mode .station-dot {
+    width: 34px;
+    height: 34px;
+    font-size: 1.15rem;
+  }
+
+  body.view-mode .vehicle {
+    transform: translate(-50%, 28px);
+  }
+}

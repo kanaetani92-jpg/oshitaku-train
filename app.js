@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 44;
+  const VERSION = 45;
 
   const EMOJI_CATEGORIES = [
     { key: 'common', label: 'よく使う', icons: ['🏠', '👕', '🪥', '🍚', '🎒', '👟', '🛁', '🌙', '⭐', '🎉'] },
@@ -26,8 +26,9 @@
   }
 
 
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV44';
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV45';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoStateV44',
     'oshitakuTrainNoPhotoStateV43',
     'oshitakuTrainNoPhotoStateV42',
     'oshitakuTrainNoPhotoStateV41',
@@ -953,12 +954,9 @@
       dot.style.left = `${position}%`;
       dot.style.setProperty('--station-position', `${position}%`);
       dot.textContent = station.icon;
-
-      const label = document.createElement('span');
-      label.className = `station-label${stationIndex === index ? ' current' : ''}${stationIndex === index + 1 ? ' next' : ''}${stationIndex % 2 === 1 ? ' label-below' : ' label-above'}${distant ? ' is-distant' : ''}`;
-      label.textContent = station.name;
-      dot.append(label);
-      track.append(dot);
+      dot.setAttribute('aria-label', station.name || '駅');
+      dot.title = station.name || '駅';
+track.append(dot);
     });
 
     const progress = index / last * 100;
