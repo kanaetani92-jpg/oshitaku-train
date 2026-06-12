@@ -1,4 +1,4 @@
-# ゴールまで時間表示削除レポート
+# タイマー操作→タイムライン順修正レポート
 
 ## 確認結果
 
@@ -6,24 +6,22 @@
 - data-layer.js: OK
 - service-worker.js: OK
 - HTML ID重複：なし
-- remainingText削除：OK
-- timeLabel削除：OK
-- childTimeBox削除：OK
-- childRemainingText削除：OK
-- UI上のゴールまで表示削除：OK
-- renderでremainingText更新なし：OK
-- renderでchildRemainingText更新なし：OK
-- CSSで時間表示を非表示補強：OK
-- 駅間時間補正維持：OK
-- 絵文字UI維持：OK
+- DOMでタイマー操作がタイムラインより前：OK
+- CSS orderでタイマー操作30：OK
+- CSS orderでタイムライン40：OK
+- スマホgridでtimerがtimelineより前：OK
+- PC用説明CSSあり：OK
+- ゴールまで時間表示削除維持：OK
 - これからすること未復活：OK
-- 保存形式V39：OK
-- PWA V39：OK
-- HTML参照V39：OK
+- 絵文字UI維持：OK
+- 駅間時間補正維持：OK
+- 保存形式V40：OK
+- PWA V40：OK
+- HTML参照V40：OK
 
 ## 未確認
 
-- PC実ブラウザでの実操作
+- PC実ブラウザでの表示順
 - iPhone Safari実機
 - Android Chrome実機
 - Service Workerの実登録

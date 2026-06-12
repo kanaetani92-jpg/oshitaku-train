@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 39;
+  const VERSION = 40;
 
   const EMOJI_CATEGORIES = [
     { key: 'common', label: 'よく使う', icons: ['🏠', '👕', '🪥', '🍚', '🎒', '👟', '🛁', '🌙', '⭐', '🎉'] },
@@ -26,8 +26,9 @@
   }
 
 
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV39';
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV40';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoStateV39',
     'oshitakuTrainNoPhotoStateV38',
     'oshitakuTrainNoPhotoStateV37',
     'oshitakuTrainNoPhotoStateV36',

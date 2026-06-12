@@ -844,8 +844,8 @@ button {
     grid-template-areas:
       "card"
       "actions"
-      "timeline"
       "timer"
+      "timeline"
       "completion";
     gap: 12px;
     padding: 12px;
@@ -1423,4 +1423,60 @@ body.timeline-horizontal .station-label,
 #timeLabel,
 #childTimeBox {
   display: none !important;
+}
+
+
+/* Timer controls before timeline layout */
+body.view-mode .main-card,
+body.edit-mode .main-card {
+  display: grid;
+}
+
+body.view-mode #currentCard,
+body.edit-mode #currentCard {
+  order: 10;
+}
+
+body.view-mode #actionRow,
+body.edit-mode #actionRow {
+  order: 20;
+}
+
+body.view-mode #viewTimerControls,
+body.edit-mode #viewTimerControls {
+  order: 30;
+}
+
+body.view-mode .track-wrap,
+body.edit-mode .track-wrap {
+  order: 40;
+}
+
+body.view-mode .completion,
+body.edit-mode .completion {
+  order: 50;
+}
+
+/* PC版では、タイマー操作のすぐ下に横タイムラインを置く */
+@media (min-width: 641px) {
+  body.view-mode #viewTimerControls {
+    margin-top: 14px;
+    margin-bottom: 10px;
+  }
+
+  body.view-mode .track-wrap {
+    margin-top: 0;
+  }
+}
+
+/* スマホ版も同じ順番に統一：カード → できた → タイマー操作 → タイムライン */
+@media (max-width: 640px) {
+  body.view-mode .main-card {
+    grid-template-areas:
+      "card"
+      "actions"
+      "timer"
+      "timeline"
+      "completion";
+  }
 }

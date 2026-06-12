@@ -5,7 +5,7 @@ STATIC_CHECK_RESULT.txt
 TEST_REPORT.md
 app.js
 data-layer.js
-docs/REMOVE_GOAL_TIME_DISPLAY.md
+docs/TIMER_THEN_TIMELINE_LAYOUT.md
 icons/favicon-32.png
 icons/icon-192.png
 icons/icon-512.png

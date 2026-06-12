@@ -1,27 +1,23 @@
-# おしたくトレイン ゴールまで時間表示削除版
+# おしたくトレイン タイマー操作→タイムライン順修正版
 
 作成日：2026-06-12
 
-この版では、機能としての「ゴールまで」の時間表示を削除しました。
+この版では、PC版で「タイマー操作」の下に「タイムライン」が来るように、表示順を明示しました。
 
 ## 修正内容
 
-- 画面上の「ゴールまで」時間表示を削除
-- `remainingText` をHTMLから削除
-- `timeLabel` をHTMLから削除
-- `childTimeBox` / `childRemainingText` をHTMLから削除
-- `renderTimeInformation()` から時間表示の更新処理を削除
-- 古いHTMLやPWAキャッシュが混ざった場合に備えて、CSSでも時間表示を非表示
-- 内部の時間計算は、タイマー・できた・前の駅にもどるの動作用として維持
-- 保存形式とPWAキャッシュをV39へ更新
+- PC版で `viewTimerControls` の下に `track-wrap` が来る順番をCSSで明示
+- スマホ版でも、カード → できた！ → タイマー操作 → タイムライン の順番に統一
+- DOM順が混在しても、CSSの `order` でタイマー操作が先、タイムラインが後になるよう補強
+- 保存形式とPWAキャッシュをV40へ更新
 
 ## 保存形式
 
-`oshitakuTrainNoPhotoStateV39`
+`oshitakuTrainNoPhotoStateV40`
 
 ## PWAキャッシュ
 
-`oshitaku-train-pwa-v39`
+`oshitaku-train-pwa-v40`
 
 ## GitHub
 
