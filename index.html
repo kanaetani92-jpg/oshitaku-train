@@ -13,7 +13,7 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <link rel="stylesheet" href="style.css?v=40" />
+  <link rel="stylesheet" href="style.css?v=41" />
 </head>
 <body class="edit-mode timeline-horizontal">
   <div class="app">
@@ -48,6 +48,11 @@
             <button id="doneBtn" class="btn done-btn" type="button">できた！</button>
           </section>
 
+          <section class="track-wrap" aria-label="予定の進み具合">
+            <div id="track" class="track"><div id="trackDone" class="track-done"></div><div id="vehicle" class="vehicle">🚃</div></div>
+          </section>
+
+
           <section id="viewTimerControls" class="view-timer-controls hidden" aria-label="タイマー操作">
             <h2 class="section-title">タイマー操作</h2>
             <div class="view-timer-button-row">
@@ -57,10 +62,7 @@
             </div>
           </section>
 
-          <section class="track-wrap" aria-label="予定の進み具合">
-            <div id="track" class="track"><div id="trackDone" class="track-done"></div><div id="vehicle" class="vehicle">🚃</div></div>
-          </section>
-<p id="completion" class="completion hidden" role="status">🎉 ゴールです。よくできました！</p>
+          etion" class="completion hidden" role="status">🎉 ゴールです。よくできました！</p>
         </main>
 
         <aside id="editorPanel" class="card editor-panel" aria-label="編集">
@@ -405,7 +407,7 @@
   </div>
 
   <output id="selfTestResult" class="visually-hidden"></output>
-  <script src="data-layer.js?v=40" defer></script>
-  <script src="app.js?v=40" defer></script>
+  <script src="data-layer.js?v=41" defer></script>
+  <script src="app.js?v=41" defer></script>
 </body>
 </html>

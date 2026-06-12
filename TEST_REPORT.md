@@ -1,4 +1,4 @@
-# タイマー操作→タイムライン順修正レポート
+# タイムライン→タイマー操作順修正レポート
 
 ## 確認結果
 
@@ -6,18 +6,18 @@
 - data-layer.js: OK
 - service-worker.js: OK
 - HTML ID重複：なし
-- DOMでタイマー操作がタイムラインより前：OK
-- CSS orderでタイマー操作30：OK
-- CSS orderでタイムライン40：OK
-- スマホgridでtimerがtimelineより前：OK
+- DOMでタイムラインがタイマー操作より前：OK
+- CSS orderでタイムライン30：OK
+- CSS orderでタイマー操作40：OK
+- スマホgridでtimelineがtimerより前：OK
 - PC用説明CSSあり：OK
 - ゴールまで時間表示削除維持：OK
 - これからすること未復活：OK
 - 絵文字UI維持：OK
 - 駅間時間補正維持：OK
-- 保存形式V40：OK
-- PWA V40：OK
-- HTML参照V40：OK
+- 保存形式V41：OK
+- PWA V41：OK
+- HTML参照V41：OK
 
 ## 未確認
 

@@ -1,14 +1,14 @@
 'use strict';
 
 const CACHE_PREFIX = 'oshitaku-train-pwa-';
-const CACHE_VERSION = 'v40';
+const CACHE_VERSION = 'v41';
 const CACHE_NAME = `${CACHE_PREFIX}${CACHE_VERSION}`;
 const APP_SHELL = [
   './',
   './index.html',
-  './style.css?v=40',
-  './data-layer.js?v=40',
-  './app.js?v=40',
+  './style.css?v=41',
+  './data-layer.js?v=41',
+  './app.js?v=41',
   './manifest.webmanifest',
   './offline.html',
   './icons/favicon-32.png',
