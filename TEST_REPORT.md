@@ -1,4 +1,4 @@
-# 駅間時間修正レポート
+# ゴールまで時間表示削除レポート
 
 ## 確認結果
 
@@ -6,23 +6,20 @@
 - data-layer.js: OK
 - service-worker.js: OK
 - HTML ID重複：なし
-- 駅間時間補正関数あり：OK
-- 旧データ判定あり：OK
-- intervalMinutesあり：OK
-- durationBeforeがintervalMinutes使用：OK
-- totalMinutesがintervalMinutes使用：OK
-- loadStateで補正実行：OK
-- freshでも補正実行：OK
-- 時間ラベル明確化：OK
-- 編集ガイド明確化：OK
-- render時間計算にintervalMinutes使用：OK
-- 保存形式V38：OK
-- PWA V38：OK
-- HTML参照V38：OK
-- これからすること未復活：OK
+- remainingText削除：OK
+- timeLabel削除：OK
+- childTimeBox削除：OK
+- childRemainingText削除：OK
+- UI上のゴールまで表示削除：OK
+- renderでremainingText更新なし：OK
+- renderでchildRemainingText更新なし：OK
+- CSSで時間表示を非表示補強：OK
+- 駅間時間補正維持：OK
 - 絵文字UI維持：OK
-- childRemainingText維持：OK
-- 旧データ補正シミュレーション：OK
+- これからすること未復活：OK
+- 保存形式V39：OK
+- PWA V39：OK
+- HTML参照V39：OK
 
 ## 未確認
 

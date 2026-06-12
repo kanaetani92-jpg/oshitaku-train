@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 38;
+  const VERSION = 39;
 
   const EMOJI_CATEGORIES = [
     { key: 'common', label: 'よく使う', icons: ['🏠', '👕', '🪥', '🍚', '🎒', '👟', '🛁', '🌙', '⭐', '🎉'] },
@@ -26,8 +26,9 @@
   }
 
 
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV38';
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV39';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoStateV38',
     'oshitakuTrainNoPhotoStateV37',
     'oshitakuTrainNoPhotoStateV36',
     'oshitakuTrainNoPhotoStateV35',
@@ -907,11 +908,6 @@
   function renderTimeInformation(index) {
     const current = state.stations[index];
     const next = state.stations[index + 1];
-
-    const goalRemainingText = formatDuration(remainingMs());
-    setText('remainingText', goalRemainingText);
-    setText('childRemainingText', goalRemainingText);
-    setText('timeLabel', 'ゴールまで');
     const late = isCurrentStationLate(index);
     const lateMessage = state.settings.lateBehavior === 'wait'
       ? 'ゆっくりでだいじょうぶ。できたら次へ進みます。'
@@ -1720,19 +1716,14 @@
       render();
 
       check('これからすること表示なし', !document.body.textContent.includes('これからすること'));
-      check('子ども画面に残り時間表示あり', Boolean(byId('childRemainingText')));
+      check('ゴールまで時間表示なし', !document.body.textContent.includes('ゴールまで') && !byId('childRemainingText') && !byId('remainingText'));
       const beforeRemaining = remainingMs();
-      const beforeText = byId('childRemainingText')?.textContent || '';
       done();
       const afterRemaining = remainingMs();
-      const afterText = byId('childRemainingText')?.textContent || '';
-      check('できたで残り時間が減る', afterRemaining < beforeRemaining);
-      check('できたで残り時間表示が変わる', beforeText !== afterText);
+      check('内部の残り時間計算は進む', afterRemaining < beforeRemaining);
 
       previousStation();
-      const previousText = byId('childRemainingText')?.textContent || '';
       check('前の駅へ戻る', activeIndex() === 0);
-      check('前の駅へ戻ると残り時間表示が戻る', previousText !== afterText);
 
       state = originalSnapshot;
       previousActionLocked = false;
@@ -1754,7 +1745,7 @@
     document.title = results.some((result) => result.startsWith('FAIL'))
       ? 'SELFTEST_FAIL'
       : 'SELFTEST_PASS';
-    console.log(results.join('\\n'));
+    console.log(results.join('\n'));
   }
 
   const initialPage = new URLSearchParams(location.search).get('page');

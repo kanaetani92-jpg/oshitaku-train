@@ -1413,3 +1413,14 @@ body.timeline-horizontal .station-label,
   background: #edf4ff;
   color: #1d4f91;
 }
+
+
+/* Remove goal time display feature */
+.time-box,
+.child-time-box,
+#remainingText,
+#childRemainingText,
+#timeLabel,
+#childTimeBox {
+  display: none !important;
+}
