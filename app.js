@@ -1,9 +1,10 @@
 (() => {
   'use strict';
 
-  const VERSION = 29;
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV29';
+  const VERSION = 30;
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoStateV30';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoStateV29',
     'oshitakuTrainNoPhotoStateV28',
     'oshitakuTrainNoPhotoStateV27',
     'oshitakuTrainNoPhotoStateV26',
@@ -751,17 +752,15 @@
     try {
       const displayMode = displayModeActive();
       applySettings();
-      document.body.classList.toggle('view-mode', state.uiMode === 'view' && !previewing);
-      document.body.classList.toggle('edit-mode', state.uiMode === 'edit' && !previewing);
-      document.body.classList.toggle('preview-mode', previewing);
+      document.body.classList.toggle('view-mode', state.uiMode === 'view');
+      document.body.classList.toggle('edit-mode', state.uiMode === 'edit');
+      document.body.classList.toggle('preview-mode', false);
 
       const viewToggle = byId('viewEditToggle');
       if (viewToggle) {
-        setText('viewEditToggle', state.uiMode === 'view' ? '編集画面' : '表示を確認');
+        setText('viewEditToggle', state.uiMode === 'view' ? '編集画面' : '子ども画面');
         viewToggle.setAttribute('aria-pressed', String(displayMode));
       }
-
-      byId('previewBanner')?.classList.toggle('hidden', !previewing);
       byId('schedulePage')?.classList.toggle('active', state.currentPage === 'schedule');
       byId('todoPage')?.classList.toggle('active', state.currentPage === 'todo');
       byId('settingsPage')?.classList.toggle('active', state.currentPage === 'settings');
@@ -778,7 +777,7 @@
       renderPresets();
       renderSettings();
 
-      const childViewActive = state.currentPage === 'schedule' && state.uiMode === 'view' && !previewing;
+      const childViewActive = state.currentPage === 'schedule' && state.uiMode === 'view';
       const doneHidden = !childViewActive || index >= state.stations.length - 1;
       const previousHidden = !childViewActive || !state.settings.showPreviousButton;
       const previousDisabled = index <= 0 || previousActionLocked;
@@ -796,6 +795,26 @@
         actionRow.classList.toggle('hidden', doneHidden && previousHidden);
         actionRow.classList.toggle('single-action', !previousHidden && doneHidden);
       }
+
+      const timerControls = byId('viewTimerControls');
+      if (timerControls) timerControls.classList.toggle('hidden', !childViewActive);
+      const startButton = byId('startBtn');
+      const pauseButton = byId('pauseBtn');
+      const resetButton = byId('resetBtn');
+      const atGoal = index >= state.stations.length - 1;
+      if (startButton) {
+        startButton.disabled = !childViewActive || state.running || atGoal;
+        startButton.setAttribute('aria-disabled', String(startButton.disabled));
+      }
+      if (pauseButton) {
+        pauseButton.disabled = !childViewActive || !state.running;
+        pauseButton.setAttribute('aria-disabled', String(pauseButton.disabled));
+      }
+      if (resetButton) {
+        resetButton.disabled = !childViewActive && state.uiMode !== 'edit';
+        resetButton.setAttribute('aria-disabled', String(resetButton.disabled));
+      }
+
       byId('completion')?.classList.toggle('hidden', index < state.stations.length - 1);
     } catch (error) {
       console.error('描画エラー', error);
@@ -1096,6 +1115,8 @@
 
   function startTimer() {
     state.mode = 'timer';
+    if (state.currentPage !== 'schedule') state.currentPage = 'schedule';
+    if (state.uiMode !== 'view') state.uiMode = 'view';
     if (!state.running) {
       state.running = true;
       state.startedAt = nowMs();
@@ -1156,13 +1177,13 @@
   }
 
   function enterPreview() {
-    hideUndo();
-    pauseTimer(false);
-    previewing = true;
+    previewing = false;
+    state.uiMode = 'view';
     state.currentPage = 'schedule';
     closeMenu();
+    saveState();
     render();
-    announce('プレビューを表示しました。タイマーは開始していません。');
+    announce('子ども画面へ移りました。');
   }
 
   function returnToEdit() {
@@ -1171,15 +1192,11 @@
     state.currentPage = 'schedule';
     saveState();
     render();
-    requestAnimationFrame(() => byId('previewBtn')?.focus());
+    requestAnimationFrame(() => byId('viewEditToggle')?.focus());
     announce('編集画面へ戻りました。');
   }
 
   function toggleView() {
-    if (previewing) {
-      returnToEdit();
-      return;
-    }
     if (state.uiMode === 'view') {
       if (state.settings.editorLock && !window.confirm('保護者用の編集画面へ戻りますか？')) return;
       state.uiMode = 'edit';
@@ -1189,7 +1206,14 @@
       announce('編集画面へ戻りました。');
       return;
     }
-    enterPreview();
+
+    previewing = false;
+    state.uiMode = 'view';
+    state.currentPage = 'schedule';
+    closeMenu();
+    saveState();
+    render();
+    announce('子ども画面へ移りました。出発ボタンでタイマーを始められます。');
   }
 
   function startPlan() {
@@ -1198,14 +1222,13 @@
     state.mode = 'timer';
     state.uiMode = 'view';
     state.currentPage = 'schedule';
-    if (!state.running && state.doneIndex < state.stations.length - 1) {
-      state.running = true;
-      state.startedAt = nowMs();
-    }
+    pauseTimer(false);
+    state.running = false;
+    state.startedAt = null;
     saveState();
-    startTick();
+    stopTickIfIdle();
     render();
-    announce('この予定を始めました。');
+    announce('子ども画面へ移りました。出発ボタンでタイマーを始められます。');
   }
 
   function showPage(page) {
@@ -1358,8 +1381,6 @@
     safeOn('menuCloseButton', 'click', closeMenu);
     safeOn('menuBackdrop', 'click', closeMenu);
     safeOn('viewEditToggle', 'click', toggleView);
-    safeOn('previewBtn', 'click', enterPreview);
-    safeOn('returnToEditBtn', 'click', returnToEdit);
     safeOn('todoBackButton', 'click', () => showPage('schedule'));
     safeOn('settingsBackButton', 'click', () => showPage('schedule'));
     safeOn('doneBtn', 'click', done);
@@ -1580,36 +1601,39 @@
 
     const originalSnapshot = clone(state);
     try {
-      check('自動進行の文言を削除', !document.body.textContent.includes('自動進行'));
-      check('時計連動の文言を削除', !document.body.textContent.includes('時計連動'));
-
       state.mode = 'timer';
-      state.uiMode = 'view';
+      state.uiMode = 'edit';
       state.currentPage = 'schedule';
       state.doneIndex = -1;
       state.elapsedMs = 0;
       state.running = false;
       state.startedAt = null;
+      previewing = false;
       previousActionLocked = false;
       hideUndo();
       render();
 
-      check('見るモードで前の駅ボタンを配置', Boolean(byId('previousStationBtn')));
-      check('最初の駅では前の駅ボタンが無効', byId('previousStationBtn')?.disabled === true);
+      check('プレビュー文言なし', !document.body.textContent.includes('プレビュー'));
+      check('編集画面にタイマー操作を表示しない', !document.getElementById('editorPanel')?.textContent.includes('タイマー操作'));
+
+      startPlan();
+      check('この予定で始めるは子ども画面へ移動', state.uiMode === 'view' && state.currentPage === 'schedule');
+      check('この予定で始めるではタイマー開始しない', state.running === false);
+      check('見るモードにタイマー操作を表示', !byId('viewTimerControls')?.classList.contains('hidden'));
+
+      startTimer();
+      check('見るモードでスタートできる', state.running === true);
+      pauseTimer();
+      check('見るモードで一時停止できる', state.running === false);
 
       done();
       check('できたで次の駅へ進む', activeIndex() === 1);
-      check('次の駅では前の駅ボタンが有効', byId('previousStationBtn')?.disabled === false);
-
       previousStation();
       check('前の駅へ戻る', activeIndex() === 0);
-      check('戻る通知を表示', !byId('undoSnackbar')?.classList.contains('hidden'));
-
-      restorePreviousAction();
-      check('戻る操作を元に戻す', activeIndex() === 1);
 
       state = originalSnapshot;
       previousActionLocked = false;
+      previewing = false;
       hideUndo();
       saveState();
       render();

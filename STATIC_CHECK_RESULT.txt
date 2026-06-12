@@ -4,15 +4,13 @@
 - data-layer.js: OK
 - service-worker.js: OK
 - HTML ID重複：なし
-- 前の駅ボタンがある：OK
-- 自動タイマー文言なし：OK
-- 時計にあわせる文言なし：OK
-- モード定数はtimerのみ：OK
-- 保存形式V29：OK
-- PWA V29：OK
-- HTML参照V29：OK
-- 戻る処理あり：OK
-- data-layer.jsあり：OK
-- manifestあり：OK
-- offlineあり：OK
-- iconsあり：OK
+- プレビューボタン削除：OK
+- プレビュー中バナー削除：OK
+- 表示上のプレビュー文言なし：OK
+- 子ども画面へ進むボタンあり：OK
+- 編集画面からタイマー操作削除：OK
+- 子ども画面タイマー操作あり：OK
+- startPlanはrunning trueにしない：OK
+- 保存形式V30：OK
+- PWA V30：OK
+- HTML参照V30：OK

@@ -13,7 +13,7 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <link rel="stylesheet" href="style.css?v=29" />
+  <link rel="stylesheet" href="style.css?v=30" />
 </head>
 <body class="edit-mode timeline-horizontal">
   <div class="app">
@@ -28,16 +28,7 @@
 
     <p id="errorBanner" class="error-banner hidden" role="alert"></p>
     <p id="liveStatus" class="visually-hidden" aria-live="polite" aria-atomic="true"></p>
-
-    <section id="previewBanner" class="preview-banner hidden" aria-label="プレビュー中">
-      <div>
-        <strong>プレビュー中</strong>
-        <span>タイマーは開始していません。表示だけを確認しています。</span>
-      </div>
-      <button id="returnToEditBtn" class="btn secondary" type="button">← 編集へ戻る</button>
-    </section>
-
-    <section id="schedulePage" class="app-page active" aria-label="予定">
+<section id="schedulePage" class="app-page active" aria-label="予定">
       <div class="layout">
         <main class="card main-card">
           <section class="status-area">
@@ -57,6 +48,15 @@
           <section id="actionRow" class="action-row" aria-label="予定を進める操作">
             <button id="previousStationBtn" class="btn previous-station-btn hidden" type="button">↶ 前の駅にもどる</button>
             <button id="doneBtn" class="btn done-btn" type="button">できた！</button>
+          </section>
+
+          <section id="viewTimerControls" class="view-timer-controls hidden" aria-label="タイマー操作">
+            <h2 class="section-title">タイマー操作</h2>
+            <div class="view-timer-button-row">
+              <button id="startBtn" class="btn primary" type="button">出発・再開</button>
+              <button id="pauseBtn" class="btn secondary" type="button">一時停止</button>
+              <button id="resetBtn" class="btn danger" type="button">最初に戻る</button>
+            </div>
           </section>
 
           <section class="track-wrap" aria-label="予定の進み具合">
@@ -83,8 +83,7 @@
               <small id="saveStatus">この端末に自動保存します</small>
             </div>
             <div class="editor-head-actions">
-              <button id="previewBtn" class="btn secondary" type="button">プレビュー</button>
-              <button id="startPlanBtn" class="btn success" type="button">この予定で始める</button>
+              <button id="startPlanBtn" class="btn success" type="button">子ども画面へ進む</button>
             </div>
           </section>
 
@@ -122,18 +121,8 @@
               <select id="vehicleSelect"><option>🚃</option><option>🚄</option><option>✈️</option><option>🚌</option><option>🚀</option><option>🚢</option><option>🐰</option></select>
             </label>
           </section>
-
-          <section class="editor-section">
-            <h2>4. タイマー操作</h2>
-            <div class="button-grid">
-              <button id="startBtn" class="btn primary" type="button">出発・再開</button>
-              <button id="pauseBtn" class="btn secondary" type="button">一時停止</button>
-              <button id="resetBtn" class="btn danger" type="button">最初に戻る</button>
-            </div>
-          </section>
-
-          <section class="editor-section">
-            <h2>5. 駅を編集する</h2>
+<section class="editor-section">
+            <h2>4. 駅を編集する</h2>
             <div id="stationEditor" class="station-editor"></div>
             <button id="addStationBtn" class="btn secondary full" type="button">駅を追加</button>
           </section>
@@ -412,7 +401,7 @@
     <button class="menu-link" data-page="todo" type="button">📝 To Do</button>
     <button class="menu-link" data-page="settings" type="button">⚙️ 設定 <small>表示・音・操作を調整</small></button>
     <button class="menu-link" data-page="account" type="button">🔐 アカウント <small>任意ログイン・バックアップ準備</small></button>
-    <p class="menu-note">子ども画面は実際に使う画面です。表示だけ確認するときは編集画面の「プレビュー」を使います。</p>
+    <p class="menu-note">子ども画面は実際に使う画面です。表示だけ確認するときは編集画面の「」を使います。</p>
   </nav>
 
 
@@ -433,7 +422,7 @@
   </div>
 
   <output id="selfTestResult" class="visually-hidden"></output>
-  <script src="data-layer.js?v=29" defer></script>
-  <script src="app.js?v=29" defer></script>
+  <script src="data-layer.js?v=30" defer></script>
+  <script src="app.js?v=30" defer></script>
 </body>
 </html>

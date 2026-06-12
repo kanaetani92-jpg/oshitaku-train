@@ -189,7 +189,7 @@ body.view-mode #editorPanel, body.preview-mode #editorPanel { display: none; }
 body.view-mode .layout, body.preview-mode .layout { grid-template-columns: minmax(0, 1fr); }
 body.view-mode .main-card, body.preview-mode .main-card { width: min(900px, 100%); margin: auto; }
 body.view-mode #viewEditToggle { border-color: var(--primary); color: var(--primary); background: #fff; }
-body.preview-mode #viewEditToggle { visibility: hidden; }
+body.preview-mode #viewEditToggle { visibility: visible; }
 
 @media (max-width: 800px) {
   .app { width: calc(100% - 12px); padding-top: 7px; }
@@ -721,5 +721,56 @@ html[data-contrast="high"] .sync-status-grid div { border-width: 3px; background
 
   .previous-station-btn {
     order: 2;
+  }
+}
+
+
+/* Child view timer controls */
+.view-timer-controls {
+  width: min(660px, 100%);
+  margin: 12px auto 0;
+  padding: 12px;
+  border: 2px solid #dbeafe;
+  border-radius: 20px;
+  background: #f6f9ff;
+}
+
+.view-timer-controls .section-title {
+  margin: 0 0 10px;
+  text-align: center;
+  font-size: 1rem;
+  color: #1d4f91;
+}
+
+.view-timer-button-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.view-timer-button-row .danger {
+  grid-column: 1 / -1;
+}
+
+.view-timer-button-row .btn {
+  min-height: 52px;
+  font-weight: 900;
+}
+
+body.edit-mode .view-timer-controls {
+  display: none;
+}
+
+body.view-mode .view-timer-controls.hidden {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .view-timer-button-row {
+    grid-template-columns: 1fr;
+  }
+
+  .view-timer-button-row .danger {
+    grid-column: auto;
   }
 }
