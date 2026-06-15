@@ -2454,3 +2454,78 @@ body.edit-mode #settingsIconButton {
 #appMenu {
   display: none !important;
 }
+
+
+/* Settings button UX refinement */
+.header-actions {
+  align-items: center !important;
+}
+
+body.view-mode #viewEditToggle {
+  order: 1 !important;
+}
+
+body.view-mode #settingsIconButton {
+  order: 2 !important;
+  min-width: 34px !important;
+  min-height: 34px !important;
+  width: 34px !important;
+  height: 34px !important;
+  padding: 0 !important;
+  border-radius: 12px !important;
+  font-size: 0.92rem !important;
+  opacity: 0.72 !important;
+}
+
+body.view-mode #settingsIconButton:focus-visible,
+body.view-mode #settingsIconButton:hover {
+  opacity: 1 !important;
+}
+
+body.view-mode .header-actions {
+  gap: 0.55rem !important;
+}
+
+body.edit-mode #settingsIconButton {
+  order: 1 !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  width: auto !important;
+  height: auto !important;
+  padding-inline: 0.72rem !important;
+  border-radius: 14px !important;
+  font-size: 1.18rem !important;
+  opacity: 1 !important;
+}
+
+body.edit-mode #viewEditToggle {
+  order: 2 !important;
+}
+
+body.edit-mode .header-actions {
+  gap: 0.55rem !important;
+}
+
+body:not(.view-mode):not(.edit-mode) #settingsIconButton {
+  min-width: 44px !important;
+  min-height: 44px !important;
+  width: auto !important;
+  height: auto !important;
+  padding-inline: 0.72rem !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 390px) {
+  body.view-mode #settingsIconButton {
+    min-width: 32px !important;
+    min-height: 32px !important;
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.86rem !important;
+  }
+
+  body.view-mode .header-actions,
+  body.edit-mode .header-actions {
+    gap: 0.45rem !important;
+  }
+}
