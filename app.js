@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = '1.4.1';
+  const VERSION = '1.4.3';
 
   const EMOJI_CATEGORIES = [
     { key: 'common', label: 'よく使う', icons: ['🏠', '👕', '🪥', '🍚', '🎒', '👟', '🛁', '🌙', '⭐', '🎉'] },
@@ -26,8 +26,10 @@
   }
 
 
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoState1.4.1';
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoState1.4.3';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoState1.4.2',
+    'oshitakuTrainNoPhotoState1.4.1',
     'oshitakuTrainNoPhotoState1.4.0',
     'oshitakuTrainNoPhotoState1.3.9',
     'oshitakuTrainNoPhotoState1.3.8',
@@ -909,12 +911,19 @@
 
       const viewToggle = byId('viewEditToggle');
       if (viewToggle) {
-        setText('viewEditToggle', state.uiMode === 'view' ? '編集画面' : '子ども画面');
+        setText('viewEditToggle', state.uiMode === 'view' ? '編集画面へ進む' : '子ども画面へ進む');
         viewToggle.setAttribute('aria-pressed', String(displayMode));
       }
       byId('schedulePage')?.classList.toggle('active', state.currentPage === 'schedule');
       byId('settingsPage')?.classList.toggle('active', state.currentPage === 'settings');
       viewToggle?.classList.toggle('hidden', state.currentPage !== 'schedule');
+      const settingsIconButton = byId('settingsIconButton');
+      if (settingsIconButton) {
+        const hideSettingsIcon = state.currentPage === 'settings';
+        settingsIconButton.classList.toggle('hidden', hideSettingsIcon);
+        settingsIconButton.setAttribute('aria-hidden', String(hideSettingsIcon));
+        settingsIconButton.disabled = hideSettingsIcon;
+      }
 
       setText('displayTitle', state.title);
       const index = activeIndex();

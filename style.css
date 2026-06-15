@@ -2529,3 +2529,78 @@ body:not(.view-mode):not(.edit-mode) #settingsIconButton {
     gap: 0.45rem !important;
   }
 }
+
+
+/* Header action order v1.4.2 */
+body.view-mode #settingsIconButton,
+body.edit-mode #settingsIconButton {
+  order: 1 !important;
+}
+
+body.view-mode #viewEditToggle,
+body.edit-mode #viewEditToggle {
+  order: 2 !important;
+}
+
+body.view-mode .header-actions,
+body.edit-mode .header-actions {
+  gap: 0.55rem !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+}
+
+/* 子ども画面でも設定ボタンを先頭に置き、画面切替ボタンの文言を明確にします。 */
+body.view-mode #settingsIconButton {
+  min-width: 38px !important;
+  min-height: 38px !important;
+  width: 38px !important;
+  height: 38px !important;
+  padding: 0 !important;
+  border-radius: 12px !important;
+  font-size: 0.98rem !important;
+  opacity: 0.82 !important;
+}
+
+body.view-mode #settingsIconButton:focus-visible,
+body.view-mode #settingsIconButton:hover {
+  opacity: 1 !important;
+}
+
+body.edit-mode #settingsIconButton {
+  min-width: 44px !important;
+  min-height: 44px !important;
+  width: auto !important;
+  height: auto !important;
+  padding-inline: 0.72rem !important;
+  border-radius: 14px !important;
+  font-size: 1.18rem !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 390px) {
+  body.view-mode #settingsIconButton {
+    min-width: 36px !important;
+    min-height: 36px !important;
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 0.9rem !important;
+  }
+
+  body.view-mode .header-actions,
+  body.edit-mode .header-actions {
+    gap: 0.42rem !important;
+  }
+
+  body.view-mode #viewEditToggle,
+  body.edit-mode #viewEditToggle {
+    font-size: 0.76rem !important;
+    padding-left: 0.46rem !important;
+    padding-right: 0.46rem !important;
+  }
+}
+
+
+/* Hide settings icon on settings page */
+#settingsIconButton.hidden {
+  display: none !important;
+}
