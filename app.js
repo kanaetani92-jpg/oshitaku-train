@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = '1.4.5';
+  const VERSION = '1.4.8';
 
   const EMOJI_CATEGORIES = [
     { key: 'common', label: 'よく使う', icons: ['🏠', '👕', '🪥', '🍚', '🎒', '👟', '🛁', '🌙', '⭐', '🎉'] },
@@ -26,8 +26,11 @@
   }
 
 
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoState1.4.5';
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoState1.4.8';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoState1.4.7',
+    'oshitakuTrainNoPhotoState1.4.6',
+    'oshitakuTrainNoPhotoState1.4.5',
     'oshitakuTrainNoPhotoState1.4.4',
     'oshitakuTrainNoPhotoState1.4.3',
     'oshitakuTrainNoPhotoState1.4.2',
@@ -909,6 +912,7 @@
       document.body.classList.toggle('view-mode', state.uiMode === 'view');
       document.body.classList.toggle('edit-mode', state.uiMode === 'edit');
       document.body.classList.toggle('preview-mode', false);
+      document.body.classList.toggle('settings-page-active', state.currentPage === 'settings');
       if (state.uiMode === 'view' && menuOpen) closeMenu();
 
       const viewToggle = byId('viewEditToggle');
@@ -923,7 +927,9 @@
       if (settingsIconButton) {
         const hideSettingsIcon = state.currentPage === 'settings';
         settingsIconButton.classList.toggle('hidden', hideSettingsIcon);
+        settingsIconButton.classList.toggle('settings-hidden', hideSettingsIcon);
         settingsIconButton.setAttribute('aria-hidden', String(hideSettingsIcon));
+        settingsIconButton.tabIndex = hideSettingsIcon ? -1 : 0;
         settingsIconButton.disabled = hideSettingsIcon;
       }
 
@@ -1532,6 +1538,15 @@ track.append(dot);
     focusBeforeMenu?.focus?.();
   }
 
+  function backToEditFromSettings() {
+    state.currentPage = 'schedule';
+    state.uiMode = 'edit';
+    document.body.classList.toggle('settings-page-active', false);
+    closeMenu();
+    render();
+    scrollToPageTop();
+  }
+
   function applyPreset(id) {
     hideUndo();
     const preset = state.presets.find((item) => item.id === id);
@@ -1742,7 +1757,8 @@ track.append(dot);
   function bind() {
     safeOn('settingsIconButton', 'click', () => showPage('settings'));
     safeOn('viewEditToggle', 'click', toggleView);
-    safeOn('settingsBackButton', 'click', () => showPage('schedule'));
+    safeOn('settingsBackButton', 'click', backToEditFromSettings);
+    safeOn('settingsBackBottomButton', 'click', backToEditFromSettings);
     safeOn('doneBtn', 'click', done);
     safeOn('previousStationBtn', 'click', previousStation);
     safeOn('undoButton', 'click', restorePreviousAction);
@@ -1865,6 +1881,7 @@ track.append(dot);
         hideUndo();
         saveState('full-reset');
         render();
+                scrollToPageTop();
         announce('すべてのデータを初期化しました。');
       })().catch((error) => {
         console.error(error);

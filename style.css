@@ -2655,3 +2655,51 @@ body.edit-mode #settingsIconButton {
 #settingsPage .page-title-gear {
   display: none !important;
 }
+
+
+/* Remove decorative gear above settings back button */
+#settingsPage .settings-hero,
+#settingsPage .settings-hero-icon,
+#settingsPage .settings-page-icon,
+#settingsPage .settings-emoji,
+#settingsPage .settings-gear,
+#settingsPage .page-emoji,
+#settingsPage .page-icon,
+#settingsPage [data-settings-gear="true"] {
+  display: none !important;
+}
+
+#settingsPage > .page-emoji:first-child,
+#settingsPage > .page-icon:first-child,
+#settingsPage > .settings-emoji:first-child,
+#settingsPage > .settings-gear:first-child {
+  display: none !important;
+}
+
+
+/* Definitively hide header gear while settings page is open */
+body.settings-page-active #settingsIconButton,
+body.settings-page-active #settingsIconButton.hidden,
+body.settings-page-active #settingsIconButton.settings-hidden,
+body.settings-page-active .header-actions #settingsIconButton {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+body.settings-page-active .header-actions {
+  gap: 0 !important;
+}
+
+
+/* Bottom back button under disclaimer */
+.settings-back-bottom-button {
+  margin-top: 1rem !important;
+  width: 100% !important;
+  justify-content: center !important;
+}
+
+#settingsPage details + .settings-back-bottom-button {
+  margin-top: 1rem !important;
+}
