@@ -2703,3 +2703,54 @@ body.settings-page-active .header-actions {
 #settingsPage details + .settings-back-bottom-button {
   margin-top: 1rem !important;
 }
+
+
+/* Child screen card size setting fix */
+html[data-card-size="standard"] body.view-mode #currentCard,
+html[data-card-size="standard"] body.view-mode .current-card {
+  min-height: clamp(178px, 34svh, 280px) !important;
+  padding: clamp(16px, 4.8vw, 24px) !important;
+}
+
+html[data-card-size="standard"] body.view-mode #currentIcon,
+html[data-card-size="standard"] body.view-mode .current-icon {
+  font-size: clamp(4.2rem, 20vw, 6.6rem) !important;
+}
+
+html[data-card-size="standard"] body.view-mode #currentName,
+html[data-card-size="standard"] body.view-mode .current-card strong {
+  font-size: clamp(2.4rem, 9vw, 3.2rem) !important;
+}
+
+html[data-card-size="large"] body.view-mode #currentCard,
+html[data-card-size="large"] body.view-mode .current-card {
+  min-height: clamp(230px, 42svh, 350px) !important;
+  padding: clamp(20px, 5.6vw, 30px) !important;
+}
+
+html[data-card-size="large"] body.view-mode #currentIcon,
+html[data-card-size="large"] body.view-mode .current-icon {
+  font-size: clamp(5.2rem, 24vw, 7.8rem) !important;
+}
+
+html[data-card-size="large"] body.view-mode #currentName,
+html[data-card-size="large"] body.view-mode .current-card strong {
+  font-size: clamp(2.8rem, 10.5vw, 3.8rem) !important;
+}
+
+@media (max-width: 390px) {
+  html[data-card-size="large"] body.view-mode #currentCard,
+  html[data-card-size="large"] body.view-mode .current-card {
+    min-height: clamp(220px, 40svh, 330px) !important;
+  }
+
+  html[data-card-size="large"] body.view-mode #currentIcon,
+  html[data-card-size="large"] body.view-mode .current-icon {
+    font-size: clamp(5rem, 23vw, 7.2rem) !important;
+  }
+
+  html[data-card-size="large"] body.view-mode #currentName,
+  html[data-card-size="large"] body.view-mode .current-card strong {
+    font-size: clamp(2.55rem, 10vw, 3.45rem) !important;
+  }
+}
