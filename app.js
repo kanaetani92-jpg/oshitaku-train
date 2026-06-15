@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = '1.4.4';
+  const VERSION = '1.4.5';
 
   const EMOJI_CATEGORIES = [
     { key: 'common', label: 'よく使う', icons: ['🏠', '👕', '🪥', '🍚', '🎒', '👟', '🛁', '🌙', '⭐', '🎉'] },
@@ -26,8 +26,9 @@
   }
 
 
-  const STORAGE_KEY = 'oshitakuTrainNoPhotoState1.4.4';
+  const STORAGE_KEY = 'oshitakuTrainNoPhotoState1.4.5';
   const LEGACY_KEYS = [
+    'oshitakuTrainNoPhotoState1.4.4',
     'oshitakuTrainNoPhotoState1.4.3',
     'oshitakuTrainNoPhotoState1.4.2',
     'oshitakuTrainNoPhotoState1.4.1',

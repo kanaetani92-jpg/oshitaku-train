@@ -2647,3 +2647,11 @@ body.edit-mode #settingsIconButton {
     font-size: 1.18rem !important;
   }
 }
+
+
+/* Settings screen heading cleanup */
+#settingsPage .settings-heading-gear,
+#settingsPage .settings-title-gear,
+#settingsPage .page-title-gear {
+  display: none !important;
+}
